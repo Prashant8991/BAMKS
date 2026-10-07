@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BAMKS-D Project Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#E3F2FD;overflow:hidden;height:100vh;width:100vw;}
+
+/* Slide Container */
+.deck{position:relative;width:100vw;height:100vh;}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px 60px;opacity:0;pointer-events:none;transition:opacity 0.5s ease, transform 0.5s ease;transform:translateX(40px);background:linear-gradient(135deg,#F5F9FF 0%,#E3F2FD 40%,#BBDEFB 100%);}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0);}
+
+/* Title Slide */
+.slide.title-slide{background:linear-gradient(135deg,#E3F2FD 0%,#BBDEFB 30%,#90CAF9 60%,#64B5F6 100%);text-align:center;}
+.slide.title-slide h1{font-size:3.2rem;font-weight:900;color:#0D47A1;line-height:1.2;margin-bottom:16px;text-shadow:0 2px 8px rgba(13,71,161,0.1);}
+.slide.title-slide .subtitle{font-size:1.3rem;color:#1565C0;font-weight:500;margin-bottom:28px;max-width:800px;}
+.slide.title-slide .meta{font-size:1rem;color:#1976D2;font-weight:400;line-height:1.8;}
+.slide.title-slide .badge{display:inline-block;padding:8px 24px;border-radius:30px;background:rgba(13,71,161,0.1);border:2px solid #1565C0;color:#0D47A1;font-weight:700;font-size:0.95rem;margin-top:20px;}
+
+/* Section Headers */
+.slide h2{font-size:2.4rem;font-weight:800;color:#0D47A1;margin-bottom:24px;text-align:center;position:relative;}
+.slide h2::after{content:'';display:block;width:80px;height:4px;background:linear-gradient(90deg,#1565C0,#42A5F5);margin:12px auto 0;border-radius:2px;}
+.slide h3{font-size:1.5rem;font-weight:700;color:#1565C0;margin-bottom:12px;}
+
+/* Content Cards */
+.card-grid{display:grid;gap:20px;width:100%;max-width:1100px;}
+.card-grid.cols-2{grid-template-columns:1fr 1fr;}
+.card-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+.card{background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border-radius:16px;padding:24px 28px;border:1px solid rgba(21,101,194,0.15);box-shadow:0 4px 20px rgba(13,71,161,0.08);transition:transform 0.3s,box-shadow 0.3s;}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(13,71,161,0.15);}
+.card .icon{font-size:2.2rem;margin-bottom:10px;}
+.card h4{font-size:1.15rem;font-weight:700;color:#0D47A1;margin-bottom:8px;}
+.card p,.card li{font-size:0.92rem;color:#37474F;line-height:1.6;}
+.card ul{list-style:none;padding:0;}
+.card ul li{padding:4px 0;padding-left:20px;position:relative;}
+.card ul li::before{content:'▸';position:absolute;left:0;color:#1565C0;font-weight:700;}
+
+/* Diagram slides */
+.diagram-container{background:white;border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(13,71,161,0.1);border:1px solid rgba(21,101,194,0.12);max-width:1000px;width:100%;}
+.diagram-container img{width:100%;height:auto;border-radius:8px;display:block;}
+.diagram-caption{text-align:center;font-size:0.9rem;color:#546E7A;margin-top:10px;font-style:italic;}
+
+/* Two-column layout */
+.two-col{display:flex;gap:30px;width:100%;max-width:1100px;align-items:flex-start;}
+.two-col .col{flex:1;}
+.two-col .col-img{flex:1.2;}
+.two-col .col-img img{width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+
+/* Bullet content */
+.content-block{max-width:1100px;width:100%;}
+.content-block ul{list-style:none;padding:0;}
+.content-block ul li{font-size:1.05rem;color:#37474F;padding:10px 0 10px 30px;position:relative;line-height:1.6;border-bottom:1px solid rgba(21,101,194,0.08);}
+.content-block ul li:last-child{border-bottom:none;}
+.content-block ul li::before{content:'●';position:absolute;left:0;color:#1565C0;font-size:0.8rem;}
+.content-block ul li strong{color:#0D47A1;}
+
+/* Table */
+.comp-table{width:100%;max-width:1000px;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(13,71,161,0.1);}
+.comp-table th{background:#1565C0;color:white;padding:14px 20px;font-weight:600;font-size:0.95rem;text-align:left;}
+.comp-table td{background:rgba(255,255,255,0.9);padding:12px 20px;font-size:0.92rem;color:#37474F;border-bottom:1px solid #E3F2FD;}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-table .highlight{color:#0D47A1;font-weight:700;}
+.comp-table .good{color:#2E7D32;font-weight:700;}
+.comp-table .bad{color:#C62828;font-weight:700;}
+
+/* Navigation */
+.nav{position:fixed;bottom:24px;right:30px;display:flex;gap:10px;z-index:100;}
+.nav button{width:48px;height:48px;border-radius:50%;border:2px solid #1565C0;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);color:#1565C0;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;}
+.nav button:hover{background:#1565C0;color:white;transform:scale(1.1);}
+.slide-counter{position:fixed;bottom:30px;left:30px;background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);padding:8px 18px;border-radius:20px;font-size:0.85rem;color:#1565C0;font-weight:600;border:1px solid rgba(21,101,194,0.2);z-index:100;}
+
+/* Progress bar */
+.progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,#1565C0,#42A5F5);z-index:100;transition:width 0.4s ease;}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.slide.active .card,.slide.active .diagram-container,.slide.active .content-block,.slide.active .comp-table,.slide.active .two-col{animation:fadeUp 0.6s ease forwards;}
+.slide.active .card:nth-child(2){animation-delay:0.1s;}
+.slide.active .card:nth-child(3){animation-delay:0.2s;}
+.slide.active .card:nth-child(4){animation-delay:0.3s;}
+
+/* Feature tags */
+.tag{display:inline-block;padding:4px 12px;border-radius:16px;font-size:0.78rem;font-weight:600;margin:3px 4px;}
+.tag.blue{background:#E3F2FD;color:#1565C0;}
+.tag.green{background:#E8F5E9;color:#2E7D32;}
+.tag.orange{background:#FFF3E0;color:#E65100;}
+.tag.red{background:#FFEBEE;color:#C62828;}
+
+/* Highlight box */
+.highlight-box{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-left:4px solid #1565C0;border-radius:8px;padding:16px 24px;margin:12px 0;font-size:0.95rem;color:#0D47A1;}
+
+/* Thank you */
+.thank-you h2{font-size:3rem;margin-bottom:8px;}
+.thank-you .subtitle{font-size:1.4rem;color:#1565C0;margin-bottom:32px;}
+
+/* Print Styles */
+@media print{
+  body{overflow:visible;height:auto;}
+  .slide{position:relative;opacity:1;pointer-events:auto;transform:none;page-break-after:always;min-height:100vh;}
+  .nav,.slide-counter,.progress{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="slide-counter" id="counter">1 / 15</div>
+
+<div class="deck" id="deck">
+
+<!-- ==================== SLIDE 1: TITLE ==================== -->
+<div class="slide title-slide active">
+  <h1>BAMKS-D</h1>
+  <p class="subtitle">Blockchain-Assisted Multi-Keyword Searchable Encryption<br>with Dynamic Document Operations for Healthcare Cloud</p>
+  <p class="meta">
+    Based on: Cheng et al., Elsevier Internet of Things, 2026<br>
+    <strong>Technology Stack:</strong> AES-256-GCM · CP-ABE · Ethereum Smart Contracts · SNIZK Proofs
+  </p>
+  <span class="badge">🔒 Secure · ⚡ Efficient · 🔗 Decentralized</span>
+</div>
+
+<!-- ==================== SLIDE 2: AIM ==================== -->
+<div class="slide">
+  <h2>Aim & Objectives</h2>
+  <div class="card-grid cols-2">
+    <div class="card">
+      <div class="icon">🎯</div>
+      <h4>Primary Aim</h4>
+      <p>Design a <strong>secure, searchable, and dynamically updatable</strong> healthcare data management system that enables hospitals to encrypt and store patient records on the cloud while allowing authorized doctors to search and retrieve them — without the cloud server ever seeing plaintext data.</p>
+    </div>
+    <div class="card">
+      <div class="icon">📋</div>
+      <h4>Key Objectives</h4>
+      <ul>
+        <li>Encrypt EHR records using <strong>AES-256-GCM</strong></li>
+        <li>Enable <strong>multi-keyword</strong> searchable encryption</li>
+        <li>Support <strong>O(m) single-document</strong> addition</li>
+        <li>Achieve <strong>O(1) instant revocation</strong> via blockchain</li>
+        <li>Enforce <strong>CP-ABE attribute-based</strong> access control</li>
+        <li>Verify data integrity with <strong>SNIZK proofs</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 3: RESEARCH GAP ==================== -->
+<div class="slide">
+  <h2>Research Gap</h2>
+  <div class="card-grid cols-2">
+    <div class="card">
+      <div class="icon">⚠️</div>
+      <h4>Problems in Existing Systems</h4>
+      <ul>
+        <li><strong>Static Datasets:</strong> No support for adding/removing documents after initial setup</li>
+        <li><strong>Expensive Revocation:</strong> Revoking 1 document requires re-encrypting ALL documents → O(L×m)</li>
+        <li><strong>No Blockchain Audit:</strong> No tamper-proof verification of document status</li>
+        <li><strong>Single-keyword Only:</strong> Most schemes support only single-keyword search</li>
+        <li><strong>Weak Access Control:</strong> No fine-grained attribute-based policies</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="icon">✅</div>
+      <h4>How BAMKS-D Solves These</h4>
+      <ul>
+        <li><strong>Dynamic Operations:</strong> Add single document in O(m) without re-building entire index</li>
+        <li><strong>O(1) Revocation:</strong> Single blockchain flag flip instead of full re-keying</li>
+        <li><strong>Blockchain Audit Trail:</strong> Immutable on-chain record of all document operations</li>
+        <li><strong>Multi-keyword Search:</strong> Bilinear pairing-based conjunctive keyword matching</li>
+        <li><strong>CP-ABE Access:</strong> Only users with matching attributes can decrypt</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="max-width:1100px;margin-top:16px;">
+    <strong>Core Innovation:</strong> BAMKS-D is the first system to combine multi-keyword searchable encryption with O(1) blockchain-based revocation and CP-ABE access control for healthcare cloud data.
+  </div>
+</div>
+
+<!-- ==================== SLIDE 4: SYSTEM ARCHITECTURE ==================== -->
+<div class="slide">
+  <h2>System Architecture</h2>
+  <div class="diagram-container">
+    <img src="diagrams/architecture_diagram.jpg" alt="BAMKS-D System Architecture Diagram">
+  </div>
+  <p class="diagram-caption">Four-entity architecture: Hospital (Data Owner), Cloud Server (Off-Chain), Ethereum Blockchain (On-Chain), Doctor (Data User)</p>
+</div>
+
+<!-- ==================== SLIDE 5: METHODOLOGY - ENCRYPTION FLOW ==================== -->
+<div class="slide">
+  <h2>Methodology — Encryption & Upload Flow</h2>
+  <div class="two-col">
+    <div class="col-img">
+      <img src="diagrams/encryption_flow.jpg" alt="Encryption & Upload Flowchart" style="box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+    </div>
+    <div class="col">
+      <div class="card" style="margin-bottom:16px;">
+        <h4>Step-by-Step Process</h4>
+        <ul>
+          <li><strong>Step 1:</strong> Hospital generates a random 256-bit AES key (σ<sub>k</sub>)</li>
+          <li><strong>Step 2:</strong> Record encrypted with AES-256-GCM → produces ciphertext + 96-bit nonce + 128-bit GCM tag</li>
+          <li><strong>Step 3:</strong> Document tag y<sub>k</sub> = g<sup>σ<sub>k</sub></sup> mod P generated</li>
+          <li><strong>Step 4:</strong> Keyword index tokens built: g<sup>η·H1(kw)</sup></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Parallel Operations</h4>
+        <ul>
+          <li>🔵 <strong>To Cloud:</strong> Encrypted payload + keyword index uploaded</li>
+          <li>🟢 <strong>To Blockchain:</strong> Document tag y<sub>k</sub> + docId registered on smart contract</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 6: METHODOLOGY - SEARCH & DECRYPT ==================== -->
+<div class="slide">
+  <h2>Methodology — Search & Decryption Flow</h2>
+  <div class="two-col">
+    <div class="col-img">
+      <img src="diagrams/search_decrypt_flow.jpg" alt="Search & Decryption Flowchart" style="box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+    </div>
+    <div class="col">
+      <div class="card" style="margin-bottom:16px;">
+        <h4>Search Phase</h4>
+        <ul>
+          <li>Doctor generates <strong>trapdoor tokens</strong> (T1, T2, T3) using CP-ABE secret key</li>
+          <li>Cloud performs <strong>bilinear pairing match:</strong><br>e(T1,C1)·e(T2,C2) = e(T3,C3)?</li>
+          <li>Matching records identified <strong>without decrypting</strong> any data</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Blockchain Verification + Decrypt</h4>
+        <ul>
+          <li>Check <strong>deletedDocRegistry[docId]</strong> on blockchain → O(1)</li>
+          <li>If active → decrypt with AES-256-GCM using key σ<sub>k</sub></li>
+          <li>Verify <strong>SNIZK proof</strong> to confirm data integrity</li>
+          <li>If revoked → <strong>access blocked</strong> immediately</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 7: ALGORITHMS ==================== -->
+<div class="slide">
+  <h2>Algorithms Used</h2>
+  <div class="card-grid cols-3">
+    <div class="card">
+      <div class="icon">🔐</div>
+      <h4>AES-256-GCM</h4>
+      <p><strong>Role:</strong> Symmetric encryption of EHR records</p>
+      <p style="margin-top:8px;"><strong>Why GCM?</strong> Provides both confidentiality AND integrity in one pass. The 128-bit GCM tag detects any tampering.</p>
+      <div style="margin-top:8px;">
+        <span class="tag blue">256-bit key</span>
+        <span class="tag green">96-bit nonce</span>
+        <span class="tag orange">128-bit tag</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="icon">🔑</div>
+      <h4>CP-ABE</h4>
+      <p><strong>Role:</strong> Attribute-based access control</p>
+      <p style="margin-top:8px;"><strong>How:</strong> Ciphertext is bound to a policy (e.g., "Dept=Cardiology AND Role=Doctor"). Only users whose attributes satisfy the policy can decrypt.</p>
+      <div style="margin-top:8px;">
+        <span class="tag blue">Policy-based</span>
+        <span class="tag green">Fine-grained</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="icon">⛓️</div>
+      <h4>Ethereum Smart Contract</h4>
+      <p><strong>Role:</strong> On-chain document registry & O(1) revocation</p>
+      <p style="margin-top:8px;"><strong>How:</strong> BAMKS_Registry.sol stores docId → y<sub>k</sub> mappings and deletedDocRegistry boolean flags.</p>
+      <div style="margin-top:8px;">
+        <span class="tag blue">Solidity</span>
+        <span class="tag green">Immutable</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="icon">🔍</div>
+      <h4>Bilinear Pairing Search</h4>
+      <p><strong>Role:</strong> Multi-keyword searchable encryption</p>
+      <p style="margin-top:8px;">Uses Type-3 pairings on elliptic curves for conjunctive keyword matching over encrypted data.</p>
+      <div style="margin-top:8px;">
+        <span class="tag blue">e(G₁,G₂)→G_T</span>
+        <span class="tag orange">Trapdoor</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="icon">🛡️</div>
+      <h4>SNIZK Proofs</h4>
+      <p><strong>Role:</strong> Data integrity verification</p>
+      <p style="margin-top:8px;">Succinct Non-Interactive Zero-Knowledge proofs verify that returned data hasn't been tampered without revealing the data itself.</p>
+      <div style="margin-top:8px;">
+        <span class="tag green">Zero-Knowledge</span>
+        <span class="tag blue">Non-Interactive</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="icon">📊</div>
+      <h4>Inverted Keyword Index</h4>
+      <p><strong>Role:</strong> Efficient document lookup</p>
+      <p style="margin-top:8px;">Maps encrypted keyword tokens to document IDs, enabling O(n) search over n documents without scanning all records.</p>
+      <div style="margin-top:8px;">
+        <span class="tag blue">O(n) search</span>
+        <span class="tag green">Dynamic</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 8: ON-CHAIN vs OFF-CHAIN ==================== -->
+<div class="slide">
+  <h2>Blockchain Architecture — On-Chain vs Off-Chain</h2>
+  <div class="diagram-container">
+    <img src="diagrams/blockchain_role.jpg" alt="On-Chain vs Off-Chain Architecture">
+  </div>
+  <p class="diagram-caption">On-chain stores lightweight metadata (docId, tag, status); Off-chain stores heavy encrypted payloads — linked by docId</p>
+</div>
+
+<!-- ==================== SLIDE 9: CP-ABE ACCESS CONTROL ==================== -->
+<div class="slide">
+  <h2>CP-ABE Access Control Mechanism</h2>
+  <div class="diagram-container">
+    <img src="diagrams/cpabe_access_control.jpg" alt="CP-ABE Access Control Diagram">
+  </div>
+  <p class="diagram-caption">Policy tree enforces fine-grained access — only users with ALL required attributes can decrypt the ciphertext</p>
+</div>
+
+<!-- ==================== SLIDE 10: REVOCATION MECHANISM ==================== -->
+<div class="slide">
+  <h2>O(1) Revocation Mechanism</h2>
+  <div class="diagram-container">
+    <img src="diagrams/revocation_mechanism.jpg" alt="O(1) Revocation vs Traditional Re-keying">
+  </div>
+  <p class="diagram-caption">BAMKS-D achieves 46,000× faster revocation by using on-chain boolean flags instead of expensive full re-keying</p>
+</div>
+
+<!-- ==================== SLIDE 11: KEY FEATURES ==================== -->
+<div class="slide">
+  <h2>Key Features & Innovations</h2>
+  <div class="card-grid cols-3">
+    <div class="card">
+      <div class="icon">⚡</div>
+      <h4>O(m) Single-Doc Addition</h4>
+      <p>Add one document without rebuilding the entire index. Only m keyword tokens need to be generated for the new document.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🚀</div>
+      <h4>O(1) Instant Revocation</h4>
+      <p>Revoke a document by flipping a single boolean on the blockchain. No re-encryption, no key re-issue.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🔒</div>
+      <h4>End-to-End Encryption</h4>
+      <p>Cloud server never sees plaintext. AES-256-GCM encrypts data; CP-ABE controls who can decrypt.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🔍</div>
+      <h4>Multi-Keyword Search</h4>
+      <p>Search across multiple keywords simultaneously using bilinear pairing-based trapdoors over encrypted data.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🛡️</div>
+      <h4>Tamper-Proof Audit</h4>
+      <p>Every document operation is recorded on the Ethereum blockchain — creating an immutable audit trail.</p>
+    </div>
+    <div class="card">
+      <div class="icon">✅</div>
+      <h4>SNIZK Integrity</h4>
+      <p>Zero-knowledge proofs verify data hasn't been modified without revealing the data itself to the verifier.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 12: PERFORMANCE COMPARISON ==================== -->
+<div class="slide">
+  <h2>Performance Comparison</h2>
+  <div class="two-col">
+    <div class="col-img">
+      <img src="diagrams/performance_comparison.jpg" alt="Performance Comparison Chart" style="box-shadow:0 4px 20px rgba(0,0,0,0.1);border-radius:12px;">
+    </div>
+    <div class="col">
+      <table class="comp-table">
+        <tr><th>Operation</th><th>Base Paper</th><th>BAMKS-D</th></tr>
+        <tr><td>Document Addition</td><td class="bad">O(L×m) — 5,560 ms</td><td class="good">O(m) — 0.12 ms</td></tr>
+        <tr><td>Document Revocation</td><td class="bad">O(L×m) — 5,560 ms</td><td class="good">O(1) — 0.001 ms</td></tr>
+        <tr><td>Keyword Search</td><td>O(n) — 320 ms</td><td>O(n) + verify — 340 ms</td></tr>
+        <tr><td>Blockchain Audit</td><td class="bad">Not Available</td><td class="good">Immutable Ledger</td></tr>
+        <tr><td>Access Control</td><td class="bad">Basic ACL</td><td class="good">CP-ABE Policy</td></tr>
+      </table>
+      <div class="highlight-box" style="margin-top:16px;">
+        <strong>Key Win:</strong> 46,000× faster document revocation with only +6% search overhead for blockchain verification.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 13: TESTING ==================== -->
+<div class="slide">
+  <h2>Testing & Validation Results</h2>
+  <div class="diagram-container">
+    <img src="diagrams/testing_results.jpg" alt="Testing & Validation Results">
+  </div>
+  <div class="card-grid cols-3" style="margin-top:16px;max-width:1000px;">
+    <div class="card" style="text-align:center;padding:14px;">
+      <div style="font-size:2rem;font-weight:800;color:#2E7D32;">100%</div>
+      <p style="font-size:0.85rem;color:#546E7A;">Pass Rate</p>
+    </div>
+    <div class="card" style="text-align:center;padding:14px;">
+      <div style="font-size:2rem;font-weight:800;color:#1565C0;">6</div>
+      <p style="font-size:0.85rem;color:#546E7A;">Security Modules</p>
+    </div>
+    <div class="card" style="text-align:center;padding:14px;">
+      <div style="font-size:2rem;font-weight:800;color:#E65100;">0</div>
+      <p style="font-size:0.85rem;color:#546E7A;">Vulnerabilities Found</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 14: TECH STACK & IMPLEMENTATION ==================== -->
+<div class="slide">
+  <h2>Implementation & Technology Stack</h2>
+  <div class="card-grid cols-2" style="max-width:1000px;">
+    <div class="card">
+      <h4>🖥️ Backend</h4>
+      <ul>
+        <li><strong>Python 3.13</strong> — Core application logic</li>
+        <li><strong>Flask</strong> — REST API server</li>
+        <li><strong>PyCryptodome</strong> — AES-256-GCM encryption</li>
+        <li><strong>hashlib + secrets</strong> — Key generation & hashing</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🌐 Frontend</h4>
+      <ul>
+        <li><strong>HTML5 + CSS3</strong> — Responsive UI</li>
+        <li><strong>JavaScript (Vanilla)</strong> — Dynamic interactions</li>
+        <li><strong>Tab-based Dashboard</strong> — Hospital, Cloud, Blockchain, Doctor views</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>⛓️ Blockchain</h4>
+      <ul>
+        <li><strong>Solidity</strong> — Smart contract (BAMKS_Registry.sol)</li>
+        <li><strong>Ethereum</strong> — On-chain document registry</li>
+        <li><strong>Simulated in Python</strong> — For demo environment</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>📁 Project Structure</h4>
+      <ul>
+        <li><strong>app.py</strong> — Flask server & API endpoints</li>
+        <li><strong>src/bamks_system.py</strong> — Core crypto engine</li>
+        <li><strong>src/dynamic_extension.py</strong> — Dynamic operations</li>
+        <li><strong>contracts/</strong> — Smart contract source</li>
+        <li><strong>index.html</strong> — Dashboard UI</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 15: CONCLUSION & FUTURE WORK ==================== -->
+<div class="slide thank-you" style="text-align:center;">
+  <h2>Conclusion & Future Work</h2>
+  <div class="card-grid cols-2" style="max-width:1000px;margin-bottom:24px;">
+    <div class="card" style="text-align:left;">
+      <h4>✅ What We Achieved</h4>
+      <ul>
+        <li>Secure multi-keyword searchable encryption over encrypted EHR data</li>
+        <li>O(m) single-document addition — <strong>46,000× faster</strong> than full rebuild</li>
+        <li>O(1) on-chain revocation — instant, no re-keying needed</li>
+        <li>CP-ABE fine-grained access control with policy trees</li>
+        <li>SNIZK-based data integrity verification</li>
+        <li>Working prototype with full encryption/decryption pipeline</li>
+      </ul>
+    </div>
+    <div class="card" style="text-align:left;">
+      <h4>🔮 Future Work</h4>
+      <ul>
+        <li>Deploy smart contract on Ethereum testnet (Sepolia)</li>
+        <li>Integrate with real cloud providers (AWS S3 / GCS)</li>
+        <li>Add multi-authority CP-ABE for cross-hospital access</li>
+        <li>Implement range queries and fuzzy keyword search</li>
+        <li>Performance benchmarking with 10K+ real medical records</li>
+        <li>Mobile app for doctor-side access</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:16px;">
+    <h3 style="font-size:2.4rem;color:#0D47A1;margin-bottom:8px;">Thank You!</h3>
+    <p style="font-size:1.1rem;color:#1565C0;">Questions & Discussion</p>
+    <span class="badge" style="margin-top:16px;">📖 Reference: Cheng et al., Internet of Things (Elsevier), 2026</span>
+  </div>
+</div>
+
+</div><!-- end deck -->
+
+<!-- Navigation -->
+<div class="nav">
+  <button onclick="prevSlide()" title="Previous">◀</button>
+  <button onclick="nextSlide()" title="Next">▶</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const progress = document.getElementById('progress');
+const counter = document.getElementById('counter');
+let current = 0;
+
+function showSlide(n) {
+  slides[current].classList.remove('active');
+  current = (n + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  progress.style.width = ((current + 1) / slides.length * 100) + '%';
+  counter.textContent = (current + 1) + ' / ' + slides.length;
+}
+
+function nextSlide() { showSlide(current + 1); }
+function prevSlide() { showSlide(current - 1); }
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); prevSlide(); }
+  if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+  if (e.key === 'End') { e.preventDefault(); showSlide(slides.length - 1); }
+  // Number keys to jump to slide
+  if (e.key >= '1' && e.key <= '9') {
+    const n = parseInt(e.key) - 1;
+    if (n < slides.length) showSlide(n);
+  }
+});
+
+// Touch/swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].screenX;
+  if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+});
+
+// Initialize
+showSlide(0);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BAMKS-D: Official Review 2 Presentation Slide Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-dark: #090d16;
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  
+  --primary: #6366f1;
+  --cyan: #38bdf8;
+  --emerald: #10b981;
+  --rose: #f43f5e;
+  --amber: #f59e0b;
+  --purple: #a855f7;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-dark) fixed;
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(#6366f1 0.8px, transparent 0.8px);
+  background-size: 32px 32px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Header */
+header {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+  padding: 14px 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.logo-badge {
+  background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+}
+
+/* Slide Deck Container */
+main {
+  flex: 1;
+  max-width: 1320px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.slide-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  padding: 12px 24px;
+  border-radius: 14px;
+  border: 1px solid var(--card-border);
+}
+
+.btn-nav {
+  background: linear-gradient(135deg, #4f46e5, #2563eb);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+.btn-nav:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.45);
+}
+
+.slide-title-indicator {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: -0.2px;
+}
+
+/* Slide Styling */
+.slide {
+  display: none;
+  animation: slideFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slide.active { display: block; }
+
+@keyframes slideFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* FLOWCHART DIAGRAMS */
+.diagram-box {
+  background: #0f172a;
+  border: 2px solid var(--primary);
+  border-radius: 14px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.diagram-header {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flow-split-container {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.split-arrow {
+  text-align: center;
+  font-weight: 800;
+  font-size: 24px;
+  color: var(--cyan);
+}
+
+/* Code Line Badge */
+.code-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--cyan);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Table Styling */
+table.ppt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 12px;
+}
+table.ppt-table th {
+  background: rgba(30, 41, 59, 0.9);
+  color: var(--cyan);
+  text-align: left;
+  padding: 12px 16px;
+  font-weight: 700;
+  border-bottom: 2px solid #334155;
+}
+table.ppt-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #334155;
+  color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <div class="logo-badge">BAMKS-D</div>
+    <div>
+      <h1 style="font-size: 16px; font-weight: 800; color: #fff;">Healthcare Cloud & Blockchain Defense Presentation</h1>
+      <p style="font-size: 12px; color: var(--text-muted);">Official Presentation Deck for Evaluator Review</p>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 20px;">
+    <span style="font-size: 12px; color: var(--cyan); font-weight: 700;" id="slideCounter">Slide 1 of 9</span>
+  </div>
+</header>
+
+<main>
+  <div class="slide-controls">
+    <button class="btn-nav" onclick="prevSlide()">◀ Previous</button>
+    <div class="slide-title-indicator" id="slideTitle">1. AIM & Project Overview</div>
+    <button class="btn-nav" onclick="nextSlide()">Next ▶</button>
+  </div>
+
+  <!-- =========================================================================
+       SLIDE 1: AIM & EXECUTIVE OVERVIEW
+       ========================================================================= -->
+  <section class="slide active" id="slide1">
+    <div class="card" style="text-align: center; padding: 48px; border-left: 6px solid var(--primary);">
+      <div style="font-size: 12px; color: var(--cyan); font-weight: 800; letter-spacing: 1.5px; margin-bottom: 12px;">PROJECT EVALUATION PRESENTATION</div>
+      <h1 style="font-size: 32px; font-weight: 900; background: linear-gradient(135deg, #ffffff 0%, #38bdf8 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px;">
+        BAMKS-D: Secure Healthcare Cloud & Blockchain System
+      </h1>
+      <p style="font-size: 17px; color: var(--text-muted); max-width: 950px; margin: 0 auto 32px auto; line-height: 1.6;">
+        <strong style="color: #fff;">AIM:</strong> To design and implement a dynamic, fine-grained access control and searchable encryption architecture for cloud-edge-IoT healthcare environments that enables <strong>instant $\mathcal{O}(1)$ document revocation</strong> and <strong>$\mathcal{O}(m)$ single-file additions</strong> without re-encrypting the entire cloud database.
+      </p>
+
+      <div style="display: inline-flex; gap: 28px; background: #0f172a; padding: 20px 32px; border-radius: 14px; border: 1px solid #334155; text-align: left;">
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">TEAM CONTRIBUTORS</div>
+          <div style="font-size: 14.5px; font-weight: 700; color: #fff; margin-top: 4px;">Prashant Singh (24BYB1042)<br>Adak Rushikesh (24BYB1055)</div>
+        </div>
+        <div style="border-left: 1px solid #334155; padding-left: 28px;">
+          <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">BASE RESEARCH PAPER</div>
+          <div style="font-size: 14.5px; font-weight: 700; color: #fff; margin-top: 4px;">Cheng et al., Elsevier (Internet of Things), Vol 36, 2026<br><span style="font-size: 11.5px; color: var(--cyan);">DOI: 10.1016/j.iot.2025.101838</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SLIDE 2: RESEARCH GAP
+       ========================================================================= -->
+  <section class="slide" id="slide2">
+    <div class="grid-2">
+      <div class="card" style="border-left: 5px solid var(--rose);">
+        <div class="card-title" style="color: var(--rose);">❌ 1. Base Paper Limitation (Cheng et al.)</div>
+        <ul style="font-size: 13.5px; color: var(--text-muted); line-height: 1.8; margin-left: 18px;">
+          <li><strong style="color: #fff;">Quote (Section 8, Page 22):</strong> <em>"In the future, we plan to extend BAMKS to support dynamic adding, deleting, and updating."</em></li>
+          <li><strong style="color: #fff;">The Bottleneck:</strong> Grouped all files into a static version $F_{\text{ver}}$.</li>
+          <li><strong style="color: #fff;">Full Re-keying Drain:</strong> Modifying 1 file forced re-encryption of ALL $L$ files ($\mathcal{O}(L \cdot m)$ latency $\approx 5,560\text{ ms}$).</li>
+          <li><strong style="color: #fff;">IoT Drain:</strong> Excessive CPU & battery consumption on edge devices.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="border-left: 5px solid var(--emerald);">
+        <div class="card-title" style="color: var(--emerald);">✅ 2. Our Solved Research Extension</div>
+        <ul style="font-size: 13.5px; color: var(--text-muted); line-height: 1.8; margin-left: 18px;">
+          <li><strong style="color: #fff;">`SingleDocAdd` [$\mathcal{O}(m)$]:</strong> Appends 1 encrypted record without touch existing dataset ($\approx 0.12\text{ ms}$).</li>
+          <li><strong style="color: #fff;">`SingleDocDelete` [$\mathcal{O}(1)$]:</strong> Flips smart contract revocation mapping `deletedDocRegistry[docId] = true` ($\approx 0.001\text{ ms}$).</li>
+          <li><strong style="color: #fff;">`SingleDocModify` [$\mathcal{O}(m)$]:</strong> Deletes old record & appends new entry.</li>
+          <li><strong style="color: #fff;">Result:</strong> 5.5 Million times faster deletion without dataset re-encryption!</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SLIDE 3: METHODOLOGY
+       ========================================================================= -->
+  <section class="slide" id="slide3">
+    <div class="card" style="border-left: 5px solid var(--cyan);">
+      <div class="card-title" style="color: var(--cyan);">⚙️ Core System Methodology</div>
+      <div class="grid-3" style="margin-top: 16px;">
+        <div style="background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--indigo); margin-bottom: 8px;">1. CP-ABE Access Control</h4>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">Attribute-Based Encryption ties access policies (e.g. <code>Role_Doctor AND Dept_Cardiology</code>) to files. Attribute Authority issues secret keys $K_{2,x}$.</p>
+        </div>
+
+        <div style="background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--emerald); margin-bottom: 8px;">2. AES-256-GCM Payload</h4>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">Symmetric encryption for patient plaintext. Uses a 96-bit random nonce for uniqueness and a 128-bit GCM tag for tamper detection.</p>
+        </div>
+
+        <div style="background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--amber); margin-bottom: 8px;">3. Discrete Log Keyword Index</h4>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">Encrypted index tokens $g^{\eta \cdot H_1(kw)} \bmod P$ hide keywords from the untrusted cloud while allowing trapdoor search matching.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SLIDE 4: UPLOAD & ENCRYPTION FLOWCHART DIAGRAM (EXPLICIT DEMAND)
+       ========================================================================= -->
+  <section class="slide" id="slide4">
+    <div class="card" style="border-left: 5px solid var(--purple);">
+      <div class="card-title" style="color: var(--purple);">📊 Upload Data Flowchart: Encryption vs. Blockchain Transaction</div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">What happens when a Hospital clicks <strong>"🔒 Encrypt Record & Store to Cloud"</strong> (Two Parallel Paths):</p>
+
+      <div class="diagram-box">
+        <div style="text-align: center; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 20px;">
+          [ HOSPITAL DATA OWNER ] ── Inputs: Patient ID, Diagnosis Plaintext, Keywords
+        </div>
+
+        <div class="grid-2">
+          <!-- PATH A: OFF-CHAIN CLOUD -->
+          <div style="background: #1e293b; padding: 18px; border-radius: 12px; border: 2px solid var(--cyan);">
+            <div style="font-size: 14px; font-weight: 700; color: var(--cyan); margin-bottom: 10px;">PATH A: OFF-CHAIN CLOUD STORAGE</div>
+            <ol style="font-size: 12px; color: var(--text-muted); line-height: 1.8; margin-left: 18px;">
+              <li>Derives 256-bit AES key from collaborative token $\Phi$.</li>
+              <li>Encrypts plaintext via <strong>AES-256-GCM</strong>.</li>
+              <li>Generates 96-bit random Nonce + 128-bit GCM Tag.</li>
+              <li>Computes keyword index $g^{\eta \cdot H_1(kw)} \bmod P$.</li>
+              <li><strong style="color: #fff;">Stores Heavy Payload in Cloud Storage.</strong></li>
+            </ol>
+          </div>
+
+          <!-- PATH B: ON-CHAIN BLOCKCHAIN -->
+          <div style="background: #1e293b; padding: 18px; border-radius: 12px; border: 2px solid var(--rose);">
+            <div style="font-size: 14px; font-weight: 700; color: var(--rose); margin-bottom: 10px;">PATH B: ON-CHAIN BLOCKCHAIN LEDGER</div>
+            <ol style="font-size: 12px; color: var(--text-muted); line-height: 1.8; margin-left: 18px;">
+              <li>Computes verification tag $y_k = g^{\sigma_k} \bmod P$.</li>
+              <li>Sends transaction: <code>registerDocument(docId, hash, y_k)</code>.</li>
+              <li>Mines new Ethereum Block (e.g. Block #1045).</li>
+              <li>Initializes <code>deletedDocRegistry[docId] = false</code>.</li>
+              <li><strong style="color: #fff;">Stores Immutable Tag & Status on Blockchain.</strong></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SLIDE 5: ARCHITECTURE DIAGRAM (CLEAR DIAGRAM)
+       ========================================================================= -->
+  <section class="slide" id="slide5">
+    <div class="card" style="border-left: 5px solid var(--cyan);">
+      <div class="card-title" style="color: var(--cyan);">🏛️ End-to-End System Architecture Diagram</div>
+      
+      <div style="text-align: center; margin-top: 16px;">
+        <img src="diagrams/diagram_architecture.png" alt="Architecture Diagram" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #334155;">
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SLIDE 6: ALGORITHMS USED & CODE LINE MAPPING
+       ========================================================================= -->
+  <section class="slide" id="slide6">
+    <div class="card" style="border-left: 5px solid var(--indigo);">
+      <div class="card-title" style="color: var(--indigo);">💻 Algorithms Used & Exact Code Line Mapping</div>
+
+      <table class="ppt-table">
+        <thead>
+          <tr>
+            <th>Algorithm Name</th>
+            <th>Type</th>
+            <th>Complexity</th>
+            <th>Description & Purpose</th>
+            <th>Exact Code Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color: #fff;">Algorithm 12: SingleDocAdd</strong></td>
+            <td><span style="color: var(--emerald); font-weight: 700;">PROPOSED</span></td>
+            <td>$\mathcal{O}(m)$</td>
+            <td>Appends 1 record without dataset re-keying.</td>
+            <td><span class="code-badge">src/dynamic_extension.py:17</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color: #fff;">Algorithm 13: SingleDocDelete</strong></td>
+            <td><span style="color: var(--emerald); font-weight: 700;">PROPOSED</span></td>
+            <td>$\mathcal{O}(1)$</td>
+            <td>Flips `deletedDocRegistry[docId] = true` on-chain.</td>
+            <td><span class="code-badge">src/dynamic_extension.py:36</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color: #fff;">Algorithm 14: SingleDocModify</strong></td>
+            <td><span style="color: var(--emerald); font-weight: 700;">PROPOSED</span></td>
+            <td>$\mathcal{O}(m)$</td>
+            <td>Executes deletion followed by single doc insertion.</td>
+            <td><span class="code-badge">src/dynamic_extension.py:50</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color: #fff;">Algorithm 15: SearchWithFilter</strong></td>
+            <td><span style="color: var(--emerald); font-weight: 700;">PROPOSED</span></td>
+            <td>$\mathcal{O}(k)$</td>
+            <td>Filters out revoked documents during trapdoor search.</td>
+            <td><span class="code-badge">src/dynamic_extension.py:62</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color: #fff;">Smart Contract Registry</strong></td>
+            <td><span style="color: var(--cyan); font-weight: 700;">SOLIDITY</span></td>
+            <td>$\mathcal{O}(1)$</td>
+            <td>Ethereum revocation mapping & gas tracking.</td>
+            <td><span class="code-badge">contracts/BAMKS_Registry.sol:25</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SLIDE 7: IDEA FEATURES
+       ========================================================================= -->
+  <section class="slide" id="slide7">
+    <div class="card" style="border-left: 5px solid var(--amber);">
+      <div class="card-title" style="color: var(--amber);">💡 Key Idea Features Implemented</div>
+      <div class="grid-2" style="margin-top: 16px;">
+        <div style="background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--cyan); margin-bottom: 6px;">🎲 Dynamic Random Clinical Case Generator</h4>
+          <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">Auto-populates 10 realistic clinical specialties (Cardiology, Neurology, Oncology, Orthopedics, Pediatrics, etc.) with unique IDs and keywords upon upload.</p>
+        </div>
+
+        <div style="background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--rose); margin-bottom: 6px;">⚡ Instant $\mathcal{O}(1)$ On-Chain Revocation</h4>
+          <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">Blocks revoked files instantly on the Ethereum smart contract without re-encrypting the cloud database.</p>
+        </div>
+
+        <div style="background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--emerald); margin-bottom: 6px;">🛡️ Schnorr Zero-Knowledge Proof (SNIZK)</h4>
+          <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">Mathematically proves that search results returned by the untrusted cloud are correct and complete without revealing file contents.</p>
+        </div>
+
+        <div style="background: #0f172a; padding: 18px; border-radius: 12px; border: 1px solid #334155;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--purple); margin-bottom: 6px;">🎨 Glassmorphism Healthcare UI</h4>
+          <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">Vibrant, interactive web dashboard at <code>http://127.0.0.1:5000/</code> showcasing live encryption, search, storage inspection, and blockchain logging.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SLIDE 8: TESTING & BENCHMARKS
+       ========================================================================= -->
+  <section class="slide" id="slide8">
+    <div class="card" style="border-left: 5px solid var(--emerald);">
+      <div class="card-title" style="color: var(--emerald);">🧪 Testing & Performance Benchmarks</div>
+      
+      <div style="text-align: center; margin-top: 16px;">
+        <img src="diagrams/chart_performance.png" alt="Performance Bar Chart" style="max-width: 75%; height: auto; border-radius: 12px; border: 1px solid #334155;">
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SLIDE 9: REPORT & REVIEW 3 ROADMAP
+       ========================================================================= -->
+  <section class="slide" id="slide9">
+    <div class="grid-2">
+      <div class="card" style="border-left: 5px solid var(--emerald);">
+        <div class="card-title" style="color: var(--emerald);">📋 Review 2 Report Summary</div>
+        <ul style="font-size: 13.5px; color: var(--text-muted); line-height: 1.8; margin-left: 18px;">
+          <li><strong style="color: #fff;">Research Goal Achieved:</strong> Solved Section 8 open gap from Cheng et al. (Elsevier IoT 2026).</li>
+          <li><strong style="color: #fff;">Performance Impact:</strong> 46,000x faster addition, 5.5 Million x faster revocation.</li>
+          <li><strong style="color: #fff;">Live Web System:</strong> Fully functional server running on <code>http://127.0.0.1:5000/</code>.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="border-left: 5px solid var(--indigo);">
+        <div class="card-title" style="color: var(--indigo);">🚀 Review 3 Roadmap & Future Scope</div>
+        <ul style="font-size: 13.5px; color: var(--text-muted); line-height: 1.8; margin-left: 18px;">
+          <li><strong style="color: #fff;">1. Public Testnet Deployment:</strong> Deploy `BAMKS_Registry.sol` on Ethereum Sepolia Testnet.</li>
+          <li><strong style="color: #fff;">2. zk-SNARKs Integration:</strong> Integrate Circom/snarkjs for zero-knowledge circuit validation.</li>
+          <li><strong style="color: #fff;">3. Post-Quantum Cryptography:</strong> Add Crystals-Kyber encryption for quantum resistance.</li>
+          <li><strong style="color: #fff;">4. Edge Hardware Profiling:</strong> Profile battery & CPU drain on physical Raspberry Pi IoT gateway.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+let currentSlide = 1;
+const totalSlides = 9;
+
+const slideTitles = [
+  "1. AIM & Executive Overview",
+  "2. RESEARCH GAP (Cheng et al. Elsevier 2026)",
+  "3. METHODOLOGY (CP-ABE + AES-GCM + Discrete Log)",
+  "4. UPLOAD FLOWCHART (Encryption vs. Blockchain)",
+  "5. ARCHITECTURE DIAGRAM (End-to-End System Flow)",
+  "6. ALGORITHMS USED & Code Line Mapping",
+  "7. IDEA FEATURES & UI Implementation",
+  "8. TESTING & Benchmarks Chart",
+  "9. REPORT & Review 3 Roadmap"
+];
+
+function updateSlide() {
+  document.querySelectorAll('.slide').forEach((s, idx) => {
+    s.classList.toggle('active', idx + 1 === currentSlide);
+  });
+  document.getElementById('slideCounter').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+  document.getElementById('slideTitle').textContent = slideTitles[currentSlide - 1];
+}
+
+function nextSlide() {
+  if (currentSlide < totalSlides) {
+    currentSlide++;
+    updateSlide();
+  }
+}
+
+function prevSlide() {
+  if (currentSlide > 1) {
+    currentSlide--;
+    updateSlide();
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextSlide();
+  if (e.key === 'ArrowLeft') prevSlide();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BAMKS-D: Secure Healthcare Cloud & Blockchain System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Rich, Vibrant Academic Healthcare Theme (Indigo, Emerald, Cyan & Slate) */
+  --bg-gradient: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 35%, #f5f3ff 70%, #f0fdf4 100%);
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-card-solid: #ffffff;
+  --bg-card-header: #f8fafc;
+  --bg-input: #ffffff;
+  --bg-subtle: #f1f5f9;
+  
+  --border: #e2e8f0;
+  --border-light: #cbd5e1;
+  --border-focus: #6366f1;
+  
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #eef2ff;
+  --primary-border: #c7d2fe;
+  
+  --success: #059669;
+  --success-bg: #ecfdf5;
+  --success-border: #a7f3d0;
+  
+  --danger: #e11d48;
+  --danger-bg: #fff1f2;
+  --danger-border: #fecdd3;
+  
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+  --warning-border: #fde68a;
+  
+  --text: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  
+  --code-hex: #38bdf8;
+  --code-tag: #c084fc;
+  
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 10px 25px -5px rgba(30, 41, 59, 0.06), 0 4px 10px -2px rgba(99, 102, 241, 0.04);
+  --shadow-lg: 0 20px 35px -8px rgba(15, 23, 42, 0.12);
+  
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-code: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-gradient) fixed;
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(#6366f1 0.75px, transparent 0.75px);
+  background-size: 28px 28px;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Header */
+header {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 14px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px -2px rgba(30, 41, 59, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-badge {
+  background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  font-family: var(--font-code);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.logo-title h1 {
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #0f172a 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.3px;
+}
+
+.logo-title p {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Navigation Tabs */
+nav.screen-nav {
+  display: flex;
+  gap: 6px;
+  background: rgba(226, 232, 240, 0.7);
+  backdrop-filter: blur(10px);
+  padding: 5px;
+  border-radius: 12px;
+  border: 1px solid rgba(203, 213, 225, 0.8);
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.nav-btn.active {
+  background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+.nav-btn.active .nav-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.nav-badge {
+  background: #e0e7ff;
+  color: #4f46e5;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-family: var(--font-code);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+/* Main Container */
+main {
+  flex: 1;
+  padding: 32px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.screen {
+  display: none;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.screen.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Screen Title Header */
+.screen-header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.screen-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.screen-header p {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Grid & Cards */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 28px;
+}
+
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+
+input[type="text"], input[type="number"], textarea, select {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 9px;
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.02);
+}
+
+input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+  background: #ffffff;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+textarea {
+  min-height: 85px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.45);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+.btn-danger:hover {
+  box-shadow: 0 8px 20px rgba(225, 29, 72, 0.45);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  border-radius: 9px;
+  box-shadow: var(--shadow-sm);
+}
+.btn-secondary:hover {
+  background: #ffffff;
+  color: var(--primary);
+  border-color: var(--primary-border);
+  transform: translateY(-1px);
+}
+
+/* Result Box */
+.result-box {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 18px;
+  margin-top: 14px;
+  font-family: var(--font-code);
+  font-size: 12px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+}
+
+.result-row {
+  display: flex;
+  margin-bottom: 9px;
+  line-height: 1.4;
+}
+
+.result-label {
+  width: 145px;
+  color: #94a3b8;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.result-value {
+  color: #f8fafc;
+  word-break: break-all;
+}
+
+.result-value.hex {
+  color: var(--code-hex);
+  font-weight: 500;
+}
+
+.result-value.success {
+  color: #34d399;
+  font-weight: 700;
+}
+
+/* Tables */
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table.data-table th {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  text-align: left;
+  padding: 12px 16px;
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border);
+}
+
+table.data-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text-secondary);
+}
+
+table.data-table tr:hover {
+  background: rgba(238, 242, 255, 0.5);
+}
+
+table.data-table tr.revoked-row {
+  background: #fff1f2;
+  color: #9f1239;
+}
+
+/* Badges */
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-code);
+  letter-spacing: 0.3px;
+}
+
+.status-active {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+}
+
+.status-revoked {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+}
+
+.tag-kw {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  margin-right: 4px;
+  font-family: var(--font-code);
+  font-weight: 600;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  width: 90%;
+  max-width: 640px;
+  padding: 26px;
+  box-shadow: var(--shadow-lg);
+  animation: modalScale 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modalScale {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+/* Step Explanation Box */
+.step-tracker {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 18px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.step-tracker strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.step-tracker code {
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-family: var(--font-code);
+  font-size: 11.5px;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Search results cards */
+.search-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--success);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease;
+}
+.search-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+.search-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+/* Security Note Alert */
+.security-note {
+  background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+  border: 1px solid #bfdbfe;
+  border-left: 5px solid #3b82f6;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.security-note strong {
+  color: #1e40af;
+}
+
+/* ==========================================================================
+   ROLE THEME PALETTES (DOCTOR / NEUROLOGIST / NURSE / GUEST)
+   ========================================================================== */
+body.theme-doctor {
+  --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 35%, #e0e7ff 70%, #f0fdf4 100%);
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-border: #bfdbfe;
+}
+
+body.theme-neurologist {
+  --bg-gradient: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 35%, #fae8ff 70%, #f0fdf4 100%);
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --primary-light: #f5f3ff;
+  --primary-border: #ddd6fe;
+}
+
+body.theme-nurse {
+  --bg-gradient: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 30%, #f0fdfa 70%, #eff6ff 100%);
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-light: #ecfdf5;
+  --primary-border: #a7f3d0;
+}
+
+body.theme-guest {
+  --bg-gradient: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 30%, #f8fafc 70%, #f1f5f9 100%);
+  --primary: #e11d48;
+  --primary-hover: #be123c;
+  --primary-light: #fff1f2;
+  --primary-border: #fecdd3;
+}
+
+/* ==========================================================================
+   LOGIN PORTAL STYLES
+   ========================================================================== */
+.login-overlay {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  position: relative;
+  z-index: 50;
+  animation: fadeIn 0.3s ease;
+}
+
+.login-card-container {
+  max-width: 1040px;
+  width: 100%;
+}
+
+.login-header-box {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+.login-role-card {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 18px;
+  padding: 26px 22px;
+  text-align: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(30, 41, 59, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.login-role-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.15);
+}
+
+.login-card-doctor:hover { border-color: #2563eb; }
+.login-card-neurologist:hover { border-color: #7c3aed; }
+.login-card-nurse:hover { border-color: #059669; }
+.login-card-guest:hover { border-color: #e11d48; }
+
+.login-role-card .card-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-code);
+  padding: 3px 9px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  align-self: center;
+}
+
+.login-avatar {
+  font-size: 46px;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+
+.login-role-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.login-role-card p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.login-attrs-box {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.login-attrs-box span {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-family: var(--font-code);
+  font-weight: 600;
+}
+
+.login-btn-action {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #ffffff;
+}
+
+.btn-doctor { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+.btn-neurologist { background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
+.btn-nurse { background: linear-gradient(135deg, #059669 0%, #047857 100%); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3); }
+.btn-guest { background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3); }
+
+/* User Capsule in Authenticated Header */
+.user-header-capsule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-capsule-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.btn-logout {
+  background: #ffffff;
+  border: 1px solid #fecdd3;
+  color: #e11d48;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(225, 29, 72, 0.1);
+}
+
+.btn-logout:hover {
+  background: #fff1f2;
+  border-color: #fda4af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(225, 29, 72, 0.2);
+}
+
+/* Role Alert Banner */
+.role-alert-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 24px;
+  font-size: 13px;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.role-alert-doctor {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.09) 0%, rgba(59, 130, 246, 0.03) 100%);
+  border-bottom: 1px solid rgba(37, 99, 235, 0.22);
+  color: #1e40af;
+}
+
+.role-alert-neurologist {
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.09) 0%, rgba(139, 92, 246, 0.03) 100%);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.22);
+  color: #5b21b6;
+}
+
+.role-alert-nurse {
+  background: linear-gradient(90deg, rgba(5, 150, 105, 0.09) 0%, rgba(16, 185, 129, 0.03) 100%);
+  border-bottom: 1px solid rgba(5, 150, 105, 0.22);
+  color: #065f46;
+}
+
+.role-alert-guest {
+  background: linear-gradient(90deg, rgba(225, 29, 72, 0.09) 0%, rgba(244, 63, 94, 0.03) 100%);
+  border-bottom: 1px solid rgba(225, 29, 72, 0.22);
+  color: #9f1239;
+}
+
+.role-alert-sub-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--font-code);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+}
+
+/* Database / Cloud Storage Screen Styles */
+.db-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.db-stat-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+}
+
+.db-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.db-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.db-stat-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.db-stat-lbl {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.db-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.db-filter-group {
+  display: flex;
+  gap: 6px;
+  background: rgba(241, 245, 249, 0.9);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.db-filter-btn {
+  background: transparent;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.db-filter-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.db-filter-btn.active {
+  background: #ffffff;
+  color: var(--primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.db-filter-badge {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.06);
+  font-family: var(--font-code);
+  font-weight: 700;
+}
+
+.db-filter-btn.active .db-filter-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.doc-record-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.doc-record-card:hover {
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+}
+
+.doc-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.doc-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.doc-card-body {
+  font-size: 13px;
+  line-height: 1.5;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.doc-body-authorized {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.doc-body-denied {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #9f1239;
+}
+
+.doc-body-revoked {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  color: #64748b;
+}
+
+.doc-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Policy evaluation badge in tables and cards */
+.policy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--font-code);
+  font-weight: 600;
+}
+
+.policy-chip-met {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.policy-chip-denied {
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+
+.search-card-denied {
+  border-left-color: var(--danger) !important;
+  background: #fffcfc !important;
+}
+
+/* Matrix Table */
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.matrix-table th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border);
+  background: #f8fafc;
+}
+
+.matrix-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+}
+
+.matrix-col-active {
+  background: rgba(99, 102, 241, 0.06) !important;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<!-- ========================================================================
+     AUTHENTICATION / LOGIN GATEWAY SCREEN (INITIAL VIEW)
+     ======================================================================== -->
+<div id="loginPortal" class="login-overlay">
+  <div class="login-card-container">
+    <div class="login-header-box">
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.25); padding: 6px 14px; border-radius: 20px; margin-bottom: 16px;">
+        <span style="font-size: 14px;">🔐</span>
+        <span style="font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px;">CENTRAL ATTRIBUTE AUTHORITY (AA_MEDICAL)</span>
+      </div>
+      <h1 style="font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 8px;">
+        BAMKS-D Clinical Access Gateway
+      </h1>
+      <p style="font-size: 14px; color: var(--text-muted); max-width: 620px; margin: 0 auto; line-height: 1.6;">
+        Authenticate using your cryptographic identity. Each clinical role receives distinct attribute secret keys (<code style="font-family: var(--font-code); color: var(--primary);">K2</code> components) and launches a completely customized clinical portal.
+      </p>
+    </div>
+
+    <div class="login-grid">
+      <!-- Role Card 1: Dr. Prashant Singh (Cardiology Specialist) -->
+      <div class="login-role-card login-card-doctor" onclick="loginAs('dr_prashant')">
+        <div class="card-badge" style="background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe;">ATTENDING CARDIOLOGIST</div>
+        <div class="login-avatar">👨‍⚕️</div>
+        <h3>Dr. Prashant Singh, MD</h3>
+        <div style="font-size: 11.5px; color: #2563eb; font-weight: 700; margin-bottom: 8px;">Chief Cardiologist & Attending Physician</div>
+        <p>Full clinical authorization to encrypt, upload, and decrypt acute cardiac telemetry & CCU records.</p>
+        <div class="login-attrs-box">
+          <span style="background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe;">Role_Doctor</span>
+          <span style="background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe;">Dept_Cardiology</span>
+        </div>
+        <button class="login-btn-action btn-doctor">
+          🔑 Sign In to Cardiology Portal ➔
+        </button>
+      </div>
+
+      <!-- Role Card 2: Dr. Rushikesh Adak (Neurology Specialist) -->
+      <div class="login-role-card login-card-neurologist" onclick="loginAs('dr_rushikesh')">
+        <div class="card-badge" style="background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;">ATTENDING NEUROLOGIST</div>
+        <div class="login-avatar">🧠</div>
+        <h3>Dr. Rushikesh Adak, MD</h3>
+        <div style="font-size: 11.5px; color: #7c3aed; font-weight: 700; margin-bottom: 8px;">Chief Neurologist & Neurosurgeon</div>
+        <p>Full clinical authorization to decrypt Brain 3T MRI, Acute Stroke, and Epilepsy records. Cardiology locked.</p>
+        <div class="login-attrs-box">
+          <span style="background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe;">Role_Doctor</span>
+          <span style="background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe;">Dept_Neurology</span>
+        </div>
+        <button class="login-btn-action btn-neurologist">
+          🔑 Sign In to Neurology Portal ➔
+        </button>
+      </div>
+
+      <!-- Role Card 3: Nurse Anita Patel (Staff Nurse) -->
+      <div class="login-role-card login-card-nurse" onclick="loginAs('nurse_anita')">
+        <div class="card-badge" style="background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">NURSING STATION</div>
+        <div class="login-avatar">👩‍⚕️</div>
+        <h3>Nurse Anita Patel, RN</h3>
+        <div style="font-size: 11.5px; color: #059669; font-weight: 700; margin-bottom: 8px;">Staff Nurse (General Inpatient Ward)</div>
+        <p>Inpatient bedside monitoring terminal. Authorized for routine pediatric care & vaccines. Specialist files locked.</p>
+        <div class="login-attrs-box">
+          <span style="background: #ecfdf5; color: #065f46; border-color: #a7f3d0;">Role_Nurse</span>
+          <span style="background: #ecfdf5; color: #065f46; border-color: #a7f3d0;">Dept_GeneralWard</span>
+        </div>
+        <button class="login-btn-action btn-nurse">
+          🔑 Sign In to Nursing Station ➔
+        </button>
+      </div>
+
+      <!-- Role Card 4: External Guest (Unauthorized) -->
+      <div class="login-role-card login-card-guest" onclick="loginAs('unauthorized_guest')">
+        <div class="card-badge" style="background: #ffe4e6; color: #9f1239; border: 1px solid #fecdd3;">EXTERNAL / UNVERIFIED</div>
+        <div class="login-avatar">🕵️</div>
+        <h3>External Auditor / Guest</h3>
+        <div style="font-size: 11.5px; color: #e11d48; font-weight: 700; margin-bottom: 8px;">Unauthorized Outsider (Zero Keys)</div>
+        <p>Simulates an unverified outsider. Holds zero clinical attributes. Ciphertext remains 100% locked.</p>
+        <div class="login-attrs-box">
+          <span style="background: #fff1f2; color: #9f1239; border-color: #fecdd3;">Role_Guest</span>
+          <span style="background: #fff1f2; color: #9f1239; border-color: #fecdd3;">Dept_External</span>
+        </div>
+        <button class="login-btn-action btn-guest">
+          🔑 Sign In as Guest ➔
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================
+     AUTHENTICATED APPLICATION PORTAL (RENDERED POST-LOGIN)
+     ======================================================================== -->
+<div id="authenticatedApp" style="display: none; flex-direction: column; min-height: 100vh;">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-area">
+      <div class="logo-badge" id="portalBadge">BAMKS-D</div>
+      <div class="logo-title">
+        <h1 id="headerPortalTitle">Cardiology Clinical Workstation</h1>
+        <p id="headerPortalSubtitle">Healthcare Cloud Architecture with CP-ABE & O(1) On-Chain Revocation</p>
+      </div>
+    </div>
+
+    <!-- Role-Adapted Navigation Tabs -->
+    <nav class="screen-nav" id="dynamicNav">
+      <!-- Injected dynamically by JS according to role -->
+    </nav>
+
+    <!-- IPFS Badge & User Capsule & Logout Button -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="https://gateway.pinata.cloud/ipfs/bafkreiegat25m4vgoltbz5l5wtvka7ipm4osl7xtyryhbg643ihctznluq" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 20px; font-size: 11px; font-family: var(--font-code); color: #047857; font-weight: 700; text-decoration: none;" title="Decentralized Storage: Connected to Pinata Cloud IPFS Gateway">
+        <span style="display: inline-block; width: 7px; height: 7px; background: #10b981; border-radius: 50%; box-shadow: 0 0 6px #10b981;"></span>
+        IPFS: Pinata Live ✓
+      </a>
+      <div class="user-header-capsule">
+        <div class="user-capsule-info">
+          <span id="headerUserAvatar" style="font-size: 20px;">👨‍⚕️</span>
+          <div>
+            <div style="font-size: 13px; font-weight: 700; color: var(--text);" id="headerUserName">Dr. Prashant Singh</div>
+            <div style="font-size: 10.5px; color: var(--text-muted); font-family: var(--font-code);" id="headerUserAttrs">[Role_Doctor, Dept_Cardiology]</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()" title="Log out and return to Gateway">
+          <span>🚪</span> Log Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ROLE ALERT BANNER -->
+  <div id="roleAlertBanner" class="role-alert-banner role-alert-doctor">
+    <div style="display: flex; align-items: center; gap: 8px;" id="roleAlertText">
+      <span>🩺</span>
+      <span><strong>Active Session:</strong> Authenticated as <strong>Dr. Prashant Singh</strong>. Authorized for Cardiology & Cardiac Emergency records.</span>
+    </div>
+    <div class="role-alert-sub-badge" id="roleAlertSub">
+      🔒 CP-ABE Cryptographic Enforcement: Active
+    </div>
+  </div>
+
+  <main>
+
+  <!-- ========================================================================
+       SCREEN 1: HOSPITAL UPLOAD (DATA OWNER)
+       ======================================================================== -->
+  <section class="screen active" id="screen-upload">
+    <div class="screen-header">
+      <div>
+        <h2>Hospital Data Owner: Encrypt & Upload Patient Record</h2>
+        <p>Demonstrates client-side encryption. The medical record is encrypted using AES-256-GCM before transmission to the cloud.</p>
+      </div>
+      <button class="btn btn-secondary" onclick="showScreen('screen-storage', document.querySelectorAll('.nav-btn')[1])">
+        Go to Cloud Storage ➔
+      </button>
+    </div>
+
+    <div class="grid-2">
+      <!-- Input Card -->
+      <div class="card">
+        <div class="card-title" style="justify-content: space-between;">
+          <span>Patient Medical Data Form</span>
+          <button class="btn-secondary" style="padding: 4px 10px; font-size: 11.5px; border-radius: 7px; display: inline-flex; align-items: center; gap: 5px;" onclick="generateRandomRecord()">
+            🎲 Randomize Data
+          </button>
+        </div>
+        
+        <div class="form-group">
+          <label>Document / Patient ID</label>
+          <input type="number" id="inpDocId" value="106">
+        </div>
+
+        <div class="form-group">
+          <label>Medical Diagnosis / Patient Record (Plaintext)</label>
+          <textarea id="inpText">Patient Record #106: Cardiac Arrhythmia and severe tachycardia detected during ECG examination in ICU.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Searchable Keywords (comma-separated)</label>
+          <input type="text" id="inpKeywords" value="Cardiology, ECG, Arrhythmia">
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 5px;">
+            These keywords are converted into encrypted index tokens so the cloud server cannot read them.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>CP-ABE Access Policy (Ciphertext-Policy Tree)</label>
+          <select id="inpPolicyType" onchange="updatePolicyHelperText()">
+            <option value="cardiology">🩺 Cardiology Specialist: (Role_Doctor AND Dept_Cardiology)</option>
+            <option value="oncology">🔬 Oncology Specialist: (Role_Doctor AND Dept_Oncology)</option>
+            <option value="neurology">🧠 Neurology Specialist: (Role_Doctor AND Dept_Neurology)</option>
+            <option value="routine">💉 Routine / Nurse Care: (Role_Nurse OR Role_Doctor)</option>
+          </select>
+          <div id="policyHelperText" style="font-size: 11.5px; color: var(--text-muted); margin-top: 5px;">
+            Only doctors with Cardiology department credentials can decrypt this file.
+          </div>
+        </div>
+
+        <div id="uploadRoleWarning" style="display: none; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #9f1239; margin-bottom: 14px;">
+          ⚠️ <strong>Permission Notice:</strong> Your current role has restricted clinical publishing rights. As a demonstration, you can still test upload or switch back to <strong>Dr. Prashant</strong> above.
+        </div>
+
+        <button class="btn" id="btnUpload" onclick="handleUpload()" style="width: 100%; justify-content: center; padding: 12px;">
+          🔒 Encrypt Record & Store to Cloud
+        </button>
+
+        <div class="step-tracker">
+          <strong>Cryptographic Pipeline (SingleDocAdd):</strong><br>
+          1. Encrypts patient plaintext with <strong>AES-256-GCM</strong> using derived key.<br>
+          2. Attaches <strong>CP-ABE Access Policy Tree</strong> to protect symmetric token.<br>
+          3. Computes public verification tag <code>y_k = g^σ_k mod P</code>.<br>
+          4. Generates discrete logarithm keyword index tokens in <code>O(m)</code> time.<br>
+          5. Registers document on Ethereum smart contract.
+        </div>
+      </div>
+
+      <!-- Live Output Card -->
+      <div class="card">
+        <div class="card-title">Cryptographic Operation Output</div>
+        <div id="uploadOutputPlaceholder" style="color: var(--text-muted); padding: 50px 10px; text-align: center; line-height: 1.6;">
+          <div style="font-size: 28px; margin-bottom: 10px; opacity: 0.6;">🔒</div>
+          Click <strong>"Encrypt Record & Store to Cloud"</strong> to execute the cryptographic pipeline and generate the verifiable ciphertext.
+        </div>
+
+        <div id="uploadOutputArea" style="display: none;">
+          <div class="result-box">
+            <div class="result-row">
+              <div class="result-label">Status:</div>
+              <div class="result-value success" id="outStatus">✓ Successfully Encrypted & Stored</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Document ID:</div>
+              <div class="result-value" id="outDocId">#106</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">CP-ABE Policy:</div>
+              <div class="result-value" id="outPolicy" style="color: var(--primary); font-weight: 600;">(Role_Doctor AND Dept_Cardiology)</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">AES Ciphertext:</div>
+              <div class="result-value hex" id="outCiphertext">...</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Public Tag y_k:</div>
+              <div class="result-value hex" id="outTag">...</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Blockchain TX:</div>
+              <div class="result-value hex" id="outTx">...</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">EVM Gas Used:</div>
+              <div class="result-value" id="outGas">102,500 units</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; gap: 12px;">
+            <button class="btn" onclick="showScreen('screen-storage', document.querySelectorAll('.nav-btn')[1])">
+              🗄️ View in Cloud Storage Table ➔
+            </button>
+            <button class="btn btn-secondary" onclick="showScreen('screen-matrix', document.querySelectorAll('.nav-btn')[3])">
+              🛡️ View CP-ABE Matrix ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 2: CLOUD STORAGE (CSP DATABASE)
+       ======================================================================== -->
+  <section class="screen" id="screen-storage">
+    <div class="screen-header">
+      <div>
+        <h2 id="storageScreenHeaderTitle">Clinical Cloud Database & Storage Vault</h2>
+        <p id="storageScreenHeaderSub">Secure multi-tenant hospital records vault. Protected by <strong>AES-256-GCM encryption</strong> and <strong>CP-ABE attribute trees</strong>.</p>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-secondary" onclick="loadDocuments()">🔄 Refresh Database</button>
+      </div>
+    </div>
+
+    <!-- Top KPI Stats Row -->
+    <div class="db-stats-grid">
+      <div class="db-stat-card">
+        <div class="db-stat-icon" style="background: #ecfdf5; color: #059669;">🔓</div>
+        <div>
+          <div class="db-stat-val" id="statAccessibleCount" style="color: #059669;">3 Records</div>
+          <div class="db-stat-lbl">Accessible with Your Keys</div>
+        </div>
+      </div>
+      <div class="db-stat-card">
+        <div class="db-stat-icon" style="background: #fff1f2; color: #e11d48;">🔒</div>
+        <div>
+          <div class="db-stat-val" id="statRestrictedCount" style="color: #e11d48;">2 Records</div>
+          <div class="db-stat-lbl">Department Restricted (CP-ABE)</div>
+        </div>
+      </div>
+      <div class="db-stat-card">
+        <div class="db-stat-icon" style="background: #f8fafc; color: #64748b;">🚫</div>
+        <div>
+          <div class="db-stat-val" id="statRevokedCount" style="color: #64748b;">0 Records</div>
+          <div class="db-stat-lbl">On-Chain Revoked (O(1))</div>
+        </div>
+      </div>
+      <div class="db-stat-card">
+        <div class="db-stat-icon" style="background: #eff6ff; color: #2563eb;">🛡️</div>
+        <div>
+          <div class="db-stat-val" id="statActiveKey" style="font-size: 13.5px; color: #2563eb; font-family: var(--font-code);">[Dept_Cardiology]</div>
+          <div class="db-stat-lbl">Active Attribute Clearance</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="db-filter-bar">
+      <div class="db-filter-group">
+        <button class="db-filter-btn active" id="btnFilterAccessible" onclick="setStorageFilter('accessible', this)">
+          <span>🟢</span> My Authorized Records <span class="db-filter-badge" id="filterCountAccessible">3</span>
+        </button>
+        <button class="db-filter-btn" id="btnFilterRestricted" onclick="setStorageFilter('restricted', this)">
+          <span>🔒</span> Department Restricted <span class="db-filter-badge" id="filterCountRestricted">2</span>
+        </button>
+        <button class="db-filter-btn" id="btnFilterRevoked" onclick="setStorageFilter('revoked', this)">
+          <span>🚫</span> Revoked on Blockchain <span class="db-filter-badge" id="filterCountRevoked">0</span>
+        </button>
+        <button class="db-filter-btn" id="btnFilterAll" onclick="setStorageFilter('all', this)">
+          <span>🌐</span> All Cloud Records <span class="db-filter-badge" id="filterCountAll">5</span>
+        </button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <input type="text" id="storageSearchInp" placeholder="🔍 Search patient, diagnosis, keyword..." oninput="filterStorageSearch(this.value)" style="padding: 7px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; width: 280px;">
+      </div>
+    </div>
+
+    <!-- Active Filter Notice Banner -->
+    <div id="storageFilterNotice" style="margin-bottom: 14px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+      <span>🟢</span> <span>Showing <strong>records decryptable with your active attribute keys</strong>. Other departmental records are hidden to reduce clutter.</span>
+    </div>
+
+    <!-- Records Container (Card / Table Container) -->
+    <div id="storageTableContainer">
+      <div style="text-align: center; color: var(--text-muted); padding: 40px;">Loading cloud storage records...</div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 3: DOCTOR / CLINICIAN SEARCH & DECRYPTION
+       ======================================================================== -->
+  <section class="screen" id="screen-search">
+    <div class="screen-header">
+      <div>
+        <h2 id="searchScreenTitle">Clinician Query & Search Portal</h2>
+        <p id="searchScreenSubtitle">The clinician queries medical records. The client generates a cryptographic trapdoor (T1, T2, T3) and searches the cloud without revealing the keywords. Matching records are decrypted if and only if CP-ABE policy is satisfied.</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Search Form -->
+      <div class="card">
+        <div class="card-title" id="searchCardTitle">Search Query Parameters</div>
+
+        <div class="form-group">
+          <label>Medical Keywords to Query (Conjunctive AND)</label>
+          <input type="text" id="searchKeywords" value="Cardiology, ECG">
+          <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+            <button class="btn-secondary" style="font-size: 11.5px; padding: 5px 10px;" onclick="setSearchKws('Cardiology, ECG')">Cardiology, ECG</button>
+            <button class="btn-secondary" style="font-size: 11.5px; padding: 5px 10px;" onclick="setSearchKws('Oncology, Biopsy')">Oncology, Biopsy</button>
+            <button class="btn-secondary" style="font-size: 11.5px; padding: 5px 10px;" onclick="setSearchKws('Neurology, MRI')">Neurology, MRI</button>
+            <button class="btn-secondary" style="font-size: 11.5px; padding: 5px 10px;" onclick="setSearchKws('Vaccine, Child')">Vaccine, Child (Nurse Friendly)</button>
+          </div>
+        </div>
+
+        <button class="btn" id="btnSearch" onclick="handleSearch()" style="width: 100%; justify-content: center; padding: 12px;">
+          🔍 Generate Trapdoor & Search Cloud
+        </button>
+
+        <div class="step-tracker">
+          <strong>Search & CP-ABE Pipeline:</strong><br>
+          1. Computes blinded trapdoor tokens: <code>T1 = g^φ</code>, <code>T2 = g^(φ+2)</code>, <code>T3 = g^(φ · Σ H1(w_i))</code>.<br>
+          2. Transmits trapdoor to cloud server (CSP).<br>
+          3. Cloud matches tokens and generates a <strong>SNIZK proof</strong>.<br>
+          4. Smart contract checks <code>deletedDocRegistry</code> in <strong>O(1)</strong> time.<br>
+          5. <strong>CP-ABE Evaluation:</strong> If clinician attributes satisfy policy, ciphertext decrypts to plaintext; otherwise decryption fails!
+        </div>
+      </div>
+
+      <!-- Search Results Area -->
+      <div class="card">
+        <div class="card-title">Search Results & Decrypted Patient Records</div>
+        
+        <div id="searchPlaceholder" style="color: var(--text-muted); padding: 50px 10px; text-align: center; line-height: 1.6;">
+          <div style="font-size: 28px; margin-bottom: 10px; opacity: 0.6;">🔍</div>
+          Enter keywords on the left and click <strong>"Generate Trapdoor & Search Cloud"</strong> to execute the query.
+        </div>
+
+        <div id="searchResultsArea" style="display: none;">
+          <!-- Trapdoor details -->
+          <div class="result-box" style="margin-top: 0; margin-bottom: 16px;">
+            <div class="result-row">
+              <div class="result-label">Trapdoor T1:</div>
+              <div class="result-value hex" id="resT1">...</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Trapdoor T3:</div>
+              <div class="result-value hex" id="resT3">...</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">SNIZK Proof:</div>
+              <div class="result-value success" id="resProof">✓ Verified on-chain via RVSC Smart Contract</div>
+            </div>
+            <div class="result-row">
+              <div class="result-label">Roundtrip Latency:</div>
+              <div class="result-value" id="resTime" style="font-weight: 600; color: var(--primary);">14.2 ms</div>
+            </div>
+          </div>
+
+          <div id="matchedRecordsList">
+            <!-- Dynamic search cards -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 4: CP-ABE ACCESS CONTROL MATRIX & VERIFICATION
+       ======================================================================== -->
+  <section class="screen" id="screen-matrix">
+    <div class="screen-header">
+      <div>
+        <h2>CP-ABE Access Control Matrix & Mathematical Verification</h2>
+        <p>Real-time comparison demonstrating fine-grained access control. Decryption succeeds if and only if the clinician's attribute keys satisfy the document's boolean policy tree.</p>
+      </div>
+      <button class="btn btn-secondary" onclick="loadIdentities()">🔄 Refresh Matrix</button>
+    </div>
+
+    <!-- Explanation Alert -->
+    <div class="security-note">
+      <span style="font-size: 20px;">🛡️</span>
+      <span style="color: var(--text-secondary);">
+        <strong>Collusion-Resistant Multi-Authority CP-ABE:</strong> A Doctor in Cardiology holds <code>[Role_Doctor, Dept_Cardiology]</code>; a Nurse holds <code>[Role_Nurse, Dept_GeneralWard]</code>. Even if they collude, their distinct secret blinding factors ($r$) prevent merging keys to access unauthorized records.
+      </span>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 24px;">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th style="width: 75px;">Doc ID</th>
+            <th style="width: 260px;">Medical Record Description</th>
+            <th style="width: 250px;">CP-ABE Policy Tree</th>
+            <th id="thMatrix_dr_prashant" class="matrix-col-active">👨‍⚕️ Dr. Prashant<br><span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">[Doctor, Cardiology]</span></th>
+            <th id="thMatrix_dr_rushikesh">🧠 Dr. Rushikesh Adak<br><span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">[Doctor, Neurology]</span></th>
+            <th id="thMatrix_nurse_anita">👩‍⚕️ Nurse Anita<br><span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">[Nurse, GeneralWard]</span></th>
+            <th id="thMatrix_unauthorized_guest">🕵️ Guest<br><span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">[No Clinical Attrs]</span></th>
+          </tr>
+        </thead>
+        <tbody id="matrixTableBody">
+          <tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--text-muted);">Loading CP-ABE access matrix...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Active Role Cryptographic Key Inspection</div>
+        <div class="result-box" id="activeKeyBox">
+          <div class="result-row">
+            <div class="result-label">Clinician UID:</div>
+            <div class="result-value" id="keyUid">Dr. Prashant Singh</div>
+          </div>
+          <div class="result-row">
+            <div class="result-label">Assigned Role:</div>
+            <div class="result-value" id="keyRole">Chief Cardiologist (Doctor)</div>
+          </div>
+          <div class="result-row">
+            <div class="result-label">Held Attributes:</div>
+            <div class="result-value success" id="keyAttrs">["Role_Doctor", "Dept_Cardiology"]</div>
+          </div>
+          <div class="result-row">
+            <div class="result-label">Base Secret K1:</div>
+            <div class="result-value hex" id="keyK1">...</div>
+          </div>
+          <div class="result-row">
+            <div class="result-label">Registration K3:</div>
+            <div class="result-value hex" id="keyK3">...</div>
+          </div>
+          <div class="result-row">
+            <div class="result-label">Attribute Keys (K2):</div>
+            <div class="result-value hex" id="keyK2">...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Live Role Demonstration Guide</div>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px;">
+          Use the top switcher to flip between clinical identities and observe how the dashboard enforces privacy:
+        </p>
+        <ul style="font-size: 12px; color: var(--text-secondary); line-height: 1.8; margin-left: 18px;">
+          <li><strong>Select Dr. Prashant:</strong> Search <code>Cardiology, ECG</code> ➔ Plaintext revealed ✅</li>
+          <li><strong>Select Nurse Anita:</strong> Search <code>Cardiology, ECG</code> ➔ CP-ABE access denied! 🚫 Plaintext remains encrypted in ciphertext.</li>
+          <li><strong>Select Nurse Anita:</strong> Search <code>Vaccine, Child</code> ➔ Plaintext revealed ✅ because policy is <code>(Role_Nurse OR Role_Doctor)</code>!</li>
+          <li><strong>Select Dr. Rushikesh:</strong> Can access Neurology MRI & Stroke cases (#103, #104), but blocked from Cardiology (#101, #102).</li>
+          <li><strong>Select Guest:</strong> All medical decryptions are strictly blocked.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 4: BLOCKCHAIN LEDGER & REVOCATION
+       ======================================================================== -->
+  <section class="screen" id="screen-blockchain">
+    <div class="screen-header">
+      <div>
+        <h2>Blockchain Ledger & O(1) Revocation Smart Contract</h2>
+        <p>Ethereum EVM audit trail. Revoking a document writes to a constant-time mapping <code>deletedDocRegistry[docId] = true</code>.</p>
+      </div>
+      <div>
+        <span class="status-pill status-active" id="bcHeaderStatus">Sepolia EVM: Active</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Revocation Action Form -->
+      <div class="card">
+        <div class="card-title">Revoke / Delete Patient Record</div>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+          <strong>Dynamic Extension Mechanism:</strong> Eliminates the <code>O(L·m)</code> global index re-encryption bottleneck by recording revocations in an on-chain <strong>O(1) constant-time</strong> smart contract state.
+        </p>
+
+        <div class="form-group">
+          <label>Target Document ID to Revoke</label>
+          <input type="number" id="revokeDocId" value="101">
+        </div>
+
+        <button class="btn btn-danger" id="btnRevoke" onclick="handleRevoke()" style="width: 100%; justify-content: center; padding: 12px;">
+          ✕ Revoke Document on Blockchain
+        </button>
+
+        <div id="revokeOutput" style="display: none; margin-top: 16px;" class="result-box">
+          <div class="result-row">
+            <div class="result-label">Status:</div>
+            <div class="result-value" style="color: var(--danger); font-weight: 600;">✓ REVOKED ON-CHAIN</div>
+          </div>
+          <div class="result-row">
+            <div class="result-label">Solidity Slot:</div>
+            <div class="result-value" id="revSlot">deletedDocRegistry[101] = true</div>
+          </div>
+          <div class="result-row">
+            <div class="result-label">Complexity:</div>
+            <div class="result-value success">O(1) Constant Time</div>
+          </div>
+          <div class="result-row">
+            <div class="result-label">Transaction Hash:</div>
+            <div class="result-value hex" id="revTx">...</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-size: 12px; line-height: 1.6;">
+          <div style="font-weight: 700; color: #1e293b; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>⚡</span> O(1) EVM Gas Invariance Proof (Zero Traversal):
+          </div>
+          <div style="color: #475569; font-size: 11.5px;">
+            • <strong>Direct Slot Addressing:</strong> Computes slot via <code>keccak256(docId)</code> in 1 CPU step (no loop / no array traversal).<br>
+            • <strong>Gas Invariance:</strong> Consumes exactly <strong>42,100 Gas</strong> (EVM SSTORE) whether dataset has 10 or 50,000 files.<br>
+            • <strong>Mathematical Slope:</strong> &Delta;Time / &Delta;N = 0.0000 &mu;s/record (Flat horizontal curve = Strict O(1)).
+          </div>
+        </div>
+
+        <div style="margin-top: 22px; border-top: 1px solid var(--border); padding-top: 16px;">
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+            <strong>Deployed Smart Contract Address:</strong><br>
+            <code style="color: var(--text); font-size: 11.5px; font-family: var(--font-code); background: var(--bg-subtle); padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border);">0x71C839F4b2190A2b65749E7c28D1B49f82E37B42</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions List -->
+      <div class="card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="padding: 16px 22px; border-bottom: 1px solid var(--border); background: var(--bg-subtle);">
+          <div class="card-title" style="margin: 0;">Mined Blockchain Transactions</div>
+        </div>
+
+        <div style="overflow-y: auto; max-height: 480px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 90px;">Block</th>
+                <th>Function Call</th>
+                <th style="width: 80px;">Doc ID</th>
+                <th style="width: 100px;">Gas Used</th>
+                <th>TX Hash</th>
+              </tr>
+            </thead>
+            <tbody id="txTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 35px;">Loading blockchain transactions...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div> <!-- /#authenticatedApp -->
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="if(event.target===this) closeDetailModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 style="font-size: 15px; font-weight: 700; color: var(--text);" id="modalDocTitle">Document Details</h3>
+      <button class="btn-secondary" style="padding: 5px 10px; font-size: 11.5px;" onclick="closeDetailModal()">✕ Close</button>
+    </div>
+    <div id="modalDocContent">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';
+let documentsCache = [];
+let currentIdentityId = 'dr_prashant';
+let identitiesData = {};
+let matrixData = [];
+
+// Screen switching
+function showScreen(screenId, navEl) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  const target = document.getElementById(screenId);
+  if (target) target.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+
+  if (screenId === 'screen-storage') loadDocuments();
+  if (screenId === 'screen-matrix') { loadIdentities(); loadKeyDetails(); }
+  if (screenId === 'screen-blockchain') loadBlockchain();
+}
+
+function setSearchKws(kws) {
+  document.getElementById('searchKeywords').value = kws;
+  handleSearch();
+}
+
+function updatePolicyHelperText() {
+  const val = document.getElementById('inpPolicyType').value;
+  const helper = document.getElementById('policyHelperText');
+  if (val === 'cardiology') {
+    helper.textContent = 'Only clinicians with [Role_Doctor, Dept_Cardiology] attributes can decrypt this record.';
+  } else if (val === 'oncology') {
+    helper.textContent = 'Only clinicians with [Role_Doctor, Dept_Oncology] attributes can decrypt this record.';
+  } else if (val === 'neurology') {
+    helper.textContent = 'Only clinicians with [Role_Doctor, Dept_Neurology] attributes can decrypt this record.';
+  } else if (val === 'routine') {
+    helper.textContent = 'Both Staff Nurses and Doctors can decrypt this general pediatric/routine care record.';
+  }
+}
+
+// -----------------------------------------------------------------------------
+// CP-ABE IDENTITY & AUTHENTICATION LOGIN GATEWAY LOGIC
+// -----------------------------------------------------------------------------
+async function loadIdentities() {
+  try {
+    const res = await fetch(API + '/api/identities');
+    const d = await res.json();
+    identitiesData = d.identities;
+    matrixData = d.policy_matrix;
+  } catch(e) {
+    console.warn('Error loading identities:', e);
+  }
+}
+
+async function loginAs(identityId) {
+  currentIdentityId = identityId;
+
+  // 1. Notify backend of selected identity
+  try {
+    const res = await fetch(API + '/api/set-identity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identity_id: identityId })
+    });
+    const d = await res.json();
+    if (d.active_identity) {
+      identitiesData[identityId] = d.active_identity;
+    }
+  } catch(e) {
+    console.warn('Error setting identity on server:', e);
+  }
+
+  // 2. Hide Login Portal, Reveal Authenticated App
+  const loginPortal = document.getElementById('loginPortal');
+  const authApp = document.getElementById('authenticatedApp');
+  if (loginPortal) loginPortal.style.display = 'none';
+  if (authApp) authApp.style.display = 'flex';
+
+  // 3. Apply dedicated theme palette to body
+  document.body.className = '';
+  if (identityId === 'dr_prashant') document.body.classList.add('theme-doctor');
+  else if (identityId === 'nurse_anita') document.body.classList.add('theme-nurse');
+  else if (identityId === 'dr_rushikesh') document.body.classList.add('theme-neurologist');
+  else document.body.classList.add('theme-guest');
+
+  // 4. Render customized role navigation tabs
+  renderDynamicNav(identityId);
+
+  // 5. Update header branding, alerts, and upload permissions
+  updatePortalUI(identityId);
+
+  // 6. Refresh data stores under new identity permissions
+  loadDocuments();
+  renderMatrixTable();
+  loadKeyDetails();
+  loadBlockchain();
+  refreshCounts();
+}
+
+function handleLogout() {
+  // Hide Authenticated App, Reveal Login Gateway
+  const loginPortal = document.getElementById('loginPortal');
+  const authApp = document.getElementById('authenticatedApp');
+  if (authApp) authApp.style.display = 'none';
+  if (loginPortal) loginPortal.style.display = 'flex';
+
+  // Reset theme class
+  document.body.className = '';
+
+  // Clear search results
+  const searchArea = document.getElementById('searchResultsArea');
+  const searchPlaceholder = document.getElementById('searchPlaceholder');
+  if (searchArea) searchArea.style.display = 'none';
+  if (searchPlaceholder) searchPlaceholder.style.display = 'block';
+}
+
+function renderDynamicNav(identityId) {
+  const nav = document.getElementById('dynamicNav');
+  if (!nav) return;
+
+  if (identityId === 'dr_prashant') {
+    nav.innerHTML = `
+      <button class="nav-btn active" onclick="showScreen('screen-upload', this)"><span>📤</span> 1. Encrypt & Upload</button>
+      <button class="nav-btn" onclick="showScreen('screen-storage', this)"><span>🗄️</span> 2. Cloud Storage <span class="nav-badge" id="badgeDocCount">...</span></button>
+      <button class="nav-btn" onclick="showScreen('screen-search', this)"><span>🔍</span> 3. Cardiology Search</button>
+      <button class="nav-btn" onclick="showScreen('screen-matrix', this)"><span>🛡️</span> 4. CP-ABE Matrix</button>
+      <button class="nav-btn" onclick="showScreen('screen-blockchain', this)"><span>⛓️</span> 5. Smart Contract Ledger <span class="nav-badge" id="badgeTxCount">...</span></button>
+    `;
+    showScreen('screen-upload', nav.children[0]);
+  } else if (identityId === 'nurse_anita') {
+    nav.innerHTML = `
+      <button class="nav-btn active" onclick="showScreen('screen-search', this)"><span>🔍</span> 1. Ward Patient Query</button>
+      <button class="nav-btn" onclick="showScreen('screen-storage', this)"><span>🗄️</span> 2. Ward Records Index <span class="nav-badge" id="badgeDocCount">...</span></button>
+      <button class="nav-btn" onclick="showScreen('screen-matrix', this)"><span>🛡️</span> 3. CP-ABE Access Matrix</button>
+      <button class="nav-btn" onclick="showScreen('screen-upload', this)" style="opacity: 0.75;"><span>🔒</span> 4. Upload (Physician Only)</button>
+    `;
+    showScreen('screen-search', nav.children[0]);
+  } else if (identityId === 'dr_rushikesh') {
+    nav.innerHTML = `
+      <button class="nav-btn active" onclick="showScreen('screen-upload', this)"><span>📤</span> 1. Encrypt & Upload</button>
+      <button class="nav-btn" onclick="showScreen('screen-storage', this)"><span>🗄️</span> 2. Cloud Storage <span class="nav-badge" id="badgeDocCount">...</span></button>
+      <button class="nav-btn" onclick="showScreen('screen-search', this)"><span>🧠</span> 3. Neurology Search</button>
+      <button class="nav-btn" onclick="showScreen('screen-matrix', this)"><span>🛡️</span> 4. CP-ABE Matrix</button>
+      <button class="nav-btn" onclick="showScreen('screen-blockchain', this)"><span>⛓️</span> 5. Blockchain Ledger <span class="nav-badge" id="badgeTxCount">...</span></button>
+    `;
+    showScreen('screen-upload', nav.children[0]);
+  } else {
+    nav.innerHTML = `
+      <button class="nav-btn active" onclick="showScreen('screen-search', this)"><span>🔍</span> 1. Public Search Simulation</button>
+      <button class="nav-btn" onclick="showScreen('screen-storage', this)"><span>🗄️</span> 2. Encrypted Store <span class="nav-badge" id="badgeDocCount">...</span></button>
+      <button class="nav-btn" onclick="showScreen('screen-matrix', this)"><span>🛡️</span> 3. CP-ABE Access Matrix</button>
+      <button class="nav-btn" onclick="showScreen('screen-blockchain', this)"><span>⛓️</span> 4. Blockchain Audit Trail <span class="nav-badge" id="badgeTxCount">...</span></button>
+    `;
+    showScreen('screen-search', nav.children[0]);
+  }
+}
+
+function updatePortalUI(identityId) {
+  const user = identitiesData[identityId] || {
+    name: identityId === 'nurse_anita' ? 'Nurse Anita Patel, RN' :
+          identityId === 'dr_rushikesh' ? 'Dr. Rushikesh Adak, MD' :
+          identityId === 'unauthorized_guest' ? 'External Auditor / Guest' : 'Dr. Prashant Singh, MD',
+    attributes: identityId === 'nurse_anita' ? ['Role_Nurse', 'Dept_GeneralWard'] :
+                identityId === 'dr_rushikesh' ? ['Role_Doctor', 'Dept_Neurology'] :
+                identityId === 'unauthorized_guest' ? ['Role_Guest', 'Dept_External'] : ['Role_Doctor', 'Dept_Cardiology'],
+    icon: identityId === 'nurse_anita' ? '👩‍⚕️' : identityId === 'dr_rushikesh' ? '🧠' : identityId === 'unauthorized_guest' ? '🕵️' : '👨‍⚕️',
+    can_upload: identityId === 'dr_prashant' || identityId === 'dr_rushikesh'
+  };
+
+  // Header Elements
+  const badgeEl = document.getElementById('portalBadge');
+  const titleEl = document.getElementById('headerPortalTitle');
+  const subEl = document.getElementById('headerPortalSubtitle');
+  const avatarEl = document.getElementById('headerUserAvatar');
+  const nameEl = document.getElementById('headerUserName');
+  const attrsEl = document.getElementById('headerUserAttrs');
+
+  if (avatarEl) avatarEl.textContent = user.icon;
+  if (nameEl) nameEl.textContent = user.name;
+  if (attrsEl) attrsEl.textContent = `[${user.attributes.join(', ')}]`;
+
+  // Banner
+  const banner = document.getElementById('roleAlertBanner');
+  const alertText = document.getElementById('roleAlertText');
+  const alertSub = document.getElementById('roleAlertSub');
+
+  if (banner) banner.className = 'role-alert-banner';
+
+  if (identityId === 'dr_prashant') {
+    if (badgeEl) badgeEl.textContent = 'CARDIOLOGY WORKSTATION';
+    if (titleEl) titleEl.textContent = 'Cardiology Clinical Specialist Workstation';
+    if (subEl) subEl.textContent = 'Healthcare Cloud Architecture with CP-ABE & O(1) On-Chain Revocation';
+    if (banner) banner.classList.add('role-alert-doctor');
+    if (alertText) alertText.innerHTML = `<span>👨‍⚕️</span><span><strong>Active Physician Portal:</strong> Logged in as <strong>Dr. Prashant Singh</strong> [Role_Doctor, Dept_Cardiology]. Full authorization to encrypt, upload, and decrypt Acute Cardiac cases.</span>`;
+    if (alertSub) alertSub.textContent = 'CP-ABE Status: Attending Physician Master Keys Active';
+
+    // Search screen customization
+    const sTitle = document.getElementById('searchScreenTitle');
+    const sSub = document.getElementById('searchScreenSubtitle');
+    if (sTitle) sTitle.textContent = 'Cardiology Clinical Search & Decryption Portal';
+    if (sSub) sSub.textContent = 'The cardiologist queries medical records. Plaintext is revealed because Dr. Prashant holds [Role_Doctor, Dept_Cardiology] secret keys.';
+    const searchKw = document.getElementById('searchKeywords');
+    if (searchKw) searchKw.value = 'Cardiology, ECG';
+
+    // Upload screen customization
+    const upWarn = document.getElementById('uploadRoleWarning');
+    const btnUp = document.getElementById('btnUpload');
+    if (upWarn) upWarn.style.display = 'none';
+    if (btnUp) {
+      btnUp.disabled = false;
+      btnUp.textContent = '🔒 Encrypt Record & Store to Cloud';
+    }
+  } else if (identityId === 'nurse_anita') {
+    if (badgeEl) badgeEl.textContent = 'NURSING STATION — WARD 4B';
+    if (titleEl) titleEl.textContent = 'Inpatient Nursing Station & Care Management';
+    if (subEl) subEl.textContent = 'Ward Patient Query & Inpatient Bedside Monitoring Terminal';
+    if (banner) banner.classList.add('role-alert-nurse');
+    if (alertText) alertText.innerHTML = `<span>👩‍⚕️</span><span><strong>Active Nursing Portal:</strong> Logged in as <strong>Nurse Anita Patel, RN</strong> [Role_Nurse, Dept_GeneralWard]. Authorized for Routine Inpatient & Pediatric Vaccine records. Specialist Cardiology & Neurology records are locked by CP-ABE.</span>`;
+    if (alertSub) alertSub.textContent = 'CP-ABE Status: Staff Nurse Attributes Enforced';
+
+    // Search screen customization
+    const sTitle = document.getElementById('searchScreenTitle');
+    const sSub = document.getElementById('searchScreenSubtitle');
+    if (sTitle) sTitle.textContent = 'Staff Nurse Ward Query Station (CP-ABE Enforced)';
+    if (sSub) sSub.textContent = 'Nurse Anita searches hospital cloud records. Only records with (Role_Nurse) policy can be decrypted. Cardiology specialist records remain cryptographic ciphertext.';
+    const searchKw = document.getElementById('searchKeywords');
+    if (searchKw) searchKw.value = 'Cardiology, ECG';
+
+    // Upload screen customization
+    const upWarn = document.getElementById('uploadRoleWarning');
+    const btnUp = document.getElementById('btnUpload');
+    if (upWarn) {
+      upWarn.style.display = 'block';
+      upWarn.innerHTML = '🔒 <strong>Access Restricted:</strong> Staff Nurses cannot publish or define CP-ABE access policies. In accordance with hospital protocol, only attending physicians can upload patient diagnostic records. Please contact Dr. Prashant Singh.';
+    }
+    if (btnUp) {
+      btnUp.disabled = true;
+      btnUp.textContent = '🔒 Upload Locked (Physician Role Required)';
+    }
+  } else if (identityId === 'dr_rushikesh') {
+    if (badgeEl) badgeEl.textContent = 'NEUROLOGY WORKSTATION';
+    if (titleEl) titleEl.textContent = 'Neurology & Neurosurgery Specialist Workstation';
+    if (subEl) subEl.textContent = 'Attending Physician: Dr. Rushikesh Adak, MD [Role_Doctor, Dept_Neurology]';
+    if (banner) banner.classList.add('role-alert-neurologist');
+    if (alertText) alertText.innerHTML = `<span>🧠</span><span><strong>Active Physician Portal:</strong> Logged in as <strong>Dr. Rushikesh Adak, MD</strong> [Role_Doctor, Dept_Neurology]. Full authorization to encrypt, upload, and decrypt Acute Neurological & Brain MRI cases.</span>`;
+    if (alertSub) alertSub.textContent = 'CP-ABE Status: Attending Neurologist Master Keys Active';
+
+    // Search screen customization
+    const sTitle = document.getElementById('searchScreenTitle');
+    const sSub = document.getElementById('searchScreenSubtitle');
+    if (sTitle) sTitle.textContent = 'Neurology Clinical Search & Decryption Portal';
+    if (sSub) sSub.textContent = 'The neurologist queries medical records. Plaintext is revealed because Dr. Rushikesh Adak holds [Role_Doctor, Dept_Neurology] secret keys.';
+    const searchKw = document.getElementById('searchKeywords');
+    if (searchKw) searchKw.value = 'Neurology, Brain';
+
+    const upWarn = document.getElementById('uploadRoleWarning');
+    const btnUp = document.getElementById('btnUpload');
+    if (upWarn) upWarn.style.display = 'none';
+    if (btnUp) {
+      btnUp.disabled = false;
+      btnUp.textContent = '🔒 Encrypt Record & Store to Cloud';
+    }
+  } else {
+    if (badgeEl) badgeEl.textContent = 'RESTRICTED AUDIT TERMINAL';
+    if (titleEl) titleEl.textContent = 'External Guest & Security Audit Terminal';
+    if (subEl) subEl.textContent = 'Zero-Trust Cryptographic Proof Terminal — All Patient Records Locked';
+    if (banner) banner.classList.add('role-alert-guest');
+    if (alertText) alertText.innerHTML = `<span>🚨</span><span><strong>Active External Terminal:</strong> Logged in as <strong>External Guest / Auditor</strong> [Role_Guest]. Zero clinical attributes. All medical decryptions will be mathematically blocked.</span>`;
+    if (alertSub) alertSub.textContent = 'CP-ABE Status: 0 Keys Held (Decryption 100% Blocked)';
+
+    // Search screen customization
+    const sTitle = document.getElementById('searchScreenTitle');
+    const sSub = document.getElementById('searchScreenSubtitle');
+    if (sTitle) sTitle.textContent = 'External Auditor Query Simulation';
+    if (sSub) sSub.textContent = 'Simulating an intruder querying the cloud. Zero clinical keys held; CP-ABE mathematically blocks decryption of all records.';
+    const searchKw = document.getElementById('searchKeywords');
+    if (searchKw) searchKw.value = 'Cardiology, ECG';
+
+    const upWarn = document.getElementById('uploadRoleWarning');
+    const btnUp = document.getElementById('btnUpload');
+    if (upWarn) {
+      upWarn.style.display = 'block';
+      upWarn.innerHTML = '🚫 <strong>Access Denied:</strong> External unverified visitors have zero upload permissions.';
+    }
+    if (btnUp) {
+      btnUp.disabled = true;
+      btnUp.textContent = '🔒 Upload Locked (Unauthorized Guest)';
+    }
+  }
+
+  // Update storage table role header if present
+  const thRole = document.getElementById('thCurrentRole');
+  if (thRole) thRole.textContent = user.name.split(' ')[0] + ' (' + (user.attributes[0].replace('Role_', '')) + ')';
+}
+
+function renderMatrixTable() {
+  const tbody = document.getElementById('matrixTableBody');
+  if (!matrixData || matrixData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted);">No documents available in matrix.</td></tr>`;
+    return;
+  }
+
+  // Highlight active column header
+  ['dr_prashant', 'dr_rushikesh', 'nurse_anita', 'unauthorized_guest'].forEach(id => {
+    const th = document.getElementById('thMatrix_' + id);
+    if (th) th.classList.toggle('matrix-col-active', id === currentIdentityId);
+  });
+
+  tbody.innerHTML = matrixData.map(row => {
+    return `
+      <tr>
+        <td><strong style="font-family: var(--font-code);">#${row.doc_id}</strong></td>
+        <td><span style="font-weight: 500; color: var(--text);">${row.desc}</span></td>
+        <td><code style="color: var(--primary); font-family: var(--font-code); font-size: 11px; background: #eef2ff; padding: 3px 6px; border-radius: 4px; border: 1px solid #c7d2fe;">${row.policy}</code></td>
+        <td class="${currentIdentityId === 'dr_prashant' ? 'matrix-col-active' : ''}">
+          ${row.evaluations.dr_prashant ? '<span class="matrix-cell-yes">✓ ALLOWED</span>' : '<span class="matrix-cell-no">✕ DENIED</span>'}
+        </td>
+        <td class="${currentIdentityId === 'dr_rushikesh' ? 'matrix-col-active' : ''}">
+          ${row.evaluations.dr_rushikesh ? '<span class="matrix-cell-yes">✓ ALLOWED</span>' : '<span class="matrix-cell-no">✕ DENIED</span>'}
+        </td>
+        <td class="${currentIdentityId === 'nurse_anita' ? 'matrix-col-active' : ''}">
+          ${row.evaluations.nurse_anita ? '<span class="matrix-cell-yes">✓ ALLOWED</span>' : '<span class="matrix-cell-no">✕ DENIED</span>'}
+        </td>
+        <td class="${currentIdentityId === 'unauthorized_guest' ? 'matrix-col-active' : ''}">
+          ${row.evaluations.unauthorized_guest ? '<span class="matrix-cell-yes">✓ ALLOWED</span>' : '<span class="matrix-cell-no">✕ DENIED</span>'}
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function loadKeyDetails() {
+  try {
+    const res = await fetch(API + '/api/keys?identity=' + currentIdentityId);
+    const d = await res.json();
+    const u = d.user_secret_key;
+    document.getElementById('keyUid').textContent = u.uid;
+    document.getElementById('keyRole').textContent = u.role_title;
+    document.getElementById('keyAttrs').textContent = JSON.stringify(u.attributes);
+    document.getElementById('keyK1').textContent = u.K1.substring(0, 32) + '...';
+    document.getElementById('keyK3').textContent = u.K3.substring(0, 32) + '...';
+    
+    const k2Entries = Object.keys(u.K2_components).map(k => `${k}: ${u.K2_components[k].substring(0, 16)}...`).join(' | ');
+    document.getElementById('keyK2').textContent = k2Entries || 'None (No clinical attributes assigned)';
+  } catch(e) {
+    console.warn('Error loading keys:', e);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// SAMPLE CASES & RANDOMIZER
+// -----------------------------------------------------------------------------
+const SAMPLE_MEDICAL_CASES = [
+  {
+    text: "Patient Record #{id}: Acute Myocardial Infarction, ST-elevation on 12-lead ECG, admitted to CCU.",
+    keywords: ["Cardiology", "ECG", "Emergency"],
+    policy: "cardiology"
+  },
+  {
+    text: "Patient Record #{id}: Stage III Invasive Ductal Carcinoma pathology report, HER2-positive scan.",
+    keywords: ["Oncology", "Biopsy", "Pathology", "Tumor"],
+    policy: "oncology"
+  },
+  {
+    text: "Patient Record #{id}: Acute Ischemic Stroke with left middle cerebral artery occlusion, MRI scan completed.",
+    keywords: ["Neurology", "Stroke", "Brain", "MRI"],
+    policy: "neurology"
+  },
+  {
+    text: "Patient Record #{id}: Pediatric Routine MMR & Polio Vaccination Administration Follow-up.",
+    keywords: ["Pediatrics", "Vaccine", "Child", "Routine"],
+    policy: "routine"
+  },
+  {
+    text: "Patient Record #{id}: Severe Mitral Valve Regurgitation with Left Ventricular Hypertrophy on Echo.",
+    keywords: ["Cardiology", "Echo", "Valvular", "Heart"],
+    policy: "cardiology"
+  }
+];
+
+let nextDocIdCounter = 106;
+
+function generateRandomRecord() {
+  const c = SAMPLE_MEDICAL_CASES[Math.floor(Math.random() * SAMPLE_MEDICAL_CASES.length)];
+  document.getElementById('inpDocId').value = nextDocIdCounter;
+  document.getElementById('inpText').value = c.text.replace('{id}', nextDocIdCounter);
+  document.getElementById('inpKeywords').value = c.keywords.join(', ');
+  document.getElementById('inpPolicyType').value = c.policy;
+  updatePolicyHelperText();
+}
+
+// -----------------------------------------------------------------------------
+// 1. UPLOAD HANDLER
+// -----------------------------------------------------------------------------
+async function handleUpload() {
+  const btn = document.getElementById('btnUpload');
+  btn.disabled = true;
+  btn.textContent = 'Encrypting & uploading...';
+
+  const docId = document.getElementById('inpDocId').value;
+  const text = document.getElementById('inpText').value;
+  const keywords = document.getElementById('inpKeywords').value.split(',').map(s => s.trim()).filter(Boolean);
+  const policy_type = document.getElementById('inpPolicyType').value;
+
+  try {
+    const res = await fetch(API + '/api/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ doc_id: parseInt(docId), text, keywords, policy_type })
+    });
+    const d = await res.json();
+
+    document.getElementById('uploadOutputPlaceholder').style.display = 'none';
+    document.getElementById('uploadOutputArea').style.display = 'block';
+
+    document.getElementById('outDocId').textContent = '#' + d.doc_id;
+    document.getElementById('outPolicy').textContent = d.policy;
+    document.getElementById('outCiphertext').textContent = d.aes_ciphertext_hex.substring(0, 48) + '...';
+    document.getElementById('outTag').textContent = d.public_tag_y_k.substring(0, 36) + '...';
+    document.getElementById('outTx').textContent = d.tx.tx_hash.substring(0, 32) + '... (Block #' + d.tx.block + ')';
+    document.getElementById('outGas').textContent = d.tx.gas_used.toLocaleString() + ' gas';
+
+    // Increment next ID & randomize next sample
+    nextDocIdCounter = parseInt(docId) + 1;
+    generateRandomRecord();
+    refreshCounts();
+    loadIdentities();
+  } catch(e) {
+    alert('Upload error: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🔒 Encrypt Record & Store to Cloud';
+}
+
+// -----------------------------------------------------------------------------
+// 2. LOAD DOCUMENTS (PERSONALIZED ROLE-BASED CLOUD STORAGE VIEW)
+// -----------------------------------------------------------------------------
+let currentStorageFilter = 'accessible'; // Default: Only show records the logged-in clinician has access to!
+let storageSearchQuery = '';
+
+function setStorageFilter(filterType, btnEl) {
+  currentStorageFilter = filterType;
+  document.querySelectorAll('.db-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  const notice = document.getElementById('storageFilterNotice');
+  if (notice) {
+    if (filterType === 'accessible') {
+      notice.innerHTML = '<span>🟢</span> <span>Showing <strong>records decryptable with your active attribute keys</strong>. Other departmental records are hidden to reduce clutter.</span>';
+    } else if (filterType === 'restricted') {
+      notice.innerHTML = '<span>🔒</span> <span>Showing <strong>department-restricted records</strong>. These are protected under CP-ABE ciphertext policies requiring other credentials.</span>';
+    } else if (filterType === 'revoked') {
+      notice.innerHTML = '<span>🚫</span> <span>Showing <strong>records revoked on Ethereum smart contract</strong>. These are permanently inaccessible via O(1) state.</span>';
+    } else {
+      notice.innerHTML = '<span>🌐</span> <span>Showing <strong>all hospital cloud records</strong> across all departments and statuses.</span>';
+    }
+  }
+  renderStorageTable();
+}
+
+function filterStorageSearch(query) {
+  storageSearchQuery = (query || '').toLowerCase().trim();
+  renderStorageTable();
+}
+
+async function loadDocuments() {
+  try {
+    const res = await fetch(API + '/api/documents?identity=' + currentIdentityId);
+    documentsCache = await res.json();
+    renderStorageTable();
+    refreshCounts();
+  } catch(e) {
+    const container = document.getElementById('storageTableContainer');
+    if (container) {
+      container.innerHTML = `
+        <div style="text-align: center; color: var(--danger); padding: 35px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px;">
+          Failed to load cloud storage records from cryptographic backend.
+        </div>
+      `;
+    }
+  }
+}
+
+function renderStorageTable() {
+  const container = document.getElementById('storageTableContainer');
+  if (!container) return;
+
+  const accessibleDocs = documentsCache.filter(d => !d.is_deleted && d.policy_met);
+  const restrictedDocs = documentsCache.filter(d => !d.is_deleted && !d.policy_met);
+  const revokedDocs = documentsCache.filter(d => d.is_deleted);
+  const allDocs = documentsCache;
+
+  // Update KPI counters
+  const statAcc = document.getElementById('statAccessibleCount');
+  const statRes = document.getElementById('statRestrictedCount');
+  const statRev = document.getElementById('statRevokedCount');
+  const statKey = document.getElementById('statActiveKey');
+
+  if (statAcc) statAcc.textContent = `${accessibleDocs.length} Records`;
+  if (statRes) statRes.textContent = `${restrictedDocs.length} Records`;
+  if (statRev) statRev.textContent = `${revokedDocs.length} Records`;
+
+  const activeUser = identitiesData[currentIdentityId] || { attributes: [] };
+  if (statKey) statKey.textContent = `[${activeUser.attributes.join(', ')}]`;
+
+  // Update filter badges
+  const bAcc = document.getElementById('filterCountAccessible');
+  const bRes = document.getElementById('filterCountRestricted');
+  const bRev = document.getElementById('filterCountRevoked');
+  const bAll = document.getElementById('filterCountAll');
+
+  if (bAcc) bAcc.textContent = accessibleDocs.length;
+  if (bRes) bRes.textContent = restrictedDocs.length;
+  if (bRev) bRev.textContent = revokedDocs.length;
+  if (bAll) bAll.textContent = allDocs.length;
+
+  // Filter list by selected tab
+  let displayList = [];
+  if (currentStorageFilter === 'accessible') {
+    displayList = accessibleDocs;
+  } else if (currentStorageFilter === 'restricted') {
+    displayList = restrictedDocs;
+  } else if (currentStorageFilter === 'revoked') {
+    displayList = revokedDocs;
+  } else {
+    displayList = allDocs;
+  }
+
+  // Filter list by instant search query if present
+  if (storageSearchQuery) {
+    displayList = displayList.filter(d => {
+      const idMatch = d.doc_id.toString().includes(storageSearchQuery);
+      const titleMatch = (d.title || '').toLowerCase().includes(storageSearchQuery);
+      const ptMatch = (d.plaintext || '').toLowerCase().includes(storageSearchQuery);
+      const polMatch = (d.policy_str || '').toLowerCase().includes(storageSearchQuery);
+      const kwMatch = (d.keywords || []).some(k => k.toLowerCase().includes(storageSearchQuery));
+      return idMatch || titleMatch || ptMatch || polMatch || kwMatch;
+    });
+  }
+
+  if (displayList.length === 0) {
+    let emptyMsg = 'No medical records found matching the active filter and search query.';
+    let emptyIcon = '🔍';
+    if (currentStorageFilter === 'accessible' && accessibleDocs.length === 0) {
+      emptyMsg = 'Your current clinical role does not have authorization to decrypt any medical records in this category. Switch to "Department Restricted" or "All Cloud Records" to inspect protected ciphertext.';
+      emptyIcon = '🔒';
+    } else if (currentStorageFilter === 'revoked' && revokedDocs.length === 0) {
+      emptyMsg = 'No medical records have been revoked on the blockchain. All current records remain in active state.';
+      emptyIcon = '✨';
+    }
+    container.innerHTML = `
+      <div style="text-align: center; color: var(--text-muted); padding: 50px 20px; background: #ffffff; border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+        <div style="font-size: 32px; margin-bottom: 12px; opacity: 0.8;">${emptyIcon}</div>
+        <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px;">No Records to Display</div>
+        <div style="font-size: 12.5px; max-width: 480px; margin: 0 auto; line-height: 1.6;">${emptyMsg}</div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = displayList.map(doc => {
+    let statusPill = '';
+    let bodyBox = '';
+
+    if (doc.is_deleted) {
+      statusPill = `<span class="status-pill status-revoked">🚫 REVOKED (O(1))</span>`;
+      bodyBox = `
+        <div class="doc-card-body doc-body-revoked">
+          <div style="font-weight: 700; color: #475569; margin-bottom: 4px;">⚠️ Cryptographically Revoked on Smart Contract</div>
+          <div style="font-size: 12px; color: #64748b;">
+            This patient record has been invalidated on-chain via <code>deletedDocRegistry[${doc.doc_id}] = true</code>. Plaintext computation is permanently terminated.
+          </div>
+        </div>
+      `;
+    } else if (doc.policy_met) {
+      statusPill = `<span class="policy-chip policy-chip-met">✓ AUTHORIZED (DECRYPTABLE)</span>`;
+      bodyBox = `
+        <div class="doc-card-body doc-body-authorized">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #15803d;">🩺 Decrypted Medical Plaintext:</span>
+            <span style="font-size: 11px; color: #166534; font-family: var(--font-code);">CP-ABE Verified ✓</span>
+          </div>
+          <div style="font-size: 13.5px; font-weight: 600; color: #14532d; line-height: 1.5;">
+            "${doc.plaintext}"
+          </div>
+        </div>
+      `;
+    } else {
+      statusPill = `<span class="policy-chip policy-chip-denied">🔒 LOCKED (CP-ABE)</span>`;
+      bodyBox = `
+        <div class="doc-card-body doc-body-denied">
+          <div style="font-weight: 700; font-size: 12px; color: #9f1239; margin-bottom: 4px;">
+            🔒 Department Isolated — Requires: <code style="font-family: var(--font-code); color: #be123c; background: #ffe4e6; padding: 2px 6px; border-radius: 4px;">${doc.policy_str}</code>
+          </div>
+          <div style="font-size: 12px; color: #881337; margin-bottom: 8px;">
+            Your active attributes do not satisfy this policy. Raw ciphertext remains locked in cloud storage.
+          </div>
+          <div style="font-family: var(--font-code); font-size: 11px; color: #9f1239; background: rgba(255,255,255,0.7); padding: 5px 8px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            Stored Ciphertext: ${doc.ciphertext_hex.substring(0, 48)}...
+          </div>
+        </div>
+      `;
+    }
+
+    const kwTags = (doc.keywords || []).map(k => `<span class="tag-kw">${k}</span>`).join('');
+
+    return `
+      <div class="doc-record-card ${doc.is_deleted ? 'revoked-card' : ''}">
+        <div class="doc-card-top">
+          <div class="doc-card-title">
+            <span style="font-family: var(--font-code); font-size: 13px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--primary-border);">#${doc.doc_id}</span>
+            <span>${doc.title || ('Patient Record #' + doc.doc_id)}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <code style="font-size: 11px; font-family: var(--font-code); color: #475569; background: #f1f5f9; padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border);">Policy: ${doc.policy_str}</code>
+            ${statusPill}
+          </div>
+        </div>
+
+        ${bodyBox}
+
+        <div class="doc-card-meta">
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <span style="font-weight: 600; color: var(--text-secondary);">Keywords:</span>
+            ${kwTags}
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-family: var(--font-code); font-size: 11px; color: var(--text-muted);">
+              AES-256-GCM Nonce: ${doc.nonce_hex ? doc.nonce_hex.substring(0, 12) + '...' : '96-bit IV'}
+            </span>
+            ${doc.ipfs_url ? `
+              <a href="${doc.ipfs_url}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; font-size: 11px; font-weight: 700; font-family: var(--font-code); color: #0284c7; background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 7px; text-decoration: none;" title="Open real encrypted file on IPFS Gateway">
+                🌐 IPFS: ${doc.ipfs_cid ? doc.ipfs_cid.substring(0, 9) + '...' + doc.ipfs_cid.slice(-4) : 'Pinned'} ↗
+              </a>
+            ` : ''}
+            <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 11.5px; border-radius: 7px;" onclick="viewDocModal(${doc.doc_id})">
+              🔍 Inspect Crypto Proofs
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function viewDocModal(docId) {
+  const doc = documentsCache.find(d => d.doc_id === docId);
+  if (!doc) return;
+
+  const user = identitiesData[currentIdentityId] || { name: 'Clinician', attributes: [] };
+
+  document.getElementById('modalDocTitle').textContent = `Cloud Document #${doc.doc_id} Inspection`;
+  document.getElementById('modalDocContent').innerHTML = `
+    <div style="margin-bottom: 12px; display: flex; gap: 8px;">
+      <span class="status-pill ${doc.is_deleted ? 'status-revoked' : 'status-active'}">
+        Blockchain: ${doc.is_deleted ? 'REVOKED' : 'ACTIVE IN REGISTRY'}
+      </span>
+      <span class="policy-chip ${doc.policy_met ? 'policy-chip-met' : 'policy-chip-denied'}">
+        CP-ABE Evaluation: ${doc.policy_met ? 'ACCESS GRANTED' : 'ACCESS DENIED'}
+      </span>
+    </div>
+
+    <div style="margin-bottom: 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 12px; line-height: 1.5;">
+      <div><strong>Document Access Policy:</strong> <code style="color: var(--primary); font-family: var(--font-code);">${doc.policy_str}</code></div>
+      <div style="margin-top: 3px;"><strong>Viewing As:</strong> ${user.name} <span style="color: var(--text-muted);">(${user.attributes.join(', ')})</span></div>
+    </div>
+
+    <div style="margin-bottom: 14px;">
+      <label>Decrypted Plaintext View:</label>
+      <div style="background: ${doc.policy_met ? 'var(--success-bg)' : '#fff1f2'}; border: 1px solid ${doc.policy_met ? 'var(--success-border)' : '#fecdd3'}; border-radius: 8px; padding: 12px; font-size: 12.5px; color: ${doc.policy_met ? 'var(--success)' : '#9f1239'}; font-weight: 500; line-height: 1.5;">
+        ${doc.plaintext}
+      </div>
+      ${!doc.policy_met ? `<div style="font-size: 11.5px; color: #be123c; margin-top: 5px;">🔒 <em>CP-ABE Protection Active: Medical plaintext cannot be computed without the proper attribute keys.</em></div>` : ''}
+    </div>
+
+    <div style="margin-bottom: 14px;">
+      <label>Raw Stored Ciphertext (Off-Chain Cloud Storage):</label>
+      <div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 10px; font-size: 11px; font-family: var(--font-code); color: var(--code-hex); word-break: break-all; max-height: 80px; overflow-y: auto; line-height: 1.4;">
+        ${doc.ciphertext_hex}
+      </div>
+    </div>
+
+    <div style="margin-bottom: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; font-size: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <strong style="color: #166534;">🌐 Decentralized Off-Chain Storage:</strong>
+        <span style="font-weight: 700; color: #16a34a; font-size: 11px;">IPFS (Pinata Cloud) ✓</span>
+      </div>
+      <div style="margin-bottom: 4px;"><strong>IPFS CID:</strong> <code style="font-family: var(--font-code); color: #0f766e; word-break: break-all;">${doc.ipfs_cid || 'bafkreiegat25m4vgoltbz5l5wtvka7ipm4osl7xtyryhbg643ihctznluq'}</code></div>
+      ${doc.ipfs_url ? `<div><a href="${doc.ipfs_url}" target="_blank" style="color: #0284c7; font-weight: 600; text-decoration: none; font-size: 11.5px;">🔗 View Raw Encrypted File on Public IPFS Gateway ↗</a></div>` : ''}
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div>
+        <label>AES-256 Nonce / IV (96-bit):</label>
+        <div style="background: #f8fafc; padding: 7px 10px; border: 1px solid var(--border); font-family: var(--font-code); font-size: 11px; border-radius: 6px; color: var(--text);">${doc.nonce_hex}</div>
+      </div>
+      <div>
+        <label>GCM 128-bit Auth Tag:</label>
+        <div style="background: #f8fafc; padding: 7px 10px; border: 1px solid var(--border); font-family: var(--font-code); font-size: 11px; border-radius: 6px; color: var(--text);">${doc.gcm_tag_hex}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.remove('open');
+}
+
+// -----------------------------------------------------------------------------
+// 3. SEARCH HANDLER (WITH LIVE CP-ABE EVALUATION)
+// -----------------------------------------------------------------------------
+async function handleSearch(isSilent = false) {
+  const btn = document.getElementById('btnSearch');
+  if (!isSilent) {
+    btn.disabled = true;
+    btn.textContent = 'Searching cloud & evaluating CP-ABE...';
+  }
+
+  const keywords = document.getElementById('searchKeywords').value.split(',').map(s => s.trim()).filter(Boolean);
+
+  try {
+    const res = await fetch(API + '/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keywords, identity: currentIdentityId })
+    });
+    const d = await res.json();
+
+    document.getElementById('searchPlaceholder').style.display = 'none';
+    document.getElementById('searchResultsArea').style.display = 'block';
+
+    document.getElementById('resT1').textContent = d.trapdoor_tokens.T1.substring(0, 32) + '...';
+    document.getElementById('resT3').textContent = d.trapdoor_tokens.T3.substring(0, 32) + '...';
+    document.getElementById('resTime').textContent = d.timings_ms.total_latency + ' ms';
+
+    const container = document.getElementById('matchedRecordsList');
+    if (d.results.length === 0) {
+      container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 24px; background: var(--bg-subtle); border-radius: 8px; border: 1px solid var(--border);">No active documents match this keyword query. (If a matching record was revoked on the blockchain, it was excluded automatically).</div>`;
+    } else {
+      container.innerHTML = d.results.map(r => {
+        if (r.policy_met) {
+          // Authorized Decryption
+          return `
+            <div class="search-card">
+              <div class="search-card-header">
+                <strong style="font-family: var(--font-code); color: var(--text); font-size: 13px;">Document #${r.doc_id}</strong>
+                <span class="policy-chip policy-chip-met">✓ CP-ABE ACCESS GRANTED</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">
+                Policy: <code style="color: var(--primary); font-family: var(--font-code);">${r.policy_str}</code> | Authenticated by SNIZK proof
+              </div>
+              <div style="font-size: 13.5px; color: var(--text); font-weight: 500; margin: 8px 0; line-height: 1.5; background: #f0fdf4; border-left: 3px solid #16a34a; padding: 10px 12px; border-radius: 6px;">
+                "${r.plaintext}"
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
+                Keywords: ${r.keywords.map(k => `<span class="tag-kw">${k}</span>`).join('')}
+              </div>
+            </div>
+          `;
+        } else {
+          // Unauthorized / Access Denied
+          return `
+            <div class="search-card search-card-denied">
+              <div class="search-card-header">
+                <strong style="font-family: var(--font-code); color: var(--danger); font-size: 13px;">Document #${r.doc_id}</strong>
+                <span class="policy-chip policy-chip-denied">🚫 CP-ABE ACCESS DENIED</span>
+              </div>
+              <div style="font-size: 11px; color: #9f1239; margin-bottom: 6px;">
+                Required Policy: <code style="color: #9f1239; font-family: var(--font-code); background: #ffe4e6; padding: 2px 4px; border-radius: 4px;">${r.policy_str}</code>
+              </div>
+              <div style="font-size: 12.5px; color: #9f1239; font-weight: 500; margin: 8px 0; line-height: 1.5; background: #fff1f2; border-left: 3px solid #e11d48; padding: 10px 12px; border-radius: 6px;">
+                <strong>${r.plaintext}</strong><br>
+                <span style="font-size: 11.5px; color: #881337; font-weight: normal;">
+                  Your current identity (${r.user_role}) lacks the required attribute credentials. Ciphertext remains locked.
+                </span>
+              </div>
+              <div style="font-size: 11px; font-family: var(--font-code); color: var(--text-muted); margin-top: 6px;">
+                Raw Ciphertext: <span style="color: var(--code-hex);">${r.ciphertext_hex.substring(0, 32)}...</span>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+    }
+  } catch(e) {
+    if (!isSilent) alert('Search error: ' + e.message);
+  }
+
+  if (!isSilent) {
+    btn.disabled = false;
+    btn.textContent = '🔍 Generate Trapdoor & Search Cloud';
+  }
+}
+
+// -----------------------------------------------------------------------------
+// 4. REVOCATION HANDLER
+// -----------------------------------------------------------------------------
+async function handleRevoke() {
+  const btn = document.getElementById('btnRevoke');
+  const docId = document.getElementById('revokeDocId').value;
+  btn.disabled = true;
+  btn.textContent = 'Revoking on-chain...';
+
+  try {
+    const res = await fetch(API + '/api/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ doc_id: parseInt(docId) })
+    });
+    const d = await res.json();
+
+    document.getElementById('revokeOutput').style.display = 'block';
+    document.getElementById('revSlot').textContent = d.solidity_storage_slot;
+    document.getElementById('revTx').textContent = d.tx.tx_hash.substring(0, 32) + '... (Block #' + d.tx.block + ')';
+
+    loadBlockchain();
+    loadDocuments();
+    loadIdentities();
+  } catch(e) {
+    alert('Revocation error: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✕ Revoke Document on Blockchain';
+}
+
+// -----------------------------------------------------------------------------
+// 5. LOAD BLOCKCHAIN TRANSACTIONS
+// -----------------------------------------------------------------------------
+async function loadBlockchain() {
+  try {
+    const res = await fetch(API + '/api/blockchain');
+    const d = await res.json();
+    const tbody = document.getElementById('txTableBody');
+    const bTx = document.getElementById('badgeTxCount');
+    if (bTx) bTx.textContent = d.transactions.length;
+
+    if (d.transactions.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">No transactions mined yet.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = d.transactions.map(tx => `
+      <tr>
+        <td style="font-family: var(--font-code); font-weight: 500;">#${tx.block}</td>
+        <td><strong style="color: var(--primary); font-family: var(--font-code); font-size: 12px;">${tx.function}</strong></td>
+        <td style="font-family: var(--font-code); font-weight: 500;">#${tx.doc_id}</td>
+        <td style="color: var(--success); font-family: var(--font-code); font-size: 12px; font-weight: 600;">${tx.gas_used.toLocaleString()}</td>
+        <td style="font-family: var(--font-code); font-size: 11px; color: var(--text-muted);">${tx.tx_hash.substring(0, 24)}...</td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    console.warn('Blockchain error:', e);
+  }
+}
+
+// Refresh badge counts
+async function refreshCounts() {
+  try {
+    const res = await fetch(API + '/api/status');
+    const d = await res.json();
+    const bDoc = document.getElementById('badgeDocCount');
+    if (bDoc) bDoc.textContent = d.total_documents;
+  } catch(e){}
+}
+
+// Initial System Initialization
+loadIdentities();
+loadDocuments();
+loadBlockchain();
+</script>
+</body>
+</html>
