@@ -84,7 +84,6 @@ BAMKS/
 ├── app.py                         # Flask web application & REST API
 ├── deploy_sepolia.py              # Ethereum Sepolia smart contract deployment script
 ├── test_demo.py                   # Full end-to-end cryptographic demo test
-├── review2_demo.py                # Review demo suite & benchmarks
 ├── proof_of_o1_complexity.py      # Benchmark proving O(1) search complexity
 ├── index.html                     # Interactive dashboard frontend
 ├── requirements.txt               # Python package dependencies

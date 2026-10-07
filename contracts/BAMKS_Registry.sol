@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 /**
  * @title BAMKS_Registry & RVSC Smart Contract
- * @author Rushikesh Adak (24BYB1055)
+ * @author Rushikesh Adak
  * @dev Implements Result Verification Smart Contract (RVSC) and Dynamic Document Deletion Registry
  *      Base Paper: Cheng et al., Elsevier 2026 (BAMKS)
  *      Proposed Extension: Fine-Grained Dynamic Single-Document Revocation Mapping

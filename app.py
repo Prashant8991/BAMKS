@@ -235,7 +235,7 @@ def get_status():
         "prime_p": to_hex256(PRIME_P),
         "generator_g": bamks_system.g,
         "base_paper": "Cheng et al., Elsevier IoT Vol 36, Dec 2025/2026",
-        "authors": "Prashant Singh (24BYB1042) & Adak Rushikesh (24BYB1055)",
+        "authors": "Prashant Singh & Rushikesh Adak",
         "total_documents": len(bamks_system.files),
         "active_documents": active_count,
         "revoked_documents": len(bamks_system.files) - active_count,

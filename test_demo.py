@@ -22,7 +22,7 @@ def run_demonstration():
     print("  BASE RESEARCH PAPER : Cheng et al., Elsevier (Internet of Things), Vol 36, 2026")
     print("  PAPER TITLE         : Blockchain-assisted attribute-based multi-keyword search for")
     print("                        dynamic encrypted data in cloud-edge-IoT")
-    print("  PROJECT REVIEW TEAM : Prashant Singh (24BYB1042) | Adak Rushikesh (24BYB1055)")
+    print("  AUTHORS             : Prashant Singh | Rushikesh Adak")
     print("=" * 85)
 
     system = DynamicBAMKSExtension()

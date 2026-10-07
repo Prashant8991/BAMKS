@@ -39,6 +39,14 @@ wheels/
 *~
 *.metadata.json
 
+# Documents & Presentation binaries
+*.pdf
+*.pptx
+*.ppt
+*.docx
+*.doc
+
 # OS files
 .DS_Store
 Thumbs.db
+
