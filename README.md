@@ -160,6 +160,8 @@ python deploy_sepolia.py
 
 ---
 
-## 👤 Author
+## 👥 Authors & Contributors
 
-- **Prashant Singh** - [GitHub: @Prashant8991](https://github.com/Prashant8991)
+- **Prashant Singh** ([@Prashant8991](https://github.com/Prashant8991)) — Cryptographic Engine, CP-ABE, Dynamic Algorithms & REST API
+- **Adak Rushikesh** ([@rushikeshadak6-git](https://github.com/rushikeshadak6-git)) — Solidity Smart Contracts, Blockchain Layer & EVM Benchmarks
+
