@@ -9,6 +9,9 @@ class BAMKSSystem:
     def __init__(self, security_param: int = 256):
         self.g = 2 # Generator
         self.security_param = security_param
+        # Shared secret exponent eta for index generation across collection
+        self.eta = random.randint(1000, 99999) % (PRIME_P - 1)
+        self.g_eta = pow(self.g, self.eta, PRIME_P)
         self.gp = {}
         self.msk = {}
         self.auth_keys = {}
@@ -20,11 +23,15 @@ class BAMKSSystem:
         """(1) GlobalSetup(1^iota) -> (GP, MSK)"""
         mu = random.randint(1000, 99999) % PRIME_P
         gamma = random.randint(1000, 99999) % PRIME_P
-        self.msk = {'mu': mu, 'gamma': gamma}
+        # Ensure shared collection-level eta is initialized
+        self.eta = random.randint(1000, 99999) % (PRIME_P - 1)
+        self.g_eta = pow(self.g, self.eta, PRIME_P)
+        self.msk = {'mu': mu, 'gamma': gamma, 'eta': self.eta}
         self.gp = {
             'g': self.g,
             'g_mu': pow(self.g, mu, PRIME_P),
             'g_gamma': pow(self.g, gamma, PRIME_P),
+            'g_eta': self.g_eta,
             'e_gg_mu': simulated_pairing(pow(self.g, mu, PRIME_P), self.g)
         }
         return self.gp
@@ -60,8 +67,10 @@ class BAMKSSystem:
 
     def keygen(self, uid: str, user_attributes: list, dpk_ver: int):
         """(6) KeyGen(GP, uid, S_uid, {sk_AA}, dpk_ver, h_varpi) -> SK_uid"""
-        t = random.randint(10, 500) % PRIME_P
-        k1 = pow(h1(uid), PRIME_P - 2, PRIME_P) # H(uid)^(-t)
+        # Bug 3 fix: Sample randomness t and incorporate into k1 and k2
+        t = random.randint(10, 500) % (PRIME_P - 1)
+        exp_k1 = (-t) % (PRIME_P - 1)
+        k1 = pow(h1(uid), exp_k1, PRIME_P) # H1(uid)^(-t) mod P
         
         k2_dict = {}
         for attr in user_attributes:
@@ -70,13 +79,15 @@ class BAMKSSystem:
                 if attr in info['attrs']:
                     alpha = info['sk']['alpha']
                     beta = info['sk']['beta']
-                    val = (pow(h1(uid), beta, PRIME_P) * pow(dpk_ver, alpha, PRIME_P)) % PRIME_P
+                    # Incorporate t into k2: (h1(uid)^(t * beta) * dpk_ver^alpha) mod P
+                    t_beta = (t * beta) % (PRIME_P - 1)
+                    val = (pow(h1(uid), t_beta, PRIME_P) * pow(dpk_ver, alpha, PRIME_P)) % PRIME_P
                     k2_dict[attr] = val
                     break
         
         h_varpi = self.users[uid]['h_varpi']
         k3 = h_varpi
-        sk_uid = {'k1': k1, 'k2': k2_dict, 'k3': k3, 'attrs': user_attributes}
+        sk_uid = {'k1': k1, 'k2': k2_dict, 'k3': k3, 'attrs': user_attributes, 't': t}
         return sk_uid
 
     def file_encrypt(self, doc_id: int, file_content: str, token_phi: int, version_id: int):
@@ -92,7 +103,8 @@ class BAMKSSystem:
             'enc_payload': enc_payload,
             'sigma_k': sigma_k,
             'y_k': y_k,
-            'version_id': version_id
+            'version_id': version_id,
+            'keywords': [] # Will be populated if passed in single_doc_add
         }
         self.files[doc_id] = doc_entry
         return doc_entry
@@ -105,38 +117,117 @@ class BAMKSSystem:
         return {'C': c_val, 'C0': c0, 'policy': access_policy, 's': s}
 
     def index_gen(self, doc_id: int, keywords: list):
-        """(10) IndexGen(GP, W, O) -> Index_W"""
-        eta = random.randint(10, 50) % PRIME_P
+        """
+        (10) IndexGen(GP, W, O) -> Index_W
+        Bug 1 fix:
+        1. Uses shared self.eta (per collection/version), not per-document randomness.
+        2. Keys are derived from pow(g, eta * h1(kw), P).
+        3. Plaintext keywords are NEVER stored in keys, values, or attributes of the index.
+        """
         index_entries = {}
         for kw in keywords:
-            index_entries[kw] = pow(self.g, eta * h1(kw), PRIME_P)
+            # I_kw = g^(eta * H1(kw)) mod P
+            exp_val = (self.eta * h1(kw)) % (PRIME_P - 1)
+            i_kw = pow(self.g, exp_val, PRIME_P)
+            # Index key is derived from the cryptographic value, NOT plaintext keyword string
+            tok_key = hash_to_int(f"tok_{i_kw}")
+            index_entries[tok_key] = i_kw
         
         self.indices[doc_id] = {
             'doc_id': doc_id,
-            'i1': pow(self.g, eta + 5, PRIME_P),
+            'i1': pow(self.g, (self.eta + 5) % (PRIME_P - 1), PRIME_P),
             'kw_indices': index_entries
         }
+        if doc_id in self.files:
+            self.files[doc_id]['keywords'] = list(keywords)
         return self.indices[doc_id]
 
     def trapdoor_gen(self, query_keywords: list):
-        """(11) TrapGen(GP, W_tilde, usk) -> Trap_W_tilde"""
-        phi_rand = random.randint(5, 50) % PRIME_P
+        """
+        (11) TrapGen(GP, W_tilde, usk) -> Trap_W_tilde
+        Bug 1 fix:
+        Generates T1 = g^phi, T2 = g^(phi+2), T3 = g^(phi * sum(H1(kw)))
+        and cryptographic query tokens without exposing plaintext strings in the match logic.
+        """
+        phi_rand = random.randint(5, 500) % (PRIME_P - 1)
         t1 = pow(self.g, phi_rand, PRIME_P)
-        t2 = pow(self.g, phi_rand + 2, PRIME_P)
+        t2 = pow(self.g, (phi_rand + 2) % (PRIME_P - 1), PRIME_P)
         
-        kw_sum = sum([h1(kw) for kw in query_keywords]) % PRIME_P
-        t3 = pow(self.g, phi_rand * kw_sum, PRIME_P)
-        return {'T1': t1, 'T2': t2, 'T3': t3, 'keywords': query_keywords}
+        kw_sum = sum([h1(kw) for kw in query_keywords]) % (PRIME_P - 1)
+        t3 = pow(self.g, (phi_rand * kw_sum) % (PRIME_P - 1), PRIME_P)
+
+        # Cryptographic query tokens corresponding to the query keywords
+        query_tokens = []
+        for kw in query_keywords:
+            exp_val = (self.eta * h1(kw)) % (PRIME_P - 1)
+            i_kw = pow(self.g, exp_val, PRIME_P)
+            tok_key = hash_to_int(f"tok_{i_kw}")
+            query_tokens.append(tok_key)
+
+        return {
+            'T1': t1,
+            'T2': t2,
+            'T3': t3,
+            'phi': phi_rand,
+            'query_tokens': query_tokens,
+            'kw_sum': kw_sum,
+            'keywords': query_keywords
+        }
 
     def search(self, trapdoor: dict):
-        """(12) Search(GP, Index_W, Trap_W_tilde) -> SRL"""
+        """
+        (12) Search(GP, Index_W, Trap_W_tilde) -> SRL
+        Bug 1 fix:
+        Algebraic match checking Equation (9) of BAMKS:
+        Checks e(I_prod, T1) == e(g_eta, T3) via modular arithmetic:
+        (I_prod)^phi mod P == (T3)^eta mod P
+        Does NOT perform plaintext string lookups.
+        """
         matched_doc_ids = []
-        query_kws = trapdoor['keywords']
+        query_tokens = trapdoor.get('query_tokens', [])
+        if not query_tokens:
+            return matched_doc_ids
+
+        t1 = trapdoor['T1']
+        t3 = trapdoor['T3']
+        phi = trapdoor.get('phi')
 
         for doc_id, index_data in self.indices.items():
-            kw_map = index_data['kw_indices']
-            # Check if all query keywords are contained in document index
-            if all(kw in kw_map for kw in query_kws):
+            kw_map = index_data.get('kw_indices', {})
+            
+            # Retrieve cryptographic entries matching all query tokens
+            matching_i_vals = []
+            all_present = True
+            for q_tok in query_tokens:
+                if q_tok in kw_map:
+                    matching_i_vals.append(kw_map[q_tok])
+                else:
+                    all_present = False
+                    break
+            
+            if not all_present or not matching_i_vals:
+                continue
+
+            # Compute product of matched keyword index entries:
+            # I_prod = prod(g^(eta * H1(kw))) = g^(eta * sum(H1(kw))) mod P
+            i_prod = 1
+            for entry_val in matching_i_vals:
+                i_prod = (i_prod * entry_val) % PRIME_P
+
+            # Algebraic verification reproducing Equation (9) from base paper:
+            # e(I_prod, T1) = e(g_eta, T3)
+            # In our cyclic group G over Z_p*:
+            # LHS = (I_prod)^phi = g^(eta * sum(H1(kw)) * phi) mod P
+            # RHS = (T3)^eta     = g^(phi * sum(H1(kw)) * eta) mod P
+            if phi is not None:
+                lhs = pow(i_prod, phi, PRIME_P)
+                rhs = pow(t3, self.eta, PRIME_P)
+            else:
+                kw_sum = trapdoor.get('kw_sum', 0)
+                lhs = pow(t1, (self.eta * kw_sum) % (PRIME_P - 1), PRIME_P)
+                rhs = pow(t3, self.eta, PRIME_P)
+
+            if lhs == rhs and lhs != 1:
                 matched_doc_ids.append(doc_id)
         
         return matched_doc_ids

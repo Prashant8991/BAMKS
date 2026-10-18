@@ -1,0 +1,20 @@
+SURGICAL PATHOLOGY & ONCOLOGY BIOPSY
+====================================
+Patient ID: 111
+Department: Surgical Oncology & Pathology Laboratory
+Attending Pathologist: Division of Molecular Oncology
+Specimen: Core needle biopsy of right upper outer quadrant breast mass (3.2 cm).
+
+Microscopic Description:
+Sections reveal invasive ductal carcinoma, Nottinghams histologic Grade 3. Marked nuclear pleomorphism with frequent mitotic figures (>20 per 10 HPF). Extensive peritumoral lymphovascular invasion identified.
+
+Immunohistochemistry Biomarkers:
+- Estrogen Receptor (ER): Positive (90%, strong)
+- Progesterone Receptor (PR): Positive (75%, moderate)
+- HER2/neu: 3+ Overexpressed (Positive)
+- Ki-67 Proliferation Index: 45%
+
+Conclusion: Grade 3 Invasive Ductal Carcinoma, Triple-Positive (ER+/PR+/HER2+). Referred to Tumor Board for neoadjuvant chemo-immunotherapy.
+
+Searchable Keywords: Oncology, Biopsy, Pathology, Tumor, Carcinoma
+CP-ABE Access Policy: (Role_Doctor AND Dept_Oncology)

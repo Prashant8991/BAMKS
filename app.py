@@ -374,7 +374,7 @@ def get_documents():
             plaintext = f"[CP-ABE ACCESS DENIED: Requires Policy: {policy_str}]"
             status_text = "POLICY_DENIED"
 
-        kws = list(bamks_system.indices.get(doc_id, {}).get("kw_indices", {}).keys())
+        kws = bamks_system.files.get(doc_id, {}).get("keywords", [])
         ipfs_info = get_doc_ipfs_info(doc_id)
         docs_list.append({
             "doc_id": doc_id,
@@ -442,7 +442,7 @@ def search():
         else:
             plaintext = f"[CP-ABE ACCESS DENIED: Locked by Policy: {policy_str}]"
 
-        kws = list(bamks_system.indices[doc_id]["kw_indices"].keys())
+        kws = bamks_system.files.get(doc_id, {}).get("keywords", [])
         results.append({
             "doc_id": doc_id,
             "plaintext": plaintext,
@@ -548,6 +548,124 @@ def add_document():
         "ipfs_uri": ipfs_info.get("ipfs_uri"),
         "ipfs_url": ipfs_info.get("gateway_url"),
         "tx": tx
+    })
+
+@app.route("/api/add-batch", methods=["POST"])
+def add_batch_documents():
+    data = request.get_json() or {}
+    documents = data.get("documents", [])
+    if not documents:
+        return jsonify({"status": "error", "message": "No documents provided"}), 400
+
+    results = []
+    t_start = time.perf_counter()
+    total_gas = 0
+
+    for doc in documents:
+        doc_id = int(doc.get("doc_id", len(bamks_system.files) + 101))
+        text = doc.get("text", f"Clinical Record #{doc_id}")
+        keywords = doc.get("keywords", ["Medical", "EHR"])
+        policy_type = doc.get("policy_type", "cardiology")
+        file_name = doc.get("file_name", f"Record_{doc_id}.txt")
+
+        if policy_type == "cardiology":
+            DOC_POLICIES[doc_id] = {
+                "tree_str": "(Role_Doctor AND Dept_Cardiology)",
+                "clauses": [["Role_Doctor", "Dept_Cardiology"]],
+                "desc": f"{file_name}: Cardiology Clinical File"
+            }
+        elif policy_type == "oncology":
+            DOC_POLICIES[doc_id] = {
+                "tree_str": "(Role_Doctor AND Dept_Oncology)",
+                "clauses": [["Role_Doctor", "Dept_Oncology"]],
+                "desc": f"{file_name}: Oncology Clinical File"
+            }
+        elif policy_type == "neurology":
+            DOC_POLICIES[doc_id] = {
+                "tree_str": "(Role_Doctor AND Dept_Neurology)",
+                "clauses": [["Role_Doctor", "Dept_Neurology"]],
+                "desc": f"{file_name}: Neurology Clinical File"
+            }
+        elif policy_type == "routine":
+            DOC_POLICIES[doc_id] = {
+                "tree_str": "(Role_Nurse OR Role_Doctor)",
+                "clauses": [["Role_Nurse"], ["Role_Doctor"]],
+                "desc": f"{file_name}: Routine General Ward File"
+            }
+        else:
+            DOC_POLICIES[doc_id] = {
+                "tree_str": "(Role_Doctor AND Dept_Cardiology)",
+                "clauses": [["Role_Doctor", "Dept_Cardiology"]],
+                "desc": f"{file_name}: Clinical File"
+            }
+
+        doc_entry, index_entry, single_time_ms = bamks_system.single_doc_add(
+            doc_id, text, keywords, token_phi, version_id
+        )
+        ipfs_info = get_doc_ipfs_info(doc_id)
+        actual_gas = 21000 + (20000 * 4) + 1500
+        total_gas += actual_gas
+        tx = log_tx("registerDocument", doc_id, actual_gas)
+
+        results.append({
+            "doc_id": doc_id,
+            "file_name": file_name,
+            "policy": DOC_POLICIES[doc_id]["tree_str"],
+            "computation_time_ms": round(single_time_ms, 3),
+            "ciphertext_hex": doc_entry["enc_payload"]["ciphertext"][:32] + "...",
+            "public_tag_y_k": to_hex256(doc_entry["y_k"])[:24] + "...",
+            "tx_hash": tx["tx_hash"],
+            "ipfs_cid": ipfs_info.get("cid")
+        })
+
+    total_batch_time_ms = (time.perf_counter() - t_start) * 1000
+    avg_per_file_ms = total_batch_time_ms / len(documents)
+
+    return jsonify({
+        "status": "success",
+        "total_files": len(documents),
+        "total_batch_time_ms": round(total_batch_time_ms, 3),
+        "avg_per_file_ms": round(avg_per_file_ms, 3),
+        "total_gas_consumed": total_gas,
+        "results": results
+    })
+
+@app.route("/api/load-sample-batch", methods=["POST"])
+def load_sample_batch():
+    sample_records = [
+        (106, "Patient Record #106: Emergency Angioplasty & Stent Placement in Left Anterior Descending Artery", ["Cardiology", "ECG", "Stent", "Emergency"], "cardiology", "Patient_106_Angioplasty.txt"),
+        (107, "Patient Record #107: Transesophageal Echocardiogram (TEE) & Left Ventricular Ejection Fraction (LVEF 42%)", ["Cardiology", "ECG", "Echo", "Telemetry"], "cardiology", "Patient_107_Echocardiogram.txt"),
+        (108, "Patient Record #108: Cardiac Electrophysiology Mapping & Atrial Fibrillation Radiofrequency Ablation", ["Cardiology", "ECG", "Ablation", "Heart"], "cardiology", "Patient_108_CardiacAblation.txt"),
+        (109, "Patient Record #109: 3T Functional Brain MRI Scan & Cortical Sphenoidal Seizure Mapping", ["Neurology", "MRI", "Brain", "Epilepsy"], "neurology", "Patient_109_BrainMRI.txt"),
+        (110, "Patient Record #110: Acute Middle Cerebral Artery Ischemic Stroke Thrombolysis Protocol & Perfusion CT", ["Neurology", "Stroke", "Brain", "Emergency"], "neurology", "Patient_110_StrokeCTScan.txt"),
+        (111, "Patient Record #111: Invasive Ductal Carcinoma Histopathology, HER2 Receptor & Axillary Node Biopsy", ["Oncology", "Biopsy", "Pathology", "Tumor"], "oncology", "Patient_111_PathologyBiopsy.txt"),
+        (112, "Patient Record #112: Pediatric Inpatient Growth Vitals, Routine Measles-Mumps-Rubella (MMR) History", ["Pediatrics", "Vaccine", "Child", "Routine"], "routine", "Patient_112_PediatricMMR.txt"),
+        (113, "Patient Record #113: General Ward Post-Operative Wound Dressing, Analgesic Administration & Vitals Log", ["Nursing", "Inpatient", "Routine", "Ward"], "routine", "Patient_113_WardNursingLog.txt")
+    ]
+    added = []
+    t_start = time.perf_counter()
+    for d_id, txt, kws, pol, fname in sample_records:
+        if d_id not in bamks_system.files:
+            if pol == "cardiology":
+                DOC_POLICIES[d_id] = {"tree_str": "(Role_Doctor AND Dept_Cardiology)", "clauses": [["Role_Doctor", "Dept_Cardiology"]], "desc": f"{fname}: Cardiology Record"}
+            elif pol == "neurology":
+                DOC_POLICIES[d_id] = {"tree_str": "(Role_Doctor AND Dept_Neurology)", "clauses": [["Role_Doctor", "Dept_Neurology"]], "desc": f"{fname}: Neurology Record"}
+            elif pol == "oncology":
+                DOC_POLICIES[d_id] = {"tree_str": "(Role_Doctor AND Dept_Oncology)", "clauses": [["Role_Doctor", "Dept_Oncology"]], "desc": f"{fname}: Oncology Record"}
+            else:
+                DOC_POLICIES[d_id] = {"tree_str": "(Role_Nurse OR Role_Doctor)", "clauses": [["Role_Nurse"], ["Role_Doctor"]], "desc": f"{fname}: Routine General Ward Record"}
+
+            doc_entry, _, _ = bamks_system.single_doc_add(d_id, txt, kws, token_phi, version_id)
+            get_doc_ipfs_info(d_id)
+            log_tx("registerDocument", d_id, 114500)
+            added.append(d_id)
+
+    total_time_ms = (time.perf_counter() - t_start) * 1000
+    return jsonify({
+        "status": "success",
+        "added_count": len(added),
+        "total_documents": len(bamks_system.files),
+        "ingestion_time_ms": round(total_time_ms, 3)
     })
 
 @app.route("/api/delete", methods=["POST"])

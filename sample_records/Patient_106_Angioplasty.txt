@@ -1,0 +1,15 @@
+CLINICAL ADMISSION & ANGIOPLASTY SUMMARY
+========================================
+Patient ID: 106
+Department: Cardiology & Cardiac Catheterization Lab
+Attending Physician: Dr. Prashant Singh, MD
+Admission Date: October 19, 2026
+Diagnosis: Acute ST-Elevation Myocardial Infarction (STEMI), Left Anterior Descending (LAD) Artery 95% Occlusion
+
+Clinical Notes:
+Patient presented via Emergency EMS with crushing substernal chest pain radiating to left jaw. 12-lead ECG confirmed 4mm ST-segment elevation in leads V1-V4. Emergent coronary angiography was performed via right radial approach.
+Successful deployment of a drug-eluting stent (DES) in proximal LAD with post-dilation TIMI-3 flow restored.
+Post-procedure troponin I peaked at 48.2 ng/mL. Patient transferred to CCU in stable hemodynamic condition.
+
+Searchable Keywords: Cardiology, ECG, Stent, Emergency, Angioplasty
+CP-ABE Access Policy: (Role_Doctor AND Dept_Cardiology)

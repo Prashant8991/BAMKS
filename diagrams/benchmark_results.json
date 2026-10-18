@@ -1,0 +1,39 @@
+{
+  "summary": {
+    "base_rekey_1000_ms": 276.04,
+    "single_doc_add_ms": 0.3255,
+    "single_doc_delete_ms": 0.001
+  },
+  "benchmarks": [
+    {
+      "n": 50,
+      "base_ms": 14.05,
+      "our_ms": 0.2916,
+      "speedup": 48.2
+    },
+    {
+      "n": 200,
+      "base_ms": 54.72,
+      "our_ms": 0.303,
+      "speedup": 180.6
+    },
+    {
+      "n": 500,
+      "base_ms": 140.39,
+      "our_ms": 0.2911,
+      "speedup": 482.3
+    },
+    {
+      "n": 1000,
+      "base_ms": 306.43,
+      "our_ms": 0.2941,
+      "speedup": 1041.9
+    },
+    {
+      "n": 5000,
+      "base_ms": 1409.79,
+      "our_ms": 0.3971,
+      "speedup": 3550.2
+    }
+  ]
+}

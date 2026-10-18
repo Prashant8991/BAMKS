@@ -3,6 +3,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import os
+import json
+import time
 
 os.makedirs("diagrams", exist_ok=True)
 
@@ -15,7 +17,6 @@ ax.set_ylim(0, 7)
 ax.axis('off')
 fig.patch.set_facecolor('#0f172a')
 
-# Boxes
 colors = {'hosp': '#10b981', 'cloud': '#0284c7', 'bc': '#e11d48', 'doc': '#8b5cf6'}
 
 # Hospital Box
@@ -61,30 +62,53 @@ plt.savefig("diagrams/diagram_architecture.png", dpi=300)
 plt.close()
 
 # -----------------------------------------------------------------------------
-# 2. Performance Bar Chart Comparison
+# 2. Performance Bar Chart Comparison (Bug 4 Fix: Real Measured Timings)
 # -----------------------------------------------------------------------------
+json_path = "diagrams/benchmark_results.json"
+if os.path.exists(json_path):
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    summary = data.get("summary", {})
+    base_time = summary.get("base_rekey_1000_ms")
+    add_time = summary.get("single_doc_add_ms")
+    del_time = summary.get("single_doc_delete_ms")
+else:
+    # Direct live measurement if json not pre-generated
+    from src.dynamic_extension import DynamicBAMKSExtension
+    sys_bench = DynamicBAMKSExtension()
+    sys_bench.global_setup()
+    _, phi = sys_bench.do_setup(["Hospital_Alpha"])
+    base_time = sys_bench.full_reindex_baseline(1000, ["Cardiology", "ECG", "Emergency"], phi, 1)
+    _, _, add_time = sys_bench.single_doc_add(999, "Benchmark doc", ["Cardiology", "ECG"], phi, 1)
+    del_time = sys_bench.single_doc_delete(999)
+
+times = [base_time, add_time, del_time]
+print(f"\n[MEASURED BENCHMARK DATA FOR CHART]")
+print(f"  • Full Re-keying (L=1,000 files) : {base_time:.4f} ms")
+print(f"  • SingleDocAdd (O(m))             : {add_time:.4f} ms")
+print(f"  • SingleDocDelete (O(1))          : {del_time:.4f} ms")
+
 fig, ax = plt.subplots(figsize=(9, 5), dpi=300)
 fig.patch.set_facecolor('#0f172a')
 ax.set_facecolor('#1e293b')
 
-categories = ['Full Re-keying\n(Base Paper)', 'SingleDocAdd\n(Our Work)', 'SingleDocDelete\n(Our Work)']
-times = [5560.0, 0.12, 0.001]
+categories = ['Full Re-keying\n(Base Paper, L=1000)', 'SingleDocAdd\n(Our Work)', 'SingleDocDelete\n(Our Work)']
 bar_colors = ['#f43f5e', '#38bdf8', '#34d399']
 
 bars = ax.bar(categories, times, color=bar_colors, width=0.55, edgecolor='#ffffff', linewidth=1)
 ax.set_yscale('log')
 ax.set_ylabel('Execution Time in ms (Log Scale)', color='#ffffff', fontsize=11, weight='bold')
-ax.set_title('Latency Comparison: Base Paper O(L x m) vs. Our BAMKS-D O(1)', color='#ffffff', fontsize=13, weight='bold', pad=15)
+ax.set_title('Latency Comparison: Measured Base Paper O(L x m) vs. Our BAMKS-D O(1)', color='#ffffff', fontsize=13, weight='bold', pad=15)
 ax.tick_params(colors='#ffffff', labelsize=10)
 ax.grid(True, which="both", ls="--", lw=0.5, color='#334155')
 
 for bar in bars:
     yval = bar.get_height()
-    txt = f"{yval:.3f} ms" if yval < 1 else f"{yval:,.0f} ms"
+    txt = f"{yval:.4f} ms" if yval < 1 else f"{yval:,.2f} ms"
     ax.text(bar.get_x() + bar.get_width()/2.0, yval * 1.5, txt, ha='center', va='bottom', color='#ffffff', weight='bold', fontsize=10)
 
 plt.tight_layout()
 plt.savefig("diagrams/chart_performance.png", dpi=300)
 plt.close()
 
-print("[OK] All diagram images generated successfully in diagrams/ folder.")
+print("[OK] All diagram images generated successfully in diagrams/ folder with measured timings.")
