@@ -1,0 +1,29 @@
+================================================================================
+COMPREHENSIVE CANCER CENTER — SURGICAL PATHOLOGY BIOPSY REPORT
+================================================================================
+Patient ID: 205
+Patient Name: Eleanor Vance | Age: 52 | Sex: Female
+Department: Division of Surgical Oncology & Molecular Pathology
+Access Policy: (Role_Doctor AND Dept_Oncology)
+
+SPECIMEN:
+Ultrasound-guided core needle biopsy of palpable right breast mass (measuring 2.8 x 2.1 cm) and fine needle aspiration of right level I axillary lymph node.
+
+HISTOPATHOLOGY & TUMOR GRADING:
+Sections demonstrate an invasive mammary carcinoma of no special type (invasive ductal carcinoma).
+- Modified Bloom-Richardson Score: Grade 3 (Tubule formation: 3, Nuclear pleomorphism: 3, Mitotic index: 3; Total score: 9/9).
+- Necrosis: Focal geographic comedo-type necrosis present.
+- Margin Status: Core biopsy tissue completely involved by invasive malignant glands.
+
+MOLECULAR BIOMARKER PROFILE (IMMUNOHISTOCHEMISTRY):
+- Estrogen Receptor (ER): Strongly positive (95% nuclear staining)
+- Progesterone Receptor (PR): Strongly positive (80% nuclear staining)
+- HER2/neu: 3+ Overexpression (Positive via DAKO HercepTest)
+- Ki-67 Proliferation Index: 52% (High proliferation)
+- Axillary Node FNA: Positive for metastatic carcinoma cells
+
+ONCOLOGICAL IMPRESSION:
+High-Grade Invasive Ductal Carcinoma, Stage IIB (T2 N1 M0), Luminal B / HER2-Positive subtype. Recommended neoadjuvant TCHP (Docetaxel, Carboplatin, Trastuzumab, Pertuzumab) protocol.
+
+Searchable Keywords: Oncology, Biopsy, Pathology, Tumor, Carcinoma
+================================================================================
