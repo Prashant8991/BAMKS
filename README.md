@@ -73,19 +73,21 @@
 ```
 BAMKS/
 ├── contracts/
-│   ├── BAMKS_Registry.sol         # Solidity smart contract for Sepolia
-│   └── build/                     # Compiled contract ABI and bytecode
+│   └── BAMKS_Registry.sol         # Solidity smart contract with EVM modExp & RVSC
 ├── src/
 │   ├── bamks_system.py            # BAMKS core setup, encryption, trapdoor, search
 │   ├── crypto_utils.py            # 256-bit prime fields, KDF, hash functions
 │   ├── dynamic_extension.py       # Dynamic single-doc update & revocation
-│   └── ipfs_storage.py            # Pinata IPFS integration client
-├── diagrams/                      # System architecture, charts & flow diagrams
+│   └── ipfs_storage.py            # Pinata IPFS decentralized integration client
+├── diagrams/                      # System architecture, charts & benchmark results
+├── sample_inputs/                 # Clinical records suite (.txt, .json, .csv, .md)
 ├── app.py                         # Flask web application & REST API
 ├── deploy_sepolia.py              # Ethereum Sepolia smart contract deployment script
-├── test_demo.py                   # Full end-to-end cryptographic demo test
+├── test_demo.py                   # Full end-to-end cryptographic demo & benchmarks
+├── test_correctness_and_security.py # Cryptographic correctness & security test suite
 ├── proof_of_o1_complexity.py      # Benchmark proving O(1) search complexity
-├── index.html                     # Interactive dashboard frontend
+├── generate_scalability_graph.py  # Multi-N empirical scalability plotting
+├── index.html                     # Soft, minimal, premium dashboard frontend
 ├── requirements.txt               # Python package dependencies
 ├── .env.example                   # Environment variable template
 └── README.md                      # Project documentation
@@ -131,18 +133,25 @@ python app.py
 ```
 Open your browser at `http://localhost:5000` to interact with:
 - Clinical identity switching (Cardiology, Oncology, Neurology, General Ward)
+- Single-record & multi-file batch upload (`sample_inputs/`)
 - Real-time document encryption and IPFS upload
 - Verifiable multi-keyword search queries
 - Dynamic attribute revocation simulation
 
-### Run Cryptographic Demonstration & Test Suite
+### Run Cryptographic Demonstration & Benchmarks
 ```bash
 python test_demo.py
 ```
 
-### Verify $O(1)$ Search Complexity
+### Run Correctness & Security Test Suite
+```bash
+python test_correctness_and_security.py
+```
+
+### Verify $O(1)$ Search Complexity & Scalability
 ```bash
 python proof_of_o1_complexity.py
+python generate_scalability_graph.py
 ```
 
 ### Deploy / Verify Smart Contract on Sepolia Testnet
