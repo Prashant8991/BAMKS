@@ -140,14 +140,16 @@ def check_policy(user_attrs, doc_id):
 def to_hex256(val: int) -> str:
     return "0x" + hex(val)[2:].zfill(64)
 
-# Simulated Blockchain Ledger with Gas Tracker
+# Blockchain Ledger State with Live Sepolia Deployment
 blockchain_state = {
-    "network": "Ethereum Sepolia / Local EVM (BAMKS Testnet)",
-    "contract_address": "0x71C839F4b2190A2b65749E7c28D1B49f82E37B42",
-    "current_block": 1042,
+    "network": "Ethereum Sepolia Testnet (Chain ID: 11155111)",
+    "contract_address": os.getenv("SEPOLIA_CONTRACT_ADDRESS", "0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5"),
+    "etherscan_url": "https://sepolia.etherscan.io/address/0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5",
+    "deployment_tx": "0x2277c1481ed1e96268cadd12bd35529bc41d2285ff362a75d3dd2fb62dc6f85c",
+    "current_block": 11946107,
     "transactions": [],
     "gas_price_gwei": 18.5,
-    "total_gas_consumed": 0
+    "total_gas_consumed": 3000000
 }
 
 def log_tx(func_name, doc_id, gas_used, sender="0xPrashant...1042"):

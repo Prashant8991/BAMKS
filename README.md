@@ -159,6 +159,11 @@ python generate_scalability_graph.py
 python deploy_sepolia.py
 ```
 
+### 🔗 Live Ethereum Sepolia Deployment Proof
+- **Contract Address:** [`0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5`](https://sepolia.etherscan.io/address/0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5)
+- **Deployment Tx Hash:** [`0x2277c1481ed1e96268cadd12bd35529bc41d2285ff362a75d3dd2fb62dc6f85c`](https://sepolia.etherscan.io/tx/0x2277c1481ed1e96268cadd12bd35529bc41d2285ff362a75d3dd2fb62dc6f85c)
+- **Network:** Ethereum Sepolia (Chain ID: `11155111`)
+
 ---
 
 ## 🔐 Security & Safe Practices
