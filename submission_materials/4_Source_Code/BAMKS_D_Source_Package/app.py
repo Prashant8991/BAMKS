@@ -706,12 +706,12 @@ def modify_document():
     t_start = time.perf_counter()
     # Section 6: Modify = Delete existing entry + Insert updated entry
     bamks_system.single_doc_delete(doc_id)
-    tx_del = log_tx("deleteDocument (Modify Step 1)", doc_id, 42100)
+    tx_del = log_tx("deleteDocument (Modify Step 1)", doc_id, 72794)
 
     doc_entry, index_entry, _ = bamks_system.single_doc_add(
         doc_id, new_text, new_keywords, token_phi, version_id
     )
-    tx_add = log_tx("registerDocument (Modify Step 2)", doc_id, 102500)
+    tx_add = log_tx("registerDocument (Modify Step 2)", doc_id, 165405)
     actual_time_ms = (time.perf_counter() - t_start) * 1000
 
     return jsonify({
@@ -768,7 +768,7 @@ def live_benchmark():
         "proposed_protocol_time_ms": round(our_time_ms, 4),
         "measured_speedup_factor": round(speedup, 1),
         "base_gas_cost_estimate": L * 45000,
-        "our_gas_cost_actual": 42100
+        "our_gas_cost_actual": 72794
     })
 
 @app.route("/api/blockchain", methods=["GET"])

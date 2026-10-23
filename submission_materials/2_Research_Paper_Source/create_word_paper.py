@@ -555,7 +555,8 @@ def create_ieee_docx():
     add_body_p(
         "For small datasets (L <= 100), Cheng et al. Section 5.10 index update is faster (0.02-0.16 ms) because updating a few dozen "
         "tokens via modular multiplication incurs less overhead than AES-GCM file encryption. However, because Cheng et al. scales linearly as O(L * m), "
-        "the crossover point occurs at L ~ 300 documents. At L=5,000, BAMKS-D addition remains flat (0.67 ms), delivering a 12.11x speedup "
+        "the break-even crossover occurs at L ~ 300 documents (via linear interpolation between L=100 and L=500) and asymptotically at L ~ 410 against the L=5,000 measurement (0.67 ms). "
+        "At L=5,000, BAMKS-D addition remains flat (0.67 ms), delivering a 12.11x speedup "
         "over Cheng et al. and a 3,527.7x speedup over naive full re-encryption (2,363 ms)."
     )
     add_body_p(

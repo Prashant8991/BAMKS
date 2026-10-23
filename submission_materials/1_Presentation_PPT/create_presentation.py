@@ -474,7 +474,7 @@ def build_presentation():
     ps0.font.size = Pt(10)
     ps0.font.color.rgb = C_GREEN
     ps1 = tf_stat.add_paragraph()
-    ps1.text = "• For L <= 100, Cheng et al. index multiplication is faster than single-file AES encryption.\n• Crossover occurs at L ~ 300 files; at L=5,000, BAMKS-D achieves 12.11x speedup over Cheng et al. (and 3,527.7x over naive re-encryption)."
+    ps1.text = "• For L <= 100, Cheng et al. index multiplication is faster than single-file AES encryption.\n• Break-even crossover occurs at L in [300, 410] files (L ~ 300 via local interpolation, L ~ 410 asymptotically against L=5,000).\n• At L=5,000, BAMKS-D achieves 12.11x speedup over Cheng et al. (and 3,527.7x over naive re-encryption)."
     ps1.font.size = Pt(9.5)
     ps1.font.color.rgb = C_DARK_TXT
 
@@ -489,7 +489,7 @@ def build_presentation():
     tf_p1 = tb_p1.text_frame
     tf_p1.word_wrap = True
     p = tf_p1.paragraphs[0]
-    p.text = "Theoretical Minimal Opcode Schedule"
+    p.text = "Opcode Schedule & EVM Measurement"
     p.font.bold = True
     p.font.size = Pt(16)
     p.font.color.rgb = C_BLUE
@@ -501,19 +501,20 @@ def build_presentation():
         ("SSTORE (deletedDocRegistry):", "20,000 gas (0 to 1 cold slot storage write)."),
         ("SSTORE (fileRegistry.isDeleted):", "5,000 gas (Warm slot update on existing metadata struct)."),
         ("LOG3 (DocumentDeleted):", "1,500 gas (Event base + 3 indexed topics + timestamp)."),
-        ("Overhead (JUMP, stack):", "~200 gas -> Total Theoretical: ~47,733 gas.")
+        ("Overhead (JUMP, stack):", "~200 gas -> Theoretical Minimum: ~47,733 gas."),
+        ("Measured EVM Gas (O(1)):", "72,794 gas at N=10; 72,794 at N=100; 72,806 at N=1,000 (Strictly O(1)).")
     ]
     for pp_t, pp_d in proof_points:
         ppp = tf_p1.add_paragraph()
         ppp.text = f"• {pp_t}"
         ppp.font.bold = True
-        ppp.font.size = Pt(11)
+        ppp.font.size = Pt(10.5)
         ppp.font.color.rgb = C_NAVY
         pppd = tf_p1.add_paragraph()
         pppd.text = f"  {pp_d}"
-        pppd.font.size = Pt(10)
+        pppd.font.size = Pt(9.5)
         pppd.font.color.rgb = C_DARK_TXT
-        pppd.space_after = Pt(3)
+        pppd.space_after = Pt(2)
 
     add_card(slide10, Inches(6.8), Inches(1.6), Inches(5.7), Inches(5.3), bg_color=C_LIGHT_BG, border_color=C_CYAN)
     tb_p2 = slide10.shapes.add_textbox(Inches(7.0), Inches(1.8), Inches(5.3), Inches(4.9))

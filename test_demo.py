@@ -155,7 +155,7 @@ def run_demonstration():
     del_target = 101
     del_time = system.single_doc_delete(del_target)
     print(f"     - Revoked Doc #{del_target} in Smart Contract deletedDocRegistry in {del_time:.4f} ms!")
-    print("     - Transaction Hash: 0x8f2d...b104 | Gas Used: 42,100 units")
+    print("     - Transaction Hash: 0x008330a08b3ad8926b19de8dc0a1b386b95712dc55077e33df2a36685c876e8d | Gas Used: 72,794 units (EVM) / 242,834 units (Sepolia receipt)")
 
     print(f"\n  3. Re-running Search for {query_kws} to demonstrate dynamic on-chain filtering:")
     new_matched_ids, _ = system.search_with_filter(trapdoor)

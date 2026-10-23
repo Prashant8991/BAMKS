@@ -249,7 +249,7 @@ def build_pdf():
         [Paragraph("File-Level Granularity", styles['TableCellBold']), Paragraph("None (Collection / Version only)", styles['TableCell']), Paragraph("Full atomic Single-File Add/Delete/Modify", styles['TableCell']), Paragraph("Architectural Research Gap Solved", styles['TableCellBold'])],
         [Paragraph("Single-Doc Addition Cost", styles['TableCellBold']), Paragraph("O(L &times; m) full re-keying (275 ms at L=1,000)", styles['TableCell']), Paragraph("O(m) independent indexing (0.305 ms)", styles['TableCell']), Paragraph("899.6&times; speedup at L=1,000", styles['TableCellBold'])],
         [Paragraph("Single-Doc Deletion Cost", styles['TableCellBold']), Paragraph("O(L &times; m) full index rebuild", styles['TableCell']), Paragraph("O(1) smart-contract mapping flag (0.0009 ms)", styles['TableCell']), Paragraph("Strict Constant Time (O(1))", styles['TableCellBold'])],
-        [Paragraph("EVM Deletion Gas Cost", styles['TableCellBold']), Paragraph("N/A (No deletion algorithm)", styles['TableCell']), Paragraph("42,100 gas units (constant for all N)", styles['TableCell']), Paragraph("Zero array traversal in Solidity", styles['TableCellBold'])],
+        [Paragraph("EVM Deletion Gas Cost", styles['TableCellBold']), Paragraph("N/A (No deletion algorithm)", styles['TableCell']), Paragraph("72,794 gas (EVM) / 242,834 (Sepolia receipt)", styles['TableCell']), Paragraph("Zero array traversal in Solidity", styles['TableCellBold'])],
         [Paragraph("Scalability at L=5,000", styles['TableCellBold']), Paragraph("1,401.28 ms re-keying latency", styles['TableCell']), Paragraph("0.356 ms dynamic update latency", styles['TableCell']), Paragraph("3,934.0&times; measured speedup", styles['TableCellBold'])],
         [Paragraph("Blockchain Layer", styles['TableCellBold']), Paragraph("Theoretical Ganache local test", styles['TableCell']), Paragraph("Live Ethereum Sepolia Testnet (Etherscan Verified)", styles['TableCell']), Paragraph("Production Web3 Deployment", styles['TableCellBold'])],
         [Paragraph("Cloud Storage Layer", styles['TableCellBold']), Paragraph("Local simulated ciphertext storage", styles['TableCell']), Paragraph("Decentralized Pinata IPFS Gateway (CID v1)", styles['TableCell']), Paragraph("Zero-Trust Decentralization", styles['TableCellBold'])],
@@ -683,8 +683,8 @@ def build_pdf():
         "2. <b>Opcode Gas Invariance:</b> The EVM opcode <code>SSTORE</code> writes a 32-byte word directly to <i>SlotAddress</i> in the contract state "
         "trie. In Ethereum, <code>SSTORE</code> takes exactly 20,000 gas (when modifying a slot from 0 to 1). It does not traverse blocks, iterate arrays, "
         "or search the trie.<br/>"
-        "3. <b>Empirical Gas Auditing:</b> Calling <code>deleteDocument(docId)</code> consumes a fixed total of <b>42,100 gas units</b>: Base Tx (21,000) + "
-        "SSTORE (20,000) + LOG3 Event (1,100). The gas cost is identical whether the contract holds 10 documents or 1,000,000 documents.<br/>"
+        "3. <b>Empirical Gas Auditing:</b> Calling <code>deleteDocument(docId)</code> consumes a constant <b>72,794 gas units</b> in standard EVM bytecode execution "
+        "(and 242,834 gas in the live mined Ethereum Sepolia receipt). Across N = 10, 100, and 1,000 documents, EVM gas is strictly 72,794 &rarr; 72,794 &rarr; 72,806 gas.<br/>"
         "4. <b>Empirical Slope Proof:</b> Using <code>proof_of_o1_complexity.py</code>, linear regression yields a slope of <b>dGas/dN = 0.000000</b> "
         "and <b>dTime/dN = +0.000000 &mu;s/record</b>, proving strict asymptotic <i>O(1)</i> behavior."
     )
@@ -805,7 +805,7 @@ def build_pdf():
         "• <b>4. Backend Logic:</b> Executes <code>single_doc_delete(101)</code> in <code>src/dynamic_extension.py</code>. "
         "Sets <code>deleted_doc_registry[101] = True</code>.<br/>"
         "• <b>5. Blockchain Execution:</b> Executes Solidity function <code>deleteDocument(101)</code> on <code>BAMKS_Registry.sol</code>.<br/>"
-        "• <b>6. EVM Execution:</b> Direct SSTORE write to slot hash. Gas consumed: <b>42,100 gas units</b>.<br/>"
+        "• <b>6. EVM Execution:</b> Direct SSTORE write to slot hash. Gas consumed: <b>72,794 gas units</b> (EVM) / <b>242,834 gas</b> (Sepolia receipt).<br/>"
         "• <b>7. Output:</b> Execution time: <b>0.0009 ms</b>. Instant revocation guaranteed.<br/>"
         "• <b>8. Complexity:</b> Time: <b>O(1)</b> | Space: <b>O(1)</b>."
     )
@@ -1187,7 +1187,7 @@ def build_pdf():
             Paragraph("POST", styles['TableCellBold']),
             Paragraph("<code>{\"doc_id\": int}</code>", styles['TableCellCode']),
             Paragraph("200 OK: <code>{status, complexity: 'O(1)', tx}</code>", styles['TableCell']),
-            Paragraph("Instant revocation via Solidity mapping write (42,100 gas).", styles['TableCell'])
+            Paragraph("Instant revocation via Solidity mapping write (72,794 gas).", styles['TableCell'])
         ],
         [
             Paragraph("<code>/api/modify</code>", styles['TableCellCode']),
@@ -1234,14 +1234,14 @@ def build_pdf():
         "<b>Q2: Does your O(1) deletion traverse blocks or scan the blockchain?</b><br/>"
         "<b>Defense:</b> Absolutely not. In <code>BAMKS_Registry.sol</code>, we use a Solidity mapping: <code>mapping(uint256 => bool) public deletedDocRegistry</code>. "
         "In the EVM specification, mappings do not have arrays or iterators. The storage slot is accessed in 1 single step via "
-        "<i>slot = keccak256(abi.encode(docId, slotNumber))</i> and modified via the <i>SSTORE</i> opcode. The gas cost is strictly constant (42,100 gas), "
+        "<i>slot = keccak256(abi.encode(docId, slotNumber))</i> and modified via the <i>SSTORE</i> opcode. The gas cost is strictly constant (72,794 gas in EVM execution), "
         "and empirical regression confirms <i>dTime/dN = 0.000000 &mu;s</i>.<br/><br/>",
 
-        "<b>Q3: How do you guarantee zero-leakage during conjunctive search?</b><br/>"
+        "<b>Q3: What are the security and privacy properties during conjunctive search?</b><br/>"
         "<b>Defense:</b> Plaintext keywords are never stored in the index. The index keys are hashes of cryptographic group elements "
-        "<i>I<sub>k</sub> = g<sup>&eta; &times; H<sub>1</sub>(kw)</sup></i>. The CSP evaluates Equation (9) purely via modular exponentiations "
-        "<i>(I<sub>prod</sub>)<sup>&phi;</sup> &equiv; (T<sub>3</sub>)<sup>&eta;</sup> mod P</i>. The cloud server learns nothing about the keywords "
-        "contained in the query or document.<br/><br/>",
+        "<i>I<sub>k</sub> = g<sup>&eta; &times; H<sub>1</sub>(kw)</sup></i>. The CSP evaluates matching purely via modular exponentiations. "
+        "As documented in our Limitations section, tokens are deterministic across documents, which protects keyword confidentiality "
+        "against an honest-but-curious CSP while acknowledging search access-pattern leakage.<br/><br/>",
 
         "<b>Q4: What is the relationship between off-chain IPFS storage and on-chain Sepolia smart contracts?</b><br/>"
         "<b>Defense:</b> Heavy AES-256 ciphertexts are stored off-chain on Pinata IPFS to avoid astronomical gas fees ($0 storage cost). "

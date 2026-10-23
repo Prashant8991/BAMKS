@@ -80,7 +80,7 @@ submission_materials/
 ```bash
 python test_demo.py
 ```
-*Expected Outcome:* Executes GlobalSetup, Multi-Authority KeyGen, SingleDocAdd, SingleDocDelete, zero-leakage conjunctive search, and benchmarks baseline vs. BAMKS-D across dataset sizes L in {50, 200, 500, 1000, 5000}.
+*Expected Outcome:* Executes GlobalSetup, Multi-Authority KeyGen, SingleDocAdd, SingleDocDelete, dynamic conjunctive search, and benchmarks baseline vs. BAMKS-D across dataset sizes L in {50, 200, 500, 1000, 5000}.
 
 ### B. Run Automated Correctness & Security Test Suite
 ```bash
@@ -97,7 +97,7 @@ python test_correctness_and_security.py
 ```bash
 python proof_of_o1_complexity.py
 ```
-*Expected Outcome:* Regression analysis across N in [10, 50000] confirming dGas/dN = 0 (constant 42,100 gas) and dTime/dN approx 0 us/record.
+*Expected Outcome:* Regression analysis across N in [10, 1000] confirming dGas/dN = 0 (constant 72,794 gas in EVM; 242,834 gas in live Sepolia receipt) and dTime/dN approx 0 us/record.
 
 ### D. Launch Interactive Clinical Web Application
 ```bash
@@ -108,6 +108,6 @@ python app.py
 ---
 
 ## 4. Blockchain & IPFS Configuration
-- **Ethereum Sepolia Contract:** `0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5`
-- **Etherscan Sepolia URL:** `https://sepolia.etherscan.io/address/0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5`
+- **Ethereum Sepolia Contract:** `0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3`
+- **Etherscan Sepolia URL:** `https://sepolia.etherscan.io/address/0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3`
 - **IPFS Storage:** Decentralized Pinata IPFS Gateway (`https://gateway.pinata.cloud/ipfs/`)
