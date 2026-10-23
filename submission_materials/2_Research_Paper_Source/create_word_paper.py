@@ -512,7 +512,7 @@ def build_full_paper_docx():
         "2. Challenge: Prover hashes commitment, public key, and query context: c = H(g || Y || R || Context).\n"
         "3. Response: Prover computes response scalar: s = r + c * x mod p.\n"
         "4. Verification: Verifier accepts if and only if: g^s == R * Y^c.\n"
-        "In BAMKS and BAMKS-D, SNIZK proofs generated across multiple matching keywords are aggregated into a single proof (R_agg, pi_hat), reducing verification complexity.",
+        "In BAMKS and BAMKS-D, SNIZK proofs generated across multiple matching keywords are aggregated into a single proof (R_agg, pi_agg), reducing verification complexity.",
         bold_prefix="C. Aggregated Schnorr Non-Interactive Zero-Knowledge (SNIZK) Proofs: "
     )
 
@@ -539,7 +539,7 @@ def build_full_paper_docx():
         ["T_1, T_3", "Query trapdoor components", "T1 = g^phi mod P; T3 = g^(phi * sum(H1(w_j))) mod P"],
         ["deletedDocRegistry", "Solidity storage mapping (uint256 => bool)", "EVM state mapping enforcing instant O(1) file revocation"],
         ["y_k", "Public verification tag: g^(x_k) mod P", "On-chain commitment binding document authenticity"],
-        ["(R_agg, pi_hat)", "Aggregated Schnorr NIZK proof", "Off-chain proof verifying query matching correctness"]
+        ["(R_agg, pi_agg)", "Aggregated Schnorr NIZK proof", "Off-chain proof verifying query matching correctness"]
     ]
     format_table(t2, t2_widths, t2_headers, t2_data)
 
@@ -654,30 +654,30 @@ def build_full_paper_docx():
         add_figure_caption(doc, 3, "SingleDocDelete Mechanism: Direct keccak256 EVM Storage Mapping Update and RVSC Enforcement.")
 
     add_body_p(doc,
-        "To search for encrypted EHR records containing q query keywords W_query = {w~_1, ..., w~_q}, the clinician and cloud collaborate as follows:\n"
+        "To search for encrypted EHR records containing q query keywords W_query = {w'_1, ..., w'_q}, the clinician and cloud collaborate as follows:\n"
         "1. Trapdoor Generation: Clinician samples fresh session secret phi in Z_P* and computes trapdoor components:\n"
         "   T_1 = g^phi mod P\n"
-        "   T_3 = g^(phi * sum_{j=1}^q H1(w~_j)) mod P\n"
+        "   T_3 = g^(phi * sum_{j=1}^q H1(w'_j)) mod P\n"
         "2. Cloud Modular Evaluation (Eq. 6): For candidate document docId, CSP computes product of index tokens:\n"
         "   I_prod = prod_{j=1}^q I_doc,j mod P = g^(eta * sum H1(w_j)) mod P\n"
         "   The cloud verifies algebraic equality:\n"
         "   (I_prod)^phi == (T_3)^eta mod P\n"
         "3. Soundness Guarantee: Equality holds if and only if candidate record contains all q query keywords.\n"
-        "4. Off-Chain SNIZK Verification: Clinician validates aggregated Schnorr proof (R_agg, pi_hat) off-chain.\n"
+        "4. Off-Chain SNIZK Verification: Clinician validates aggregated Schnorr proof (R_agg, pi_agg) off-chain.\n"
         "5. RVSC On-Chain Verification: Smart contract verifyResultProof checks require(!deletedDocRegistry[id]) for all returned documents.",
         bold_prefix="D. Conjunctive Multi-Keyword Search & RVSC Verification: "
     )
 
     # ALGORITHM 3
     add_algorithm_box(doc, 3, "Conjunctive Trapdoor Generation & Cloud Matching",
-        input_txt="Query keyword set W_query = {w~_1, ..., w~_q}, Inverted index InvertedIndex, Master secret eta, Global parameters GP",
+        input_txt="Query keyword set W_query = {w'_1, ..., w'_q}, Inverted index InvertedIndex, Master secret eta, Global parameters GP",
         output_txt="Matched document ID set MatchedIDs",
         steps=[
             "phi <- RandomElement(Z_P*)",
             "T_1 <- (g ^ phi) mod P",
-            "sum_h <- sum_{j=1}^q H1(w~_j)",
+            "sum_h <- sum_{j=1}^q H1(w'_j)",
             "T_3 <- (g ^ (phi * sum_h)) mod P",
-            "CandidateIDs <- InvertedIndex.lookup(w~_1) intersect ... intersect InvertedIndex.lookup(w~_q)",
+            "CandidateIDs <- InvertedIndex.lookup(w'_1) intersect ... intersect InvertedIndex.lookup(w'_q)",
             "MatchedIDs <- []",
             "for each docId in CandidateIDs do",
             "    I_prod <- prod_{j=1}^q I_docId,j mod P",
@@ -761,14 +761,14 @@ def build_full_paper_docx():
     add_body_p(doc,
         "Theorem 1 (Correctness of Conjunctive Matching): Given valid query trapdoor T_query = (T_1, T_3) for keywords W_query and candidate index tokens {I_doc,j} for W_doc, "
         "the algebraic match equation (I_prod)^phi == (T_3)^eta mod P holds if and only if W_query subset_of W_doc.\n\n"
-        "Proof: Let W_query = {w~_1, ..., w~_q}. The cloud computes:\n"
-        "I_prod = prod_{j=1}^q I_doc,j = prod_{j=1}^q g^(eta * H1(w~_j)) = g^(eta * sum_{j=1}^q H1(w~_j)) mod P.\n"
+        "Proof: Let W_query = {w'_1, ..., w'_q}. The cloud computes:\n"
+        "I_prod = prod_{j=1}^q I_doc,j = prod_{j=1}^q g^(eta * H1(w'_j)) = g^(eta * sum_{j=1}^q H1(w'_j)) mod P.\n"
         "Raising I_prod to query session secret phi yields:\n"
-        "LHS = (I_prod)^phi = (g^(eta * sum H1(w~_j)))^phi = g^(eta * phi * sum_{j=1}^q H1(w~_j)) mod P.\n"
-        "Correspondingly, from trapdoor definition T_3 = g^(phi * sum_{j=1}^q H1(w~_j)) mod P. Raising T_3 to master secret eta yields:\n"
-        "RHS = (T_3)^eta = (g^(phi * sum H1(w~_j)))^eta = g^(eta * phi * sum_{j=1}^q H1(w~_j)) mod P.\n"
-        "Since exponent multiplication is commutative in Z_P*, LHS == RHS holds identically. Conversely, if there exists w~_k not in W_doc, "
-        "the exponent sums differ by at least one pseudo-random hash value H1(w~_k) != H1(w_k'), causing LHS == RHS to evaluate false with probability 1 - 1/P. "
+        "LHS = (I_prod)^phi = (g^(eta * sum H1(w'_j)))^phi = g^(eta * phi * sum_{j=1}^q H1(w'_j)) mod P.\n"
+        "Correspondingly, from trapdoor definition T_3 = g^(phi * sum_{j=1}^q H1(w'_j)) mod P. Raising T_3 to master secret eta yields:\n"
+        "RHS = (T_3)^eta = (g^(phi * sum H1(w'_j)))^eta = g^(eta * phi * sum_{j=1}^q H1(w'_j)) mod P.\n"
+        "Since exponent multiplication is commutative in Z_P*, LHS == RHS holds identically. Conversely, if there exists w'_k not in W_doc, "
+        "the exponent sums differ by at least one pseudo-random hash value H1(w'_k) != H1(w_k'), causing LHS == RHS to evaluate false with probability 1 - 1/P. "
         "This completes the proof of Theorem 1.",
         bold_prefix="A. Theorem 1 (Correctness of Conjunctive Search): "
     )
@@ -887,7 +887,7 @@ def build_full_paper_docx():
         "In adherence to rigorous academic standards, we explicitly delineate the architectural assumptions and boundary conditions of our prototype:\n\n"
         "1. Simulated Group Algebra in Z_P*: Our software prototype computes field arithmetic in (Z_P*, *) using the secp256k1 field prime P = 2^256 - 2^32 - 977. "
         "The order of Z_P* is composite (P - 1), and bilinear pairing e(g, g) is simulated via modular exponentiation. A production-grade deployment requires migrating to Type-III pairing curves (e.g., BN254 or BLS12-381) [5].\n\n"
-        "2. Off-Chain SNIZK Verification vs. On-Chain RVSC: While the paper title and slides reference the Result Verification Smart Contract (RVSC), the complex aggregated Schnorr proof (R_agg, pi_hat) is verified off-chain by the clinician client. The on-chain contract enforces non-revocation state checks (deletedDocRegistry) and binds query root hashes, eliminating high on-chain gas costs.\n\n"
+        "2. Off-Chain SNIZK Verification vs. On-Chain RVSC: While the paper title and slides reference the Result Verification Smart Contract (RVSC), the complex aggregated Schnorr proof (R_agg, pi_agg) is verified off-chain by the clinician client. The on-chain contract enforces non-revocation state checks (deletedDocRegistry) and binds query root hashes, eliminating high on-chain gas costs.\n\n"
         "3. Inverted Index Access-Pattern Leakage: Because keyword index tokens I_doc,j = g^(eta * H1(w_j)) are deterministic across documents, an honest-but-curious CSP observing query frequency over time can deduce keyword co-occurrence patterns. Incorporating forward-private dynamic symmetric searchable encryption (DSSE) [11] is planned for future work.\n\n"
         "4. Simulated Policy Checking: In this prototype, CP-ABE policy authorization is demonstrated via attribute set matching logic prior to payload decryption, rather than a full algebraic LSSS pairing engine.\n\n"
         "5. Local vs. On-Chain Deletion Latency: In local memory, setting deletedDocRegistry takes < 0.001 ms; on public Ethereum Sepolia, mining block confirmation takes 10.37 seconds.",

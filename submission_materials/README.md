@@ -26,7 +26,7 @@ submission_materials/
 │   ├── README.md                                # Folder documentation & source guide
 │   └── create_word_paper.py                     # Script to sync and regenerate docx
 ├── 3_Research_Paper_PDF/
-│   ├── IEEE_BAMKS_D_Research_Paper.pdf          # Final IEEE research paper PDF (Our Work, 14 Pages, 4.41 MB)
+│   ├── IEEE_BAMKS_D_Research_Paper.pdf          # Final IEEE research paper PDF (Our Work, 13 Pages, 4.4 MB)
 │   └── create_ieee_pdf.py                       # High-fidelity PDF generator script
 ├── 4_Source_Code/
 │   ├── BAMKS_D_Complete_Source_Code.zip         # Portable 5.2 MB archive with all source code

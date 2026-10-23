@@ -200,40 +200,40 @@ def build_pdf():
         'SecH1',
         fontName='Times-Bold',
         fontSize=11.5,
-        leading=14.5,
+        leading=14.0,
         textColor=colors.HexColor("#0F172A"),
-        spaceBefore=12,
-        spaceAfter=4,
+        spaceBefore=10,
+        spaceAfter=3,
         keepWithNext=True
     )
     st_h2 = ParagraphStyle(
         'SecH2',
         fontName='Times-Bold',
         fontSize=10,
-        leading=13,
+        leading=12.5,
         textColor=colors.HexColor("#1E3A8A"),
-        spaceBefore=9,
-        spaceAfter=3,
+        spaceBefore=7,
+        spaceAfter=2,
         keepWithNext=True
     )
     st_body = ParagraphStyle(
         'BodyP',
         fontName='Times-Roman',
-        fontSize=9.2,
-        leading=13.0,
+        fontSize=9.1,
+        leading=12.6,
         alignment=4, # Justified
         textColor=colors.HexColor("#1E293B"),
-        spaceAfter=5
+        spaceAfter=4
     )
     st_cap = ParagraphStyle(
         'FigCaption',
         fontName='Times-Italic',
         fontSize=8.2,
-        leading=11,
+        leading=10.5,
         alignment=1, # Center
         textColor=colors.HexColor("#475569"),
-        spaceBefore=3,
-        spaceAfter=8
+        spaceBefore=2,
+        spaceAfter=6
     )
     st_th = ParagraphStyle(
         'TH', fontName='Times-Bold', fontSize=8, leading=10.5, alignment=1, textColor=colors.white
@@ -247,6 +247,10 @@ def build_pdf():
     st_ref = ParagraphStyle(
         'RefP', fontName='Times-Roman', fontSize=7.8, leading=10.2, alignment=4,
         textColor=colors.HexColor("#334155"), spaceAfter=3
+    )
+    st_eq = ParagraphStyle(
+        'EqStyle', fontName='Times-Italic', fontSize=8.8, leading=12, alignment=1,
+        textColor=colors.HexColor("#0F172A"), spaceBefore=2, spaceAfter=3
     )
 
     story = []
@@ -454,7 +458,7 @@ def build_pdf():
         "2. Challenge: Prover hashes commitment, public key, and query context: <i>c</i> = <i>H</i>(<i>g</i> || <i>Y</i> || <i>R</i> || Context).\n"
         "3. Response: Prover computes response scalar: <i>s</i> = <i>r</i> + <i>c</i> &middot; <i>x</i> mod <i>p</i>.\n"
         "4. Verification: Verifier accepts if and only if: <i>g</i><sup><i>s</i></sup> &equiv; <i>R</i> &middot; <i>Y</i><sup><i>c</i></sup>.\n"
-        "In BAMKS and BAMKS-D, SNIZK proofs generated across multiple matching keywords are aggregated into a single proof (<i>R</i><sub>agg</sub>, &pi;&#770;), reducing verification complexity.",
+        "In BAMKS and BAMKS-D, SNIZK proofs generated across multiple matching keywords are aggregated into a single proof (<i>R</i><sub>agg</sub>, &pi;<sub>agg</sub>), reducing verification complexity.",
         st_body
     ))
 
@@ -479,7 +483,7 @@ def build_pdf():
         [Paragraph("<i>T</i><sub>1</sub>, <i>T</i><sub>3</sub>", st_td_l), Paragraph("Query trapdoor components", st_td_l), Paragraph("<i>T</i><sub>1</sub> = <i>g</i><sup>&phi;</sup>; <i>T</i><sub>3</sub> = <i>g</i><sup>&phi; &middot; &sum; <i>H</i><sub>1</sub>(<i>w</i><sub><i>j</i></sub>)</sup> mod <i>P</i>", st_td_l)],
         [Paragraph("<code>deletedDocRegistry</code>", st_td_l), Paragraph("Solidity storage mapping (uint256 => bool)", st_td_l), Paragraph("EVM state mapping enforcing instant <i>O</i>(1) file revocation", st_td_l)],
         [Paragraph("<i>y</i><sub><i>k</i></sub>", st_td_l), Paragraph("Public verification tag: <i>g</i><sup><i>x</i><sub><i>k</i></sub></sup> mod <i>P</i>", st_td_l), Paragraph("On-chain commitment binding document authenticity", st_td_l)],
-        [Paragraph("(<i>R</i><sub>agg</sub>, &pi;&#770;)", st_td_l), Paragraph("Aggregated Schnorr NIZK proof", st_td_l), Paragraph("Off-chain proof verifying query matching correctness", st_td_l)]
+        [Paragraph("(<i>R</i><sub>agg</sub>, &pi;<sub>agg</sub>)", st_td_l), Paragraph("Aggregated Schnorr NIZK proof", st_td_l), Paragraph("Off-chain proof verifying query matching correctness", st_td_l)]
     ]
     t2 = Table(t2_data, colWidths=[110, 164, 230])
     t2.setStyle(TableStyle([
@@ -516,7 +520,7 @@ def build_pdf():
     arch_img_path = os.path.join(diagrams_dir, "diagram_architecture.png")
     if os.path.exists(arch_img_path):
         story.append(Spacer(1, 4))
-        story.append(Image(arch_img_path, width=490, height=215))
+        story.append(Image(arch_img_path, width=480, height=190))
         story.append(Paragraph("Figure 1: BAMKS-D System Architecture &amp; Seven-Entity Topology across Edge, Cloud, Ethereum Sepolia, and IPFS.", st_cap))
 
     story.append(Paragraph("<b>B. Threat Model &amp; Trust Assumptions</b>", st_h2))
@@ -568,7 +572,7 @@ def build_pdf():
     # Figure 2: Encryption Flow
     enc_img_path = os.path.join(diagrams_dir, "encryption_flow.jpg")
     if os.path.exists(enc_img_path):
-        story.append(Image(enc_img_path, width=490, height=210))
+        story.append(Image(enc_img_path, width=480, height=190))
         story.append(Paragraph("Figure 2: Atomic SingleDocAdd Pipeline: Payload AES-256-GCM Encryption, Pinata IPFS Pinning, and O(m) Inverted Index Ingestion.", st_cap))
 
     story.append(Paragraph("<b>B. Instant File Revocation (SingleDocDelete Protocol)</b>", st_h2))
@@ -597,21 +601,20 @@ def build_pdf():
     # Figure 3: Revocation Mechanism
     rev_img_path = os.path.join(diagrams_dir, "revocation_mechanism.jpg")
     if os.path.exists(rev_img_path):
-        story.append(Image(rev_img_path, width=490, height=210))
+        story.append(Image(rev_img_path, width=480, height=190))
         story.append(Paragraph("Figure 3: SingleDocDelete Mechanism: Direct keccak256 EVM Storage Mapping Update and RVSC Enforcement.", st_cap))
 
     story.append(Paragraph("<b>C. Conjunctive Multi-Keyword Search &amp; Cloud Matching</b>", st_h2))
     story.append(Paragraph(
-        "To search for encrypted EHR records containing <i>q</i> query keywords <i>W</i><sub>query</sub> = {<i>w&#771;</i><sub>1</sub>, ..., <i>w&#771;</i><sub><i>q</i></sub>}, the clinician and cloud collaborate as follows:\n"
+        "To search for encrypted EHR records containing <i>q</i> query keywords <i>W</i><sub>query</sub> = {<i>w</i>&prime;<sub>1</sub>, ..., <i>w</i>&prime;<sub><i>q</i></sub>}, the clinician and cloud collaborate as follows:\n"
         "1. <i>Trapdoor Generation:</i> Clinician samples fresh session secret &phi; &isin; <b>Z</b><sub><i>P</i></sub><sup>*</sup> and computes trapdoor components:\n"
         "   <i>T</i><sub>1</sub> = <i>g</i><sup>&phi;</sup> mod <i>P</i>\n"
-        "   <i>T</i><sub>3</sub> = <i>g</i><sup>&phi; &middot; &sum;<sub><i>j</i>=1</sub><sup><i>q</i></sup> <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>j</i></sub>)</sup> mod <i>P</i>\n"
+        "   <i>T</i><sub>3</sub> = <i>g</i><sup>&phi; &middot; &sum; <i>H</i><sub>1</sub>(<i>w</i>&prime;<sub><i>j</i></sub>)</sup> mod <i>P</i>\n"
         "2. <i>Cloud Modular Evaluation (Eq. 6):</i> For candidate document docId, CSP computes product of index tokens:\n"
-        "   <i>I</i><sub>prod</sub> = &prod;<sub><i>j</i>=1</sub><sup><i>q</i></sup> <i>I</i><sub>doc,j</sub> mod <i>P</i> = <i>g</i><sup>&eta; &middot; &sum; <i>H</i><sub>1</sub>(<i>w</i><sub><i>j</i></sub>)</sup> mod <i>P</i>\n"
-        "   The cloud verifies algebraic equality:\n"
-        "   (<i>I</i><sub>prod</sub>)<sup>&phi;</sup> == (<i>T</i><sub>3</sub>)<sup>&eta;</sup> mod <i>P</i>\n"
+        "   <i>I</i><sub>prod</sub> = &prod; <i>I</i><sub>doc,<i>j</i></sub> mod <i>P</i> = <i>g</i><sup>&eta; &middot; &sum; <i>H</i><sub>1</sub>(<i>w</i><sub><i>j</i></sub>)</sup> mod <i>P</i>\n"
+        "   The cloud verifies algebraic equality: (<i>I</i><sub>prod</sub>)<sup>&phi;</sup> &equiv; (<i>T</i><sub>3</sub>)<sup>&eta;</sup> mod <i>P</i>\n"
         "3. <i>Soundness Guarantee:</i> Equality holds if and only if candidate record contains all <i>q</i> query keywords.\n"
-        "4. <i>Off-Chain SNIZK Verification:</i> Clinician validates aggregated Schnorr proof (<i>R</i><sub>agg</sub>, &pi;&#770;) off-chain.\n"
+        "4. <i>Off-Chain SNIZK Verification:</i> Clinician validates aggregated Schnorr proof (<i>R</i><sub>agg</sub>, &pi;<sub>agg</sub>) off-chain.\n"
         "5. <i>RVSC On-Chain Verification:</i> Smart contract <code>verifyResultProof</code> checks <code>require(!deletedDocRegistry[id])</code> for all returned documents.",
         st_body
     ))
@@ -620,9 +623,9 @@ def build_pdf():
     algo3_steps = [
         "phi <- RandomElement(Z_P*)",
         "T_1 <- (g ^ phi) mod P",
-        "sum_h <- sum_{j=1}^q H1(w~_j)",
+        "sum_h <- sum_{j=1}^q H1(w'_j)",
         "T_3 <- (g ^ (phi * sum_h)) mod P",
-        "CandidateIDs <- InvertedIndex.lookup(w~_1) intersect ... intersect InvertedIndex.lookup(w~_q)",
+        "CandidateIDs <- InvertedIndex.lookup(w'_1) intersect ... intersect InvertedIndex.lookup(w'_q)",
         "MatchedIDs <- []",
         "for each docId in CandidateIDs do",
         "    I_prod <- prod_{j=1}^q I_docId,j mod P",
@@ -641,7 +644,7 @@ def build_pdf():
     # Figure 4: Search Decrypt Flow
     srch_img_path = os.path.join(diagrams_dir, "search_decrypt_flow.jpg")
     if os.path.exists(srch_img_path):
-        story.append(Image(srch_img_path, width=490, height=210))
+        story.append(Image(srch_img_path, width=480, height=190))
         story.append(Paragraph("Figure 4: Conjunctive Multi-Keyword Search, Cloud Algebraic Matching (Eq. 6), and RVSC Verification.", st_cap))
 
     # =========================================================================
@@ -729,7 +732,7 @@ def build_pdf():
     # Figure 5: Blockchain Role
     bc_img_path = os.path.join(diagrams_dir, "blockchain_role.jpg")
     if os.path.exists(bc_img_path):
-        story.append(Image(bc_img_path, width=490, height=210))
+        story.append(Image(bc_img_path, width=480, height=190))
         story.append(Paragraph("Figure 5: Ethereum Sepolia Blockchain Architecture, Merkle Patricia Trie Storage Mappings, and RVSC Invariant Enforcement.", st_cap))
 
     # =========================================================================
@@ -738,16 +741,37 @@ def build_pdf():
     story.append(Paragraph("VII. Formal Security Analysis &amp; Theoretical Proofs", st_h1))
     story.append(Paragraph("<b>A. Theorem 1 (Correctness of Conjunctive Matching)</b>", st_h2))
     story.append(Paragraph(
-        "<b>Theorem 1 (Correctness of Conjunctive Matching):</b> Given valid query trapdoor <i>T</i><sub>query</sub> = (<i>T</i><sub>1</sub>, <i>T</i><sub>3</sub>) for keywords <i>W</i><sub>query</sub> and candidate index tokens {<i>I</i><sub>doc,j</sub>} for <i>W</i><sub>doc</sub>, "
-        "the algebraic match equation (<i>I</i><sub>prod</sub>)<sup>&phi;</sup> &equiv; (<i>T</i><sub>3</sub>)<sup>&eta;</sup> mod <i>P</i> holds if and only if <i>W</i><sub>query</sub> &sube; <i>W</i><sub>doc</sub>.\n\n"
-        "<i>Proof:</i> Let <i>W</i><sub>query</sub> = {<i>w&#771;</i><sub>1</sub>, ..., <i>w&#771;</i><sub><i>q</i></sub>}. The cloud computes:\n"
-        "<i>I</i><sub>prod</sub> = &prod;<sub><i>j</i>=1</sub><sup><i>q</i></sup> <i>I</i><sub>doc,j</sub> = &prod;<sub><i>j</i>=1</sub><sup><i>q</i></sup> <i>g</i><sup>&eta; &middot; <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>j</i></sub>)</sup> = <i>g</i><sup>&eta; &middot; &sum;<sub><i>j</i>=1</sub><sup><i>q</i></sup> <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>j</i></sub>)</sup> mod <i>P</i>.\n"
-        "Raising <i>I</i><sub>prod</sub> to query session secret &phi; yields:\n"
-        "LHS = (<i>I</i><sub>prod</sub>)<sup>&phi;</sup> = (<i>g</i><sup>&eta; &middot; &sum; <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>j</i></sub>)</sup>)<sup>&phi;</sup> = <i>g</i><sup>&eta; &middot; &phi; &middot; &sum;<sub><i>j</i>=1</sub><sup><i>q</i></sup> <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>j</i></sub>)</sup> mod <i>P</i>.\n"
-        "Correspondingly, from trapdoor definition <i>T</i><sub>3</sub> = <i>g</i><sup>&phi; &middot; &sum;<sub><i>j</i>=1</sub><sup><i>q</i></sup> <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>j</i></sub>)</sup> mod <i>P</i>. Raising <i>T</i><sub>3</sub> to master secret &eta; yields:\n"
-        "RHS = (<i>T</i><sub>3</sub>)<sup>&eta;</sup> = (<i>g</i><sup>&phi; &middot; &sum; <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>j</i></sub>)</sup>)<sup>&eta;</sup> = <i>g</i><sup>&eta; &middot; &phi; &middot; &sum;<sub><i>j</i>=1</sub><sup><i>q</i></sup> <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>j</i></sub>)</sup> mod <i>P</i>.\n"
-        "Since exponent multiplication is commutative in <b>Z</b><sub><i>P</i></sub><sup>*</sup>, LHS &equiv; RHS holds identically. Conversely, if there exists <i>w&#771;</i><sub><i>k</i></sub> &notin; <i>W</i><sub>doc</sub>, "
-        "the exponent sums differ by at least one pseudo-random hash value <i>H</i><sub>1</sub>(<i>w&#771;</i><sub><i>k</i></sub>) &ne; <i>H</i><sub>1</sub>(<i>w</i><sub><i>k</i></sub>'), causing LHS &equiv; RHS to evaluate false with probability 1 - 1/<i>P</i>. "
+        "<b>Theorem 1 (Correctness of Conjunctive Matching):</b> Given valid query trapdoor <i>T</i><sub>query</sub> = (<i>T</i><sub>1</sub>, <i>T</i><sub>3</sub>) for keywords <i>W</i><sub>query</sub> and candidate index tokens {<i>I</i><sub>doc,<i>j</i></sub>} for <i>W</i><sub>doc</sub>, "
+        "the algebraic match equation (<i>I</i><sub>prod</sub>)<sup>&phi;</sup> &equiv; (<i>T</i><sub>3</sub>)<sup>&eta;</sup> mod <i>P</i> holds if and only if <i>W</i><sub>query</sub> &sube; <i>W</i><sub>doc</sub>.",
+        st_body
+    ))
+    story.append(Paragraph(
+        "<i>Proof:</i> Let <i>W</i><sub>query</sub> = {<i>w</i>&prime;<sub>1</sub>, ..., <i>w</i>&prime;<sub><i>q</i></sub>}. The CSP evaluates the candidate index token product:",
+        st_body
+    ))
+    story.append(Paragraph(
+        "<i>I</i><sub>prod</sub> = &prod; <i>I</i><sub>doc,<i>j</i></sub> = <i>g</i><sup>&eta; &middot; &sum; <i>H</i><sub>1</sub>(<i>w</i>&prime;<sub><i>j</i></sub>)</sup> mod <i>P</i>",
+        st_eq
+    ))
+    story.append(Paragraph(
+        "Raising <i>I</i><sub>prod</sub> to the clinician query session secret &phi; yields:",
+        st_body
+    ))
+    story.append(Paragraph(
+        "LHS = (<i>I</i><sub>prod</sub>)<sup>&phi;</sup> = <i>g</i><sup>&eta; &middot; &phi; &middot; &sum; <i>H</i><sub>1</sub>(<i>w</i>&prime;<sub><i>j</i></sub>)</sup> mod <i>P</i>",
+        st_eq
+    ))
+    story.append(Paragraph(
+        "Correspondingly, from trapdoor definition <i>T</i><sub>3</sub> = <i>g</i><sup>&phi; &middot; &sum; <i>H</i><sub>1</sub>(<i>w</i>&prime;<sub><i>j</i></sub>)</sup> mod <i>P</i>, raising to master secret &eta; yields:",
+        st_body
+    ))
+    story.append(Paragraph(
+        "RHS = (<i>T</i><sub>3</sub>)<sup>&eta;</sup> = <i>g</i><sup>&eta; &middot; &phi; &middot; &sum; <i>H</i><sub>1</sub>(<i>w</i>&prime;<sub><i>j</i></sub>)</sup> mod <i>P</i>",
+        st_eq
+    ))
+    story.append(Paragraph(
+        "Since scalar exponent multiplication is commutative in <b>Z</b><sub><i>P</i></sub><sup>*</sup>, LHS &equiv; RHS holds identically. Conversely, if there exists any query keyword <i>w</i>&prime;<sub><i>k</i></sub> &notin; <i>W</i><sub>doc</sub>, "
+        "the exponent sums differ by at least one pseudo-random hash value <i>H</i><sub>1</sub>(<i>w</i>&prime;<sub><i>k</i></sub>) &ne; <i>H</i><sub>1</sub>(<i>w</i><sub><i>k</i></sub>), causing LHS &equiv; RHS to evaluate false with probability 1 - 1/<i>P</i>. "
         "This completes the proof of Theorem 1.",
         st_body
     ))
@@ -830,7 +854,7 @@ def build_pdf():
     # Figure 6: Test Results
     test_img_path = os.path.join(diagrams_dir, "testing_results.jpg")
     if os.path.exists(test_img_path):
-        story.append(Image(test_img_path, width=490, height=210))
+        story.append(Image(test_img_path, width=480, height=190))
         story.append(Paragraph("Figure 6: Automated Security &amp; Correctness Verification Suite across Tests A, B, C, D, and E.", st_cap))
 
     # =========================================================================
@@ -872,7 +896,7 @@ def build_pdf():
     # Figure 7: Scalability Chart
     chart_path = os.path.join(diagrams_dir, "chart_scalability_multi_n.png")
     if os.path.exists(chart_path):
-        story.append(Image(chart_path, width=490, height=215))
+        story.append(Image(chart_path, width=480, height=190))
         story.append(Paragraph("Figure 7: Empirical Scalability Curves: Naive Re-encryption vs. Cheng et al. [1] vs. BAMKS-D across L = 10 to 5,000 Files (Log-Log Scale).", st_cap))
 
     story.append(Paragraph("<b>B. Analysis of Speedup &amp; Crossover Points</b>", st_h2))
@@ -894,7 +918,7 @@ def build_pdf():
         "In adherence to rigorous academic standards, we explicitly delineate the architectural assumptions and boundary conditions of our prototype:\n\n"
         "1. <b>Simulated Group Algebra in Z_P*:</b> Our software prototype computes field arithmetic in (<b>Z</b><sub><i>P</i></sub><sup>*</sup>, &middot;) using the secp256k1 field prime <i>P</i> = 2<sup>256</sup> - 2<sup>32</sup> - 977. "
         "The order of <b>Z</b><sub><i>P</i></sub><sup>*</sup> is composite (<i>P</i> - 1), and bilinear pairing <i>e</i>(<i>g</i>, <i>g</i>) is simulated via modular exponentiation. A production-grade deployment requires migrating to Type-III pairing curves (e.g., BN254 or BLS12-381) [5].\n\n"
-        "2. <b>Off-Chain SNIZK Verification vs. On-Chain RVSC:</b> While the paper title and slides reference the Result Verification Smart Contract (RVSC), the complex aggregated Schnorr proof (<i>R</i><sub>agg</sub>, &pi;&#770;) is verified off-chain by the clinician client. "
+        "2. <b>Off-Chain SNIZK Verification vs. On-Chain RVSC:</b> While the paper title and slides reference the Result Verification Smart Contract (RVSC), the complex aggregated Schnorr proof (<i>R</i><sub>agg</sub>, &pi;<sub>agg</sub>) is verified off-chain by the clinician client. "
         "The on-chain contract enforces non-revocation state checks (<code>deletedDocRegistry</code>) and binds query root hashes, eliminating high on-chain gas costs.\n\n"
         "3. <b>Inverted Index Access-Pattern Leakage:</b> Because keyword index tokens <i>I</i><sub>doc,j</sub> = <i>g</i><sup>&eta; &middot; <i>H</i><sub>1</sub>(<i>w</i><sub><i>j</i></sub>)</sup> are deterministic across documents, an honest-but-curious CSP observing query frequency over time can deduce keyword co-occurrence patterns. Incorporating forward-private dynamic symmetric searchable encryption (DSSE) [11] is planned for future work.\n\n"
         "4. <b>Simulated Policy Checking:</b> In this prototype, CP-ABE policy authorization is demonstrated via attribute set matching logic prior to payload decryption, rather than a full algebraic LSSS pairing engine.\n\n"
