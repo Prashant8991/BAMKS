@@ -47,6 +47,7 @@ wheels/
 *.doc
 !submission_materials/**
 !documentation/**
+!READYTOSUBMIT/**
 
 # OS files
 # Antigravity artifacts
