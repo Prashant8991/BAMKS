@@ -1,0 +1,8 @@
+Hour_Shift,Patient_ID,Nurse_On_Duty,Ward_Bed,Heart_Rate_BPM,Blood_Pressure,Temp_F,Pain_Score_0_10,Medication_Administered,Nursing_Notes
+06:00,208,Anita_Patel_RN,Bed_12B,76,122/78,98.6,1,Cefazolin_1g_IV,"Morning postoperative round completed. Surgical dressing clean, dry, and intact."
+10:00,208,Anita_Patel_RN,Bed_12B,80,126/80,98.4,2,Paracetamol_1g_Oral,"Patient ambulated 30 meters with physical therapy. Good respiratory effort on incentive spirometry."
+14:00,208,Anita_Patel_RN,Bed_12B,78,120/76,98.8,1,None,"Normal oral intake tolerated. Surgical drain output 25mL serosanguinous fluid."
+18:00,208,Anita_Patel_RN,Bed_12B,82,124/82,98.7,2,Cefazolin_1g_IV,"Evening vitals stable. Urine output 45mL/hr via catheter."
+22:00,208,Anita_Patel_RN,Bed_12B,72,118/74,98.5,0,None,"Patient resting comfortably. Night shift handover completed."
+Policy,-,-,-,-,-,-,-,-,"(Role_Nurse OR Role_Doctor)"
+Keywords,-,-,-,-,-,-,-,-,"Routine;Nurse;Inpatient;Ward;PostOp"

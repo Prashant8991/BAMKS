@@ -1,0 +1,26 @@
+================================================================================
+CHILDREN'S HEALTH CLINIC & PEDIATRIC INPATIENT WARD RECORD
+================================================================================
+Patient ID: 207
+Patient Name: Lucas Morales | Age: 4 Years | Sex: Male
+Attending Nurse: Anita Patel, RN (General Ward)
+Department: Pediatrics & Outpatient Vaccination Clinic
+Access Policy: (Role_Nurse OR Role_Doctor)
+
+ROUTINE WELL-CHILD IMMUNIZATION & EXAMINATION:
+- Weight: 16.4 kg (50th percentile)
+- Height: 102.5 cm (55th percentile)
+- Body Temperature: 98.4°F (Afebrile)
+- Pulse: 92 bpm | SpO2: 99% on room air
+
+VACCINES ADMINISTERED TODAY (INTRAMUSCULAR):
+1. DTaP (Diphtheria, Tetanus, acellular Pertussis) — Booster 5 (Lot #DT-89412)
+2. IPV (Inactivated Poliovirus Vaccine) — Dose 4 (Lot #IP-44109)
+3. MMR (Measles, Mumps, Rubella) — Dose 2 (Lot #MMR-10293)
+4. Varicella (Chickenpox) — Dose 2 (Lot #VAR-88371)
+
+POST-VACCINATION OBSERVATION:
+Patient monitored for 20 minutes in outpatient observation bay. No immediate signs of anaphylaxis, urticaria, or bronchospasm. Caregiver counseled on low-grade post-vaccine fever management with pediatric acetaminophen.
+
+Searchable Keywords: Pediatrics, Vaccine, Routine, Child, Immunization
+================================================================================

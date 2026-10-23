@@ -39,12 +39,14 @@ wheels/
 *~
 *.metadata.json
 
-# Documents & Presentation binaries
+# Documents & Presentation binaries (allow submission materials & documentation)
 *.pdf
 *.pptx
 *.ppt
 *.docx
 *.doc
+!submission_materials/**
+!documentation/**
 
 # OS files
 .DS_Store

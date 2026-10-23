@@ -63,7 +63,7 @@ class DynamicBAMKSExtension(BAMKSSystem):
         """
         PROPOSED WORK: Search execution skipping revoked/deleted documents
         """
-        start_time = time.time()
+        start_time = time.perf_counter()
         
         # Base paper matching logic
         raw_matches = self.search(trapdoor)
@@ -74,7 +74,7 @@ class DynamicBAMKSExtension(BAMKSSystem):
             if not self.deleted_doc_registry.get(doc_id, False)
         ]
         
-        search_time_ms = (time.time() - start_time) * 1000
+        search_time_ms = (time.perf_counter() - start_time) * 1000
         return active_matches, search_time_ms
 
     def full_reindex_baseline(self, num_files: int, keywords_sample: list = None, token_phi: int = 12345, version_id: int = 1):

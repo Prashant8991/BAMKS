@@ -16,7 +16,7 @@ def print_header(title):
     print("=" * 80)
 
 def run_suite():
-    print_header("BAMKS-D CORRECTNESS & SECURITY TEST SUITE (VIVA READY)")
+    print_header("BAMKS-D CORRECTNESS & SECURITY TEST SUITE")
     print("  Validates all core cryptographic guarantees & research security requirements:")
     print("  [A] Wrong trapdoors never match a document")
     print("  [B] Deleted documents never appear in search results (RVSC Enforcement)")

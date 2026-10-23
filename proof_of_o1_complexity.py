@@ -29,7 +29,7 @@ def run_proof_experiment():
 
     for n in test_sizes:
         # 1. Setup simulated on-chain storage
-        # Array representation (what Ma'am is thinking of)
+        # Array representation (traditional linear scan approach)
         array_storage = list(range(1, n + 1))
         
         # Mapping representation (what BAMKS-D BAMKS_Registry.sol actually uses)
@@ -75,10 +75,10 @@ def run_proof_experiment():
     print(f"3. EVM Gas Differential   (dGas/dN)   : {delta_gas} gas units          -> PERFECTLY ZERO INVARIANCE")
 
     print("\n" + "=" * 85)
-    print("   WHY THERE IS ZERO TRAVERSAL IN SOLIDITY (TECHNICAL EXPLANATION FOR MA'AM)")
+    print("   WHY THERE IS ZERO TRAVERSAL IN SOLIDITY (FORMAL TECHNICAL EXPLANATION)")
     print("=" * 85)
     print("""
-1. WHY MA'AM'S DOUBT ARISES:
+1. COMMON MISCONCEPTION (TRADITIONAL DATA STRUCTURES):
    - In traditional databases or array-based data structures, finding a record requires
      iterating through indices: for(uint i=0; i<N; i++) -> which is O(N).
    - In blockchain block explorers, scanning past transaction history also traverses blocks.
