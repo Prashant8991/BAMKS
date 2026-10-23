@@ -265,7 +265,7 @@ def build_pdf():
     auth_data = [
         [
             Paragraph("<b>Prashant Singh</b> (Reg. No: 24BYB1042)<br/>School of Computer Science &amp; Engineering (SCOPE)<br/>Vellore Institute of Technology (VIT), Chennai<br/>prashant.singh2024@vitstudent.ac.in", st_author),
-            Paragraph("<b>Rushikesh Adak</b> (Reg. No: 24BYB1055)<br/>School of Computer Science &amp; Engineering (SCOPE)<br/>Vellore Institute of Technology (VIT), Chennai<br/>rushikesh.adak2024@vitstudent.ac.in", st_author)
+            Paragraph("<b>Rushikesh Adak</b> (Reg. No: 24BYB1055)<br/>School of Computer Science &amp; Engineering (SCOPE)<br/>Vellore Institute of Technology (VIT), Chennai<br/>adak.rushikesh2024@vitstudent.ac.in", st_author)
         ]
     ]
     t_auth = Table(auth_data, colWidths=[252, 252])

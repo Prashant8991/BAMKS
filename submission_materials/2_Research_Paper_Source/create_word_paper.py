@@ -334,7 +334,7 @@ def build_full_paper_docx():
     p_ar.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_ar.paragraph_format.line_spacing = 1.15
     p_ar.add_run("Rushikesh Adak\n").bold = True
-    p_ar.add_run("Reg. No: 24BYB1055\nSchool of Computer Science & Engineering (SCOPE)\nVellore Institute of Technology (VIT), Chennai\nrushikesh.adak2024@vitstudent.ac.in")
+    p_ar.add_run("Reg. No: 24BYB1055\nSchool of Computer Science & Engineering (SCOPE)\nVellore Institute of Technology (VIT), Chennai\nadak.rushikesh2024@vitstudent.ac.in")
 
     p_guide = doc.add_paragraph()
     p_guide.alignment = WD_ALIGN_PARAGRAPH.CENTER
