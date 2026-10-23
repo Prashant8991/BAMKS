@@ -37,6 +37,7 @@ wheels/
 *.swp
 *.swo
 *~
+~$*
 *.metadata.json
 
 # Documents & Presentation binaries (allow submission materials & documentation)
@@ -48,6 +49,7 @@ wheels/
 !submission_materials/**
 !documentation/**
 !READYTOSUBMIT/**
+~$*
 
 # OS files
 # Antigravity artifacts
