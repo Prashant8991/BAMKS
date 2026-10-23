@@ -97,7 +97,7 @@ python test_correctness_and_security.py
 ```bash
 python proof_of_o1_complexity.py
 ```
-*Expected Outcome:* Regression analysis across N in [10, 1000] confirming dGas/dN = 0 (constant 72,794 gas in EVM; 242,834 gas in live Sepolia receipt) and dTime/dN approx 0 us/record.
+*Expected Outcome:* Regression analysis across N in [1, 500] confirming dGas/dN = 0 (constant 50,111 gas in EVM; 132,131 gas in live Sepolia receipt) and dTime/dN approx 0 us/record.
 
 ### D. Launch Interactive Clinical Web Application
 ```bash
@@ -108,6 +108,8 @@ python app.py
 ---
 
 ## 4. Blockchain & IPFS Configuration
-- **Ethereum Sepolia Contract:** `0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3`
-- **Etherscan Sepolia URL:** `https://sepolia.etherscan.io/address/0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3`
+- **Ethereum Sepolia Contract:** `0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F`
+- **Etherscan Sepolia URL:** `https://sepolia.etherscan.io/address/0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F`
+- **Deployment Transaction:** `0x2ac22e95065d53dbebd14125b11551ff0ccc393d85a22e29adc05e282eb6371b` (Block #11975525)
 - **IPFS Storage:** Decentralized Pinata IPFS Gateway (`https://gateway.pinata.cloud/ipfs/`)
+

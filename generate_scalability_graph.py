@@ -25,11 +25,12 @@ def generate_scalability_analysis():
         return
 
     n_values = [item['L'] for item in bench_data]
-    naive_times = [item['naive_mean_ms'] for item in bench_data]
-    cheng_times = [item['cheng_mean_ms'] for item in bench_data]
-    add_times = [item['bamks_d_mean_ms'] for item in bench_data]
+    naive_times = [item.get('naive_mean_ms', item.get('naive_median_ms')) for item in bench_data]
+    cheng_times = [item.get('cheng_index_mean_ms', item.get('cheng_mean_ms')) for item in bench_data]
+    cheng_full_times = [item.get('cheng_full_mean_ms', item.get('cheng_mean_ms')) for item in bench_data]
+    add_times = [item.get('bamks_d_full_mean_ms', item.get('bamks_d_mean_ms')) for item in bench_data]
     speedup_naive = [item['speedup_vs_naive'] for item in bench_data]
-    speedup_cheng = [item['speedup_vs_cheng'] for item in bench_data]
+    speedup_cheng = [item.get('speedup_vs_cheng_index', item.get('speedup_vs_cheng')) for item in bench_data]
     index_sizes_kb = [(n * 452.0) / 1024.0 for n in n_values]
 
     # -------------------------------------------------------------------------

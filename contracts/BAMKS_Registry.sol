@@ -2,23 +2,21 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title BAMKS_Registry & RVSC Smart Contract
- * @author Rushikesh Adak
- * @dev Implements Result Verification Smart Contract (RVSC) and Dynamic Document Deletion Registry
- *      Base Paper: Cheng et al., Elsevier 2026 (BAMKS)
- *      Proposed Extension: Fine-Grained Dynamic Single-Document Revocation Mapping
+ * @title BAMKS_Registry & Dynamic Revocation Ledger
+ * @author Prashant Singh & Rushikesh Adak
+ * @dev Implements on-chain document registration and dynamic single-document revocation mapping (O(1)).
+ *      Off-chain aggregated Schnorr NIZK verification is performed by the client/edge node;
+ *      this contract enforces non-revocation membership and binding integrity on-chain.
  */
 contract BAMKS_Registry {
     address public owner;
 
-    // Structure for storing file metadata and cryptographic tags
     struct FileMetadata {
         uint256 docId;
         bytes32 fileHash;
         bytes32 publicTag; // y_k = g^(sigma_k)
         address ownerAddress;
         uint256 timestamp;
-        bool isDeleted;
     }
 
     // Storage mappings
@@ -37,7 +35,10 @@ contract BAMKS_Registry {
     }
 
     modifier onlyDocOwner(uint256 _docId) {
-        require(fileRegistry[_docId].ownerAddress == msg.sender || msg.sender == owner, "Unauthorized document owner");
+        require(
+            fileRegistry[_docId].ownerAddress == msg.sender || msg.sender == owner,
+            "Unauthorized: caller is not document owner or contract admin"
+        );
         _;
     }
 
@@ -46,9 +47,11 @@ contract BAMKS_Registry {
     }
 
     /**
-     * @dev Register a new single document index on-chain (SingleDocAdd)
+     * @dev Register a new single document index on-chain (SingleDocAdd).
+     *      Multi-owner onboarding allows any data owner to register an unused docId.
      */
     function registerDocument(uint256 _docId, bytes32 _fileHash, bytes32 _publicTag) external {
+        require(_docId != 0, "Invalid doc ID");
         require(fileRegistry[_docId].docId == 0, "Document ID already registered");
 
         fileRegistry[_docId] = FileMetadata({
@@ -56,8 +59,7 @@ contract BAMKS_Registry {
             fileHash: _fileHash,
             publicTag: _publicTag,
             ownerAddress: msg.sender,
-            timestamp: block.timestamp,
-            isDeleted: false
+            timestamp: block.timestamp
         });
 
         activeDocIds.push(_docId);
@@ -65,28 +67,29 @@ contract BAMKS_Registry {
     }
 
     /**
-     * @dev PROPOSED EXTENSION: Dynamic Single-Document Deletion (O(1) complexity)
+     * @dev PROPOSED EXTENSION: Dynamic Single-Document Revocation (O(1) complexity).
+     *      Callable by document owner or contract administrator.
+     *      Directly updates deletedDocRegistry mapping in O(1) time without array traversal.
      */
     function deleteDocument(uint256 _docId) external onlyDocOwner(_docId) {
         require(fileRegistry[_docId].docId != 0, "Document does not exist");
         require(!deletedDocRegistry[_docId], "Document already deleted");
 
         deletedDocRegistry[_docId] = true;
-        fileRegistry[_docId].isDeleted = true;
 
         emit DocumentDeleted(_docId, msg.sender, block.timestamp);
     }
 
     /**
-     * @dev Check if a document is active (not deleted)
+     * @dev Check if a document is active (registered and not revoked)
      */
     function isDocActive(uint256 _docId) external view returns (bool) {
         return (fileRegistry[_docId].docId != 0 && !deletedDocRegistry[_docId]);
     }
 
     /**
-     * @dev Result Verification Smart Contract (RVSC)
-     *      NOTE: Off-chain Schnorr NIZK proof is verified in Python (verify_snizk_proof);
+     * @dev Result Verification Smart Contract (RVSC) On-Chain Check.
+     *      NOTE: Off-chain aggregated Schnorr NIZK proof is verified by the client/edge node;
      *      this on-chain function enforces that no deleted/revoked document appears in the result set.
      */
     function verifyResultProof(
@@ -97,13 +100,12 @@ contract BAMKS_Registry {
     ) external returns (bool isValid) {
         require(_matchedDocIds.length > 0, "Matched result list cannot be empty");
 
-        // Enforce that no deleted document appears in the result set
+        // Enforce that no revoked/deleted document appears in the result set
         for (uint256 i = 0; i < _matchedDocIds.length; i++) {
-            uint256 id = _matchedDocIds[i];
-            require(!deletedDocRegistry[id], "Result includes a revoked/deleted document");
+            require(!deletedDocRegistry[_matchedDocIds[i]], "Result includes a revoked/deleted document");
         }
 
-        // Off-chain proof verified in Python; this function verifies query integrity & non-revocation on-chain
+        // Cryptographic binding over matched IDs, query challenge, proof, and chain ID
         bytes32 queryBinding = keccak256(abi.encodePacked(_matchedDocIds, _aggregatedChallenge, _aggregatedProof, block.chainid));
         isValid = (queryBinding != bytes32(0));
 
@@ -112,27 +114,9 @@ contract BAMKS_Registry {
     }
 
     /**
-     * @dev Helper to execute modular exponentiation via the EVM precompile (address 0x05)
-     */
-    function modExp(uint256 base, uint256 exp, uint256 mod) internal view returns (uint256 result) {
-        bytes memory input = abi.encodePacked(
-            uint256(32), // Length of Base
-            uint256(32), // Length of Exponent
-            uint256(32), // Length of Modulus
-            base,
-            exp,
-            mod
-        );
-        assembly {
-            let success := staticcall(sub(gas(), 2000), 0x05, add(input, 0x20), 0xc0, add(input, 0x20), 0x20)
-            switch success
-            case 0 { revert(0, 0) }
-            default { result := mload(add(input, 0x20)) }
-        }
-    }
-
-    /**
-     * @dev Get total active document count
+     * @dev Get total active document count.
+     *      NOTE: Traverses activeDocIds array for auditing/reporting purposes only.
+     *      This does NOT affect the O(1) single-document deletion path.
      */
     function getActiveDocumentCount() external view returns (uint256 count) {
         for (uint256 i = 0; i < activeDocIds.length; i++) {

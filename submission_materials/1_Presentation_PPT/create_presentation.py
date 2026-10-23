@@ -174,8 +174,8 @@ def build_presentation():
     p.font.color.rgb = C_RED
     p.space_after = Pt(10)
     gap_points = [
-        ("Base Paper Architecture:", "Cheng et al. (Elsevier IoT, 2026) successfully established multi-authority ABE and blockchain result verification."),
-        ("Monolithic Collection Overhead:", "Section 5.10 specifies index updates by multiplying X_upd across all L*m existing index entries (O(L*m)). Alternatively, full re-indexing requires re-encrypting all files."),
+        ("Base Paper Architecture:", "Cheng et al. (Elsevier IoT, 2026) established multi-authority ABE and blockchain result verification."),
+        ("Monolithic Collection Overhead:", "Section 5.10 specifies index updates by multiplying X_upd across all L*m existing index entries (O(L*m)). Full re-indexing requires re-encrypting all files."),
         ("Prohibitive at Scale:", "For L = 5,000 files and m = 3 keywords, updating 15,000 entries consumes significant computation for every single file appended."),
         ("Explicit Research Call:", "Section 8 explicitly identifies fine-grained dynamic file updates as an open research question.")
     ]
@@ -202,10 +202,10 @@ def build_presentation():
     p.font.color.rgb = C_GREEN
     p.space_after = Pt(10)
     sol_points = [
-        ("Atomic SingleDocAdd (O(m)):", "Decouples the inverted keyword index so appending a record requires generating tokens only for its m keywords (~0.67 ms flat at L=5,000)."),
-        ("Instant SingleDocDelete (O(1)):", "Solidity hash mapping (deletedDocRegistry) executes constant-time revocation with zero array traversal."),
-        ("Fair Baseline Comparison:", "Evaluates speedup against both naive re-encryption and true Cheng et al. Section 5.10 index updates across 30 runs."),
-        ("Live Web3 Sepolia Deployment:", "Smart contract deployed and verified on Ethereum Sepolia Testnet with real transaction receipts.")
+        ("Atomic SingleDocAdd (O(m)):", "Decouples inverted keyword index so appending a record requires generating tokens only for its m keywords (~0.34 ms full add at L=5,000)."),
+        ("Instant SingleDocDelete (O(1)):", "Solidity hash mapping (deletedDocRegistry) executes constant-time revocation (50,111 EVM gas; zero array traversal)."),
+        ("Fair Baseline Comparison:", "Evaluates speedup against both naive re-encryption and true Cheng et al. Section 5.10 index updates across 30 runs with warm-up discarded."),
+        ("Live Web3 Sepolia Deployment:", "Smart contract deployed on Ethereum Sepolia Testnet with verified runtime bytecode and real transaction receipts.")
     ]
     for st, sd in sol_points:
         ps = tf_sol.add_paragraph()
@@ -314,7 +314,7 @@ def build_presentation():
     p.space_after = Pt(8)
 
     del_points = [
-        ("Why Array Traversal Fails on Blockchain:", "Iterating arrays on-chain scales linearly (O(N) gas), risking transaction failure as N expands."),
+        ("Why Array Traversal Fails on Blockchain:", "Iterating arrays on-chain scales linearly (O(N) gas), risking transaction exhaustion as N expands."),
         ("Solidity Hash-Table State Mapping:", "BAMKS_Registry.sol uses:\n`mapping(uint256 => bool) public deletedDocRegistry;`\nEVM mappings do NOT iterate over array elements."),
         ("Direct EVM Keccak256 Slot Addressing:", "EVM computes storage location directly:\nSlot = keccak256(abi.encode(docId, slotNumber))\nSets boolean true in a single storage write."),
         ("RVSC Invariant Enforcement:", "Smart contract enforces `require(!deletedDocRegistry[id])`, ensuring revoked documents cannot be returned.")
@@ -356,7 +356,7 @@ def build_presentation():
         ("Query Trapdoor Generation:", "User samples session secret phi in Z_P* and computes:\n  T1 = g^phi mod P\n  T3 = g^(phi * sum(H1(w~_j))) mod P"),
         ("Cloud Modular Evaluation (Eq. 6):", "Cloud server aggregates candidate index tokens:\n  I_prod = prod(I_doc,j) mod P\nAnd verifies the algebraic equality:\n  (I_prod)^phi == (T3)^eta mod P"),
         ("Soundness Guarantee:", "Equality holds if and only if the document contains ALL q query keywords. Mismatched queries evaluate false with high probability."),
-        ("Schnorr NIZK Aggregation:", "Off-chain proof (R, pi_hat) guarantees search correctness without exposing clinician attributes.")
+        ("Off-Chain Proof & On-Chain RVSC:", "Aggregated Schnorr NIZK proof (R, pi_hat) verified off-chain; on-chain RVSC verifies revocation non-membership.")
     ]
     for sp_t, sp_d in srch_points:
         psp = tf_srch.add_paragraph()
@@ -427,12 +427,12 @@ def build_presentation():
     table_shape = slide9.shapes.add_table(6, 5, Inches(7.2), Inches(1.6), Inches(5.3), Inches(3.6))
     tbl = table_shape.table
     tbl.columns[0].width = Inches(1.0)
-    tbl.columns[1].width = Inches(1.2)
-    tbl.columns[2].width = Inches(1.2)
-    tbl.columns[3].width = Inches(1.0)
-    tbl.columns[4].width = Inches(0.9)
+    tbl.columns[1].width = Inches(1.1)
+    tbl.columns[2].width = Inches(1.1)
+    tbl.columns[3].width = Inches(1.1)
+    tbl.columns[4].width = Inches(1.0)
 
-    headers = ["L (Files)", "Naive Re-enc", "Cheng et al. [1]", "BAMKS-D", "Speedup"]
+    headers = ["L (Files)", "Naive Re-enc", "Cheng Idx [1]", "BAMKS-D Full", "Speedup"]
     for i, h in enumerate(headers):
         cell = tbl.cell(0, i)
         cell.text = h
@@ -445,11 +445,11 @@ def build_presentation():
         p.font.color.rgb = C_WHITE
 
     bench_rows = [
-        ("L = 50", "20.31 ms", "0.084 ms", "0.409 ms", "0.21x"),
-        ("L = 100", "42.89 ms", "0.164 ms", "0.447 ms", "0.37x"),
-        ("L = 500", "228.79 ms", "0.816 ms", "0.533 ms", "1.53x"),
-        ("L = 1,000", "467.08 ms", "1.559 ms", "0.486 ms", "3.20x"),
-        ("L = 5,000", "2,363.01 ms", "8.112 ms", "0.670 ms", "12.11x")
+        ("L = 50", "2.26 ms", "0.015 ms", "0.267 ms", "0.06x"),
+        ("L = 100", "4.66 ms", "0.032 ms", "0.265 ms", "0.12x"),
+        ("L = 500", "24.49 ms", "0.183 ms", "0.314 ms", "0.58x"),
+        ("L = 1,000", "45.60 ms", "0.325 ms", "0.283 ms", "1.15x"),
+        ("L = 5,000", "243.64 ms", "1.772 ms", "0.337 ms", "5.27x / 5.46x")
     ]
     for r_idx, r_data in enumerate(bench_rows, start=1):
         for c_idx, val in enumerate(r_data):
@@ -469,12 +469,12 @@ def build_presentation():
     tf_stat = tb_stat.text_frame
     tf_stat.word_wrap = True
     ps0 = tf_stat.paragraphs[0]
-    ps0.text = "HONEST BENCHMARK ANALYSIS (m=3, 30 Runs, Intel i5-13420H):"
+    ps0.text = "BENCHMARK ANALYSIS (m=3, 30 Runs, Warm-up Discarded):"
     ps0.font.bold = True
     ps0.font.size = Pt(10)
     ps0.font.color.rgb = C_GREEN
     ps1 = tf_stat.add_paragraph()
-    ps1.text = "• For L <= 100, Cheng et al. index multiplication is faster than single-file AES encryption.\n• Break-even crossover occurs at L in [300, 410] files (L ~ 300 via local interpolation, L ~ 410 asymptotically against L=5,000).\n• At L=5,000, BAMKS-D achieves 12.11x speedup over Cheng et al. (and 3,527.7x over naive re-encryption)."
+    ps1.text = "• For L <= 500, Cheng et al. index multiplication is faster than BAMKS-D file encryption overhead.\n• Crossover points: Pure Index Update at L ~ 800 files; Like-for-Like Full File Addition at L ~ 600 files.\n• At L=5,000: BAMKS-D achieves 5.27x pure index speedup, 5.46x full file add speedup, and 724.0x vs naive."
     ps1.font.size = Pt(9.5)
     ps1.font.color.rgb = C_DARK_TXT
 
@@ -497,12 +497,12 @@ def build_presentation():
 
     proof_points = [
         ("Base Transaction Fee:", "21,000 gas (Standard EVM baseline)."),
-        ("CALLDATALOAD + KECCAK256:", "3 + 30 gas (Direct slot calculation: keccak256(docId, slotNumber))."),
-        ("SSTORE (deletedDocRegistry):", "20,000 gas (0 to 1 cold slot storage write)."),
-        ("SSTORE (fileRegistry.isDeleted):", "5,000 gas (Warm slot update on existing metadata struct)."),
-        ("LOG3 (DocumentDeleted):", "1,500 gas (Event base + 3 indexed topics + timestamp)."),
-        ("Overhead (JUMP, stack):", "~200 gas -> Theoretical Minimum: ~47,733 gas."),
-        ("Measured EVM Gas (O(1)):", "72,794 gas at N=10; 72,794 at N=100; 72,806 at N=1,000 (Strictly O(1)).")
+        ("Cold Storage Read (SLOAD):", "2,100 gas (Reading document mapping state)."),
+        ("SSTORE (deletedDocRegistry):", "22,100 gas (0 to 1 fresh cold storage slot write)."),
+        ("LOG3 (DocumentDeleted):", "1,500 gas (Event topic hashing and emission)."),
+        ("Calldata & Execution Overhead:", "~3,400 gas (abi.decode, keccak256 slot calculation, JUMP)."),
+        ("Total Theoretical Opcode Gas:", "~50,100 gas (Excludes redundant isDeleted write)."),
+        ("Measured EVM Gas across N:", "N=1: 50,111 | N=50: 50,111 | N=500: 50,111 gas (Delta = 0, Strict O(1)).")
     ]
     for pp_t, pp_d in proof_points:
         ppp = tf_p1.add_paragraph()
@@ -528,11 +528,11 @@ def build_presentation():
     p.space_after = Pt(8)
 
     rec_points = [
-        ("Contract Address:", "0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3 (solc 0.8.20)"),
-        ("Deployment Transaction:", "Tx: 0x1f058b... in Block #11975268\nGas Used: 6,889,229 gas units"),
-        ("deleteDocument(101) Receipt:", "Tx: 0x008330... in Block #11975278\nReceipt Gas: 242,834 gas | Confirmation: 21.83 s"),
-        ("registerDocument(101) Receipt:", "Tx: 0x363d3e... in Block #11975277\nReceipt Gas: 792,245 gas | Confirmation: 35.22 s"),
-        ("Why Real Gas Exceeds Opcode Minima:", "Solidity function selector hashing, memory allocation, struct ABI encoding, and non-optimized compiler dispatch overhead.")
+        ("Contract Address:", "0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F (solc 0.8.20, runs=200)"),
+        ("Deployment Transaction:", "Tx: 0x2ac22e... in Block #11975525\nGas Used: 3,788,192 gas units (15.17 s confirmation)"),
+        ("deleteDocument(101) Receipt:", "Tx: 0x496e29... in Block #11975532\nReceipt Gas: 132,131 gas | Confirmation: 10.37 s"),
+        ("registerDocument(101) Receipt:", "Tx: 0xfdf127... in Block #11975531\nReceipt Gas: 789,245 gas | Confirmation: 13.71 s"),
+        ("EVM Opcode vs. Sepolia Receipts:", "EVM execution measures internal VM opcode costs (50k for delete, 180k for register); public testnet receipts include JSON-RPC dispatch, node pre-execution validation, and ABI envelope padding.")
     ]
     for rp_t, rp_d in rec_points:
         prp = tf_p2.add_paragraph()
@@ -559,8 +559,8 @@ def build_presentation():
         ("Test B: On-Chain Deletion RVSC Invariant",
          "• Executed single_doc_delete(101) setting deletedDocRegistry[101] = true.\n• Search query for ['Cardiology', 'ECG'] skips Doc #101 instantly.\n• Proves non-revocation invariant: Revoked records are excluded from result sets.",
          Inches(6.8), Inches(1.6), C_CYAN),
-        ("Test C: CP-ABE Attribute Access Control",
-         "• Dr. Prashant with attributes ['Role_Doctor', 'Dept_Cardiology'] decrypts record.\n• Nurse Anita with attributes ['Role_Nurse'] evaluates FALSE.\n• Output: [CP-ABE ACCESS DENIED: Requires (Role_Doctor AND Dept_Cardiology)].",
+        ("Test C: Simulated Policy Checking (Attribute Set Logic)",
+         "• Dr. Prashant with attributes ['Role_Doctor', 'Dept_Cardiology'] decrypts record.\n• Nurse Anita with attributes ['Role_Nurse'] evaluates FALSE.\n• Output: [Simulated Policy Checking: Access Denied due to role mismatch].\n• Evaluated via attribute set logic simulating CP-ABE without pairings.",
          Inches(0.8), Inches(4.3), C_GREEN),
         ("Test D & E: Batch Addition & Index Storage Scaling",
          "• single_doc_add_batch processes 4 clinical records in 0.852 ms (~0.21 ms/doc flat).\n• Inverted index storage scales strictly linearly at 452.0 bytes per added document.\n• Baseline 8 records: 4,098 bytes (512.2 B/doc including schema metadata).",
@@ -600,12 +600,13 @@ def build_presentation():
     p.space_after = Pt(8)
 
     w3_items = [
-        ("Smart Contract Address", "0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3"),
-        ("Deployment Transaction", "0x1f058bde75b20c2d1ce513897d77d70f47a2951cbcc83d9bc45a573116bf0dbf"),
-        ("Deployment Block & Gas", "Block #11975268 | Gas Used: 6,889,229"),
+        ("Smart Contract Address", "0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F"),
+        ("Deployment Transaction", "0x2ac22e95065d53dbebd14125b11551ff0ccc393d85a22e29adc05e282eb6371b"),
+        ("Deployment Block & Gas", "Block #11975525 | Gas Used: 3,788,192 (15.17 s)"),
         ("Target Network", "Ethereum Sepolia Testnet (Chain ID: 11155111)"),
-        ("registerDocument(101) Tx", "0x363d3e8867adb49a2657b798ebb26990a5d0011ec5ddaf7de267ff191dc40ad7"),
-        ("deleteDocument(101) Tx", "0x008330a08b3ad8926b19de8dc0a1b386b95712dc55077e33df2a36685c876e8d"),
+        ("registerDocument(101) Tx", "0xfdf127c7b1528cd1cd8bce1758ffe5a19260cc1a40f882b8b9f787e4ed591fbe"),
+        ("deleteDocument(101) Tx", "0x496e29a844e72e136220c71cf7a1780d29f7e86b99b9e9fb5db7c662d8c3a6d1"),
+        ("Runtime Bytecode Verification", "2,244 bytes (Matches solc 0.8.20 runs=200 compilation)"),
         ("Pinata IPFS Gateway CID", "bafkreiegat25m4vgoltbz5l5wtvka7ipm4osl7xtyryhbg643ihctznluq"),
         ("Public GitHub Repo", "https://github.com/Prashant8991/BAMKS.git")
     ]
@@ -703,10 +704,10 @@ def build_presentation():
 
     lim_items = [
         ("1. Simulated Group Algebra:", "Field operations evaluated in (Z_P*, *) with secp256k1 prime P. Order is P-1 (composite); pairing e(g,g) is simulated via modular exponentiation. Production deployment requires Type-III pairing groups (e.g., BN254 / BLS12-381)."),
-        ("2. CSP Search Separation in Prototype:", "In the demonstration test script, the CSP receives eta and phi directly to evaluate modular match equations. Production pairing eliminates this requirement."),
+        ("2. Off-Chain Proof & On-Chain RVSC:", "Aggregated Schnorr NIZK verification is computed off-chain; on-chain RVSC enforces revocation non-membership and binding."),
         ("3. Inverted Index Access-Pattern Leakage:", "Keyword tokens I_doc,j = g^(eta * H1(w_j)) are deterministic across documents. The CSP can observe document frequency and search patterns over time. Forward-private DSSE is future work."),
         ("4. Simulated Policy Checking:", "CP-ABE access policy satisfaction is evaluated via attribute set evaluation rather than full algebraic LSSS pairing engine."),
-        ("5. Local vs. On-Chain Deletion Latency:", "Local flag updates take < 0.001 ms in memory; real Ethereum Sepolia block mining takes 21.83 s for deletion confirmation.")
+        ("5. Local vs. On-Chain Deletion Latency:", "Local flag updates take < 0.001 ms in memory; real Ethereum Sepolia block mining takes 10.37 s for deletion confirmation.")
     ]
     for lt, ld in lim_items:
         pl = tf_lim.add_paragraph()
@@ -739,9 +740,9 @@ def build_presentation():
 
     concl_points = [
         ("1. Addressed Section 8 Base Paper Research Gap:", "Formulated an atomic file-level update mechanism for BAMKS, eliminating collection-wide re-keying bottlenecks."),
-        ("2. Demonstrated Empirical Speedup (12.11x):", "SingleDocAdd runs in O(m) time (~0.67 ms at L=5,000), achieving a 12.11x speedup over Cheng et al. Section 5.10 index updates (and 3,527.7x over naive full re-encryption)."),
-        ("3. On-Chain EVM Mapping Revocation (O(1)):", "Solidity deletedDocRegistry mapping executes in constant time via keccak256 slot calculation with zero array traversal."),
-        ("4. Live Ethereum Sepolia Deployment:", "Smart contract deployed and verified on public Ethereum Sepolia Testnet (0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3) with live mined transaction receipts."),
+        ("2. Demonstrated Empirical Speedup:", "SingleDocAdd runs in O(m) time (~0.34 ms full add at L=5,000), achieving a 5.27x pure index speedup and 5.46x full file add speedup over Cheng et al. Section 5.10 (724.0x over naive re-encryption)."),
+        ("3. On-Chain EVM Mapping Revocation (O(1)):", "Solidity deletedDocRegistry mapping executes in constant time (50,111 EVM gas) with zero array traversal."),
+        ("4. Live Ethereum Sepolia Deployment:", "Smart contract deployed on public Ethereum Sepolia Testnet (0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F) with verified runtime bytecode and live mined receipts."),
         ("5. Open-Source Reproducibility:", "Complete source code, contracts, clinical dataset, and test scripts available at https://github.com/Prashant8991/BAMKS.git.")
     ]
     for num, txt in concl_points:

@@ -1,0 +1,21 @@
+{
+  "contract_address": "0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F",
+  "deploy": {
+    "tx_hash": "0x2ac22e95065d53dbebd14125b11551ff0ccc393d85a22e29adc05e282eb6371b",
+    "block": 11975525,
+    "gas_used": 3788192,
+    "confirmation_time_s": 15.17
+  },
+  "register": {
+    "tx_hash": "fdf127c7b1528cd1cd8bce1758ffe5a19260cc1a40f882b8b9f787e4ed591fbe",
+    "block": 11975531,
+    "gas_used": 789245,
+    "confirmation_time_s": 13.71
+  },
+  "delete": {
+    "tx_hash": "496e29a844e72e136220c71cf7a1780d29f7e86b99b9e9fb5db7c662d8c3a6d1",
+    "block": 11975532,
+    "gas_used": 132131,
+    "confirmation_time_s": 10.37
+  }
+}

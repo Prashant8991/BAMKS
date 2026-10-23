@@ -899,7 +899,7 @@ def build_pdf():
     img_f8 = make_flowable_image(fig8_path, max_width=490, max_height=210)
     if img_f8:
         story.append(img_f8)
-        story.append(Paragraph("<b>Figure 8:</b> Ethereum Sepolia Blockchain & RVSC Ledger Tab: Highlights the live verified contract address (0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3), transaction hashes, and on-chain event logs.", styles['FigureCaption']))
+        story.append(Paragraph("<b>Figure 8:</b> Ethereum Sepolia Blockchain & RVSC Ledger Tab: Highlights the live verified contract address (0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F), transaction hashes, and on-chain event logs.", styles['FigureCaption']))
         story.append(Spacer(1, 10))
 
     story.append(PageBreak())
@@ -989,12 +989,12 @@ def build_pdf():
     story.append(Paragraph("10.1 Live Ethereum Sepolia Deployment Proof", styles['SectionTitle']))
     sepolia_proof_text = (
         "The BAMKS-D smart contract (<code>BAMKS_Registry.sol</code>) is deployed and verified on the public Ethereum Sepolia Testnet:<br/>"
-        "• <b>Contract Address:</b> <font color='#0284c7'><code>0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3</code></font><br/>"
-        "• <b>Etherscan Contract URL:</b> <font color='#0284c7'>https://sepolia.etherscan.io/address/0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3</font><br/>"
-        "• <b>Deployment Transaction Hash:</b> <font color='#0284c7'><code>0x1f058bde75b20c2d1ce513897d77d70f47a2951cbcc83d9bc45a573116bf0dbf</code></font><br/>"
-        "• <b>Deployment Block Number:</b> #11975268 | <b>Gas Consumed:</b> 6,889,229 gas units | <b>Deployer:</b> <code>0x7962dc40751101B4AF8299f70ABeb9feF52D50e9</code><br/>"
-        "• <b>registerDocument(101):</b> Tx: <code>0x363d3e8867adb49a2657b798ebb26990a5d0011ec5ddaf7de267ff191dc40ad7</code> (Block #11975277, 792,245 gas, 35.22 s)<br/>"
-        "• <b>deleteDocument(101):</b> Tx: <code>0x008330a08b3ad8926b19de8dc0a1b386b95712dc55077e33df2a36685c876e8d</code> (Block #11975278, 242,834 gas, 21.83 s)"
+        "• <b>Contract Address:</b> <font color='#0284c7'><code>0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F</code></font><br/>"
+        "• <b>Etherscan Contract URL:</b> <font color='#0284c7'>https://sepolia.etherscan.io/address/0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F</font><br/>"
+        "• <b>Deployment Transaction Hash:</b> <font color='#0284c7'><code>0x2ac22e95065d53dbebd14125b11551ff0ccc393d85a22e29adc05e282eb6371b</code></font><br/>"
+        "• <b>Deployment Block Number:</b> #11975525 | <b>Gas Consumed:</b> 3,788,192 gas units | <b>Deployer:</b> <code>0x7962dc40751101B4AF8299f70ABeb9feF52D50e9</code><br/>"
+        "• <b>registerDocument(101):</b> Tx: <code>0xfdf127c7b1528cd1cd8bce1758ffe5a19260cc1a40f882b8b9f787e4ed591fbe</code> (Block #11975531, 789,245 gas, 13.71 s)<br/>"
+        "• <b>deleteDocument(101):</b> Tx: <code>0x496e29a844e72e136220c71cf7a1780d29f7e86b99b9e9fb5db7c662d8c3a6d1</code> (Block #11975532, 132,131 gas, 10.37 s)"
     )
     story.append(Paragraph(sepolia_proof_text, styles['BodyCustom']))
     story.append(Spacer(1, 8))
@@ -1053,20 +1053,20 @@ def build_pdf():
             Paragraph("O(L &times; m) full re-keying or index multiplication", styles['TableCellCode']),
             Paragraph("O(m) independent indexing", styles['TableCellCode']),
             Paragraph("Index appended without touching unaffected files", styles['TableCell']),
-            Paragraph("12.11&times; faster over index update at L=5,000; 3,527.7&times; over naive re-encryption", styles['TableCellBold'])
+            Paragraph("5.27&times; faster over index update at L=5,000; 5.46&times; over full file addition; 724.0&times; over naive re-encryption", styles['TableCellBold'])
         ],
         [
             Paragraph("Deletion Complexity", styles['TableCellBold']),
             Paragraph("O(L &times; m) full collection rebuild", styles['TableCellCode']),
             Paragraph("O(1) smart-contract mapping flag", styles['TableCellCode']),
             Paragraph("Utilizes EVM <code>deletedDocRegistry</code> state mapping", styles['TableCell']),
-            Paragraph("Strict constant time (0.0007 ms local flag; 242,834 on-chain gas)", styles['TableCellBold'])
+            Paragraph("Strict constant time (0.0007 ms local flag; 50,111 EVM gas; 132,131 on-chain gas)", styles['TableCellBold'])
         ],
         [
             Paragraph("Blockchain Deployment", styles['TableCellBold']),
             Paragraph("Theoretical simulation on local Ganache", styles['TableCell']),
             Paragraph("Live Ethereum Sepolia Testnet deployment", styles['TableCell']),
-            Paragraph("Deployed at <code>0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3</code>", styles['TableCell']),
+            Paragraph("Deployed at <code>0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F</code>", styles['TableCell']),
             Paragraph("Real Web3 transaction hashes, Etherscan auditability", styles['TableCellBold'])
         ],
         [

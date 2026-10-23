@@ -68,13 +68,14 @@
 
 The `BAMKS_Registry.sol` smart contract is live and verified on the public Ethereum Sepolia Testnet:
 
-- **Contract Address:** [`0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3`](https://sepolia.etherscan.io/address/0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3)
-- **Deployment Tx Hash:** [`0x1f058bde75b20c2d1ce513897d77d70f47a2951cbcc83d9bc45a573116bf0dbf`](https://sepolia.etherscan.io/tx/0x1f058bde75b20c2d1ce513897d77d70f47a2951cbcc83d9bc45a573116bf0dbf)
-- **Deployment Block:** #11975268 (Gas Used: 6,889,229)
-- **Registration Tx Hash (`registerDocument`):** [`0x363d3e8867adb49a2657b798ebb26990a5d0011ec5ddaf7de267ff191dc40ad7`](https://sepolia.etherscan.io/tx/0x363d3e8867adb49a2657b798ebb26990a5d0011ec5ddaf7de267ff191dc40ad7)
-  - Confirmed in Block #11975277 | Gas Used: 792,245 | Latency: 35.22 s
-- **Deletion Tx Hash (`deleteDocument`):** [`0x008330a08b3ad8926b19de8dc0a1b386b95712dc55077e33df2a36685c876e8d`](https://sepolia.etherscan.io/tx/0x008330a08b3ad8926b19de8dc0a1b386b95712dc55077e33df2a36685c876e8d)
-  - Confirmed in Block #11975278 | Gas Used: 242,834 | Latency: 21.83 s
+- **Contract Address:** [`0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F`](https://sepolia.etherscan.io/address/0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F)
+- **Deployment Tx Hash:** [`0x2ac22e95065d53dbebd14125b11551ff0ccc393d85a22e29adc05e282eb6371b`](https://sepolia.etherscan.io/tx/0x2ac22e95065d53dbebd14125b11551ff0ccc393d85a22e29adc05e282eb6371b)
+- **Deployment Block:** #11975525 (Gas Used: 3,788,192 | 15.17 s)
+- **Registration Tx Hash (`registerDocument`):** [`0xfdf127c7b1528cd1cd8bce1758ffe5a19260cc1a40f882b8b9f787e4ed591fbe`](https://sepolia.etherscan.io/tx/0xfdf127c7b1528cd1cd8bce1758ffe5a19260cc1a40f882b8b9f787e4ed591fbe)
+  - Confirmed in Block #11975531 | Gas Used: 789,245 | Latency: 13.71 s
+- **Deletion Tx Hash (`deleteDocument`):** [`0x496e29a844e72e136220c71cf7a1780d29f7e86b99b9e9fb5db7c662d8c3a6d1`](https://sepolia.etherscan.io/tx/0x496e29a844e72e136220c71cf7a1780d29f7e86b99b9e9fb5db7c662d8c3a6d1)
+  - Confirmed in Block #11975532 | Gas Used: 132,131 | Latency: 10.37 s
+- **EVM Opcode Invariance ($O(1)$):** Measured 50,111 gas across $N \in \{1, 50, 500\}$
 - **Network:** Ethereum Sepolia (Chain ID: `11155111`)
 
 ---
@@ -132,7 +133,7 @@ cp .env.example .env
 Configure your `.env` parameters:
 - `SEPOLIA_RPC_URL`: Ethereum Sepolia node endpoint
 - `SEPOLIA_PRIVATE_KEY`: Testnet wallet private key (never use mainnet funds)
-- `SEPOLIA_CONTRACT_ADDRESS`: `0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3`
+- `SEPOLIA_CONTRACT_ADDRESS`: `0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F`
 - `PINATA_API_KEY` & `PINATA_API_SECRET` / `PINATA_JWT`: Pinata IPFS credentials
 
 ---

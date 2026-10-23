@@ -36,7 +36,7 @@ rushikesh.adak2024@vitstudent.ac.in}
 \maketitle
 
 \begin{abstract}
-In cloud-edge IoT architectures for healthcare, sharing encrypted Electronic Health Records (EHR) demands fine-grained access control, conjunctive keyword search, and verifiable query results. The BAMKS scheme (Cheng et al., \textit{Internet of Things}, 2026) addressed multi-authority access control and blockchain result verification, yet its index update mechanism requires either re-indexing the entire collection or executing $O(L \cdot m)$ group updates across all existing documents. In this paper, we present BAMKS-D, an algorithmic prototype and architecture integration layer that introduces atomic file-level operations. Single-document addition operates in strict $O(m)$ time, achieving a \textbf{12.11$\times$ speedup} at $L=5,000$ files over Cheng et al. Section 5.10 index updates (and 3,527.7$\times$ over naive full re-encryption). Single-document revocation is mapped directly to Ethereum Virtual Machine (EVM) storage (\texttt{mapping(uint256 => bool) deletedDocRegistry}), achieving $O(1)$ constant-time lookup with zero array traversal. We validate the architecture through live smart contract deployment on the Ethereum Sepolia Testnet (\texttt{0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3}), decentralized IPFS storage, and a 30-run empirical benchmark ($m=3$). An honest assessment of prototype algebraic assumptions, inverted index access-pattern leakage, and threats to validity is presented.
+In cloud-edge IoT architectures for healthcare, sharing encrypted Electronic Health Records (EHR) demands fine-grained access control, conjunctive keyword search, and verifiable query results. The BAMKS scheme (Cheng et al., \textit{Internet of Things}, 2026) introduced multi-authority access control and blockchain result verification, yet its index update mechanism requires either re-indexing the entire corpus or updating $L \cdot m$ index tokens across all existing records. In this paper, we present BAMKS-D, an algorithmic prototype and architecture integration layer introducing atomic file-level operations. Single-document addition operates in strict $O(m)$ time, achieving a \textbf{5.27$\times$ speedup} for pure index operations at $L=5,000$ files over Cheng et al. Section 5.10 updates (and \textbf{724.0$\times$} over naive full re-encryption). For like-for-like end-to-end file addition, BAMKS-D achieves a \textbf{5.46$\times$ speedup} over Cheng et al. Single-document revocation is mapped directly to Ethereum Virtual Machine (EVM) storage (\texttt{mapping(uint256 => bool) deletedDocRegistry}), achieving $O(1)$ constant-time lookup with zero array traversal on the deletion path. We validate the architecture through smart contract deployment on Ethereum Sepolia (\texttt{0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F}), decentralized IPFS storage, and 30-run empirical benchmarks ($m=3$). An honest assessment of prototype algebraic assumptions in $\mathbb{Z}_P^*$, deterministic keyword tokens, off-chain proof verification, and threats to validity is presented.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -45,48 +45,49 @@ Searchable Encryption, Attribute-Based Encryption, Blockchain, Smart Contracts, 
 
 \section{Introduction}
 
-The proliferation of Internet of Medical Things (IoMT) devices—such as wireless cardiac monitors, ambulatory pulse oximeters, and bedside telemetry sensors—has transformed contemporary healthcare delivery \cite{gupta2023security, dhinakaran2025safeguarding}. Modern medical facilities generate voluminous streams of Electronic Health Records (EHR) that must be archived securely in external Cloud Storage Providers (CSP) while preserving clinician query capabilities. Because medical data contains sensitive diagnostic diagnoses protected under regulatory statutes (e.g., HIPAA and GDPR), plaintexts must be encrypted under fine-grained access policies before outsourcing \cite{janarthanan2024privacy}.
+The proliferation of Internet of Medical Things (IoMT) devices—such as wireless cardiac monitors, ambulatory pulse oximeters, and bedside telemetry sensors—has transformed contemporary healthcare delivery \cite{gupta2023security, dhinakaran2025safeguarding}. Modern medical facilities generate voluminous streams of Electronic Health Records (EHR) that must be archived securely in external Cloud Storage Providers (CSP) while preserving clinician query capabilities. Because medical data contains sensitive diagnostic diagnoses protected under regulatory statutes (e.g., HIPAA and GDPR), plaintexts must be encrypted under fine-grained access policies before outsourcing.
 
-To reconcile cryptographic confidentiality with expressive querying, Ciphertext-Policy Attribute-Based Keyword Search (CP-ABKS) schemes were formulated \cite{boneh2004peks, bethencourt2007cpabe}. In CP-ABKS, data owners encrypt documents under an access structure (e.g., $(\text{Role\_Doctor} \land \text{Dept\_Cardiology})$), and only clinicians with valid attribute credentials can generate search trapdoors or decrypt returned records \cite{sahai2005fuzzy, waters2011expressive}. Recently, Cheng et al. \cite{cheng2026bamks} proposed BAMKS, introducing decentralized multi-authority key generation, multi-owner collaborative indexing, and a blockchain Result Verification Smart Contract (RVSC) utilizing aggregated Schnorr Non-Interactive Zero-Knowledge (SNIZK) proofs \cite{schnorr1991}.
+To reconcile cryptographic confidentiality with expressive querying, Ciphertext-Policy Attribute-Based Keyword Search (CP-ABKS) schemes were formulated, originating from verifiable attribute-based search by Zheng et al. \cite{zheng2014vabks} building upon foundational searchable encryption by Boneh et al. \cite{boneh2004peks} and CP-ABE by Bethencourt et al. \cite{bethencourt2007cpabe}. In CP-ABKS, data owners encrypt documents under an access structure (e.g., $(\text{Role\_Doctor} \land \text{Dept\_Cardiology})$), and only clinicians with valid attribute credentials can generate search trapdoors or decrypt returned records \cite{sahai2005fuzzy, waters2011expressive, goyal2006attribute}. Advanced variants introduced non-monotonic policies \cite{ostrovsky2007attribute}, multi-authority decentralized key generation \cite{chase2007multi, lewko2010multiauthority}, predicate evaluations \cite{katz2013predicate}, and dynamic broadcast structures \cite{delerablee2007dynamic}. Recently, Cheng et al. \cite{cheng2026bamks} proposed BAMKS, introducing decentralized multi-authority key generation, multi-owner collaborative indexing, and a blockchain Result Verification Smart Contract (RVSC) utilizing aggregated Schnorr Non-Interactive Zero-Knowledge (SNIZK) proofs \cite{schnorr1991}.
 
-\textbf{The Open Challenge in BAMKS:} In Section 8 of their foundational paper, Cheng et al. identified a critical operational bottleneck \cite{cheng2026bamks}: their architecture supports dynamic user credential updates, but does not provide an efficient mechanism for single-file additions or deletions. Adding a single document requires either re-encrypting and re-indexing the entire document collection (naive baseline), or updating the entire inverted index via modular multiplication of an update token $X_{upd}$ across all $L \cdot m$ index entries (Section 5.10 baseline) \cite{cheng2026bamks}. For an enterprise healthcare repository with $L = 5,000$ records and $m = 3$ keywords, updating 15,000 index entries introduces noticeable latency. Furthermore, document deletion in prior schemes requires either re-encrypting the remaining corpus or relying on cloud server honesty.
+\textbf{The Open Challenge in BAMKS:} In Section 8 of their paper, Cheng et al. identified a critical operational bottleneck \cite{cheng2026bamks}: their architecture supports dynamic user credential updates, but does not define an efficient mechanism for single-file additions or deletions. Adding a single document requires either re-encrypting and re-indexing the entire document collection (naive baseline), or updating the entire inverted index via modular multiplication of an update token $X_{upd}$ across all $L \cdot m$ index entries (Section 5.10 baseline) \cite{cheng2026bamks}. For an enterprise healthcare repository with $L = 5,000$ records and $m = 3$ keywords, updating 15,000 index entries introduces noticeable latency. Furthermore, document deletion was not defined in Cheng et al. \cite{cheng2026bamks}, forcing reliance on full corpus re-encryption ($O(L \cdot m)$ assumption) or cloud server honesty.
 
 \textbf{Contributions:} In this work, we propose \textbf{BAMKS-D}, an architecture integration and dynamic evaluation framework that addresses these limitations:
 \begin{itemize}
     \item \textbf{Atomic Single-Document Addition ($O(m)$):} We decouple the inverted keyword index so that appending a new EHR requires generating ciphertexts and index tokens for only the $m$ keywords of that specific file, eliminating collection-wide re-indexing.
-    \item \textbf{Instant On-Chain Document Revocation ($O(1)$):} We formulate an EVM state mapping mechanism (\texttt{deletedDocRegistry}) that executes in constant time via \texttt{keccak256} direct slot addressing, avoiding iterative blockchain array traversal.
-    \item \textbf{Live Ethereum Sepolia Deployment:} We deploy and verify \texttt{BAMKS\_Registry.sol} on the public Ethereum Sepolia Testnet (\texttt{0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3}), reporting receipt-based gas consumption and confirmation times.
-    \item \textbf{Rigorous Fair Benchmarks (30 Runs):} We evaluate BAMKS-D against both naive re-encryption and the true Cheng et al. Section 5.10 index update baseline, demonstrating a \textbf{12.11$\times$ speedup} at $L=5,000$ files on an Intel Core i5-13420H platform.
+    \item \textbf{Instant On-Chain Document Revocation ($O(1)$):} We formulate an EVM state mapping mechanism (\texttt{deletedDocRegistry}) that executes in constant time via \texttt{keccak256} direct slot addressing, avoiding iterative blockchain array traversal on the deletion path.
+    \item \textbf{Live Ethereum Sepolia Deployment:} We deploy and verify \texttt{BAMKS\_Registry.sol} on the public Ethereum Sepolia Testnet (\texttt{0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F}), reporting receipt-based gas consumption and confirmation times.
+    \item \textbf{Rigorous Fair Benchmarks (30 Runs):} We evaluate BAMKS-D against both naive re-encryption and the true Cheng et al. Section 5.10 index update baseline without warm-up anomalies, demonstrating a \textbf{5.27$\times$ speedup} for pure index operations and \textbf{5.46$\times$ speedup} for full file additions at $L=5,000$ files on an Intel Core i5-13420H platform.
 \end{itemize}
 
 \section{Related Work}
 
-Public-Key Encryption with Keyword Search (PEKS) was introduced by Boneh et al. \cite{boneh2004peks}, enabling untrusted servers to evaluate keyword matches. However, basic PEKS was limited to single keywords and vulnerable to Keyword Guessing Attacks (KGA). Sahai and Waters \cite{sahai2005fuzzy} formulated Attribute-Based Encryption (ABE), which Bethencourt et al. \cite{bethencourt2007cpabe} extended to Ciphertext-Policy ABE (CP-ABE). Waters \cite{waters2011expressive} formalized expressive CP-ABE using Linear Secret Sharing Schemes (LSSS). Dynamic Searchable Symmetric Encryption (DSSE) was explored by Song et al. \cite{song2000practical}, Curtmola et al. \cite{curtmola2011searchable}, Kamara et al. \cite{kamara2012dynamic}, and Bost \cite{bost2016sophos}, establishing forward and backward security notions for symmetric settings.
+Searchable encryption originated with symmetric constructions by Song et al. \cite{song2000practical}, formal security definitions by Curtmola et al. \cite{curtmola2011searchable}, and dynamic extensions by Kamara et al. \cite{kamara2012dynamic} and Bost \cite{bost2016sophos}. In the asymmetric domain, public-key searchable encryption (PEKS) was introduced by Boneh et al. \cite{boneh2004peks}. To provide expressive access policies, Zheng et al. \cite{zheng2014vabks} developed VABKS for verifiable attribute-based search.
 
-In attribute-based search, Li et al. \cite{li2021verifiable} developed verifiable data sharing with outsourced decryption, while Zhang et al. \cite{zhang2022subversion} investigated subversion-resistant search over cloud storage. Multi-authority architectures were analyzed by Chase \cite{chase2007multi} and Lewko and Waters \cite{lewko2010multiauthority}. Predicate encryption schemes supporting inner-product matching were proposed by Katz, Sahai, and Waters \cite{katz2013predicate}. Broadcast encryption techniques were studied by Delerabl\'ee et al. \cite{delerablee2007dynamic}. Blockchain-assisted searchable encryption was explored by Yang et al. \cite{yang2022blockchain}, Sun et al. \cite{sun2021privacy}, and Cheng et al. \cite{cheng2026bamks}, using smart contracts on Ethereum \cite{wood2024ethereum} and decentralized IPFS storage \cite{benet2014ipfs}. Table~\ref{tab:comparison} contrasts BAMKS-D against foundational schemes.
+Recent research has integrated blockchain ledgers to eliminate single points of failure in cloud servers \cite{wood2024ethereum, benet2014ipfs}. Liu et al. \cite{liu2022emk} designed EMK-ABSE for cloud-edge multi-keyword search, while Su et al. \cite{su2022barmk} formulated BA-RMKABSE supporting keyword updates in smart health systems. Zhang et al. \cite{zhang2023abcks} proposed ABCKS for conjunctive keywords with verifiable fairness. Liang et al. \cite{liang2023vmse} developed VMSE, which supports keyword updating in multi-user settings. Cheng et al. \cite{cheng2026bamks} synthesized multi-owner collaborative search with aggregated SNIZK result verification (BAMKS), but left single-document dynamic updates unresolved. Table~\ref{tab:comparison} contrasts BAMKS-D with representative state-of-the-art schemes.
 
-\begin{table}[htbp]
-\caption{Comparison of Searchable Encryption Schemes}
+\begin{table*}[htbp]
+\caption{Feature and Complexity Comparison of Attribute-Based Searchable Encryption Schemes}
 \label{tab:comparison}
 \centering
-\begin{tabular}{lcccc}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{Scheme} & \textbf{Query} & \textbf{Access Control} & \textbf{Update Granularity} & \textbf{Add Cost} \\
+\textbf{Scheme} & \textbf{Conjunctive Multi-KW} & \textbf{CP-ABE Access Control} & \textbf{Blockchain Assisted} & \textbf{Dynamic Update Scope} & \textbf{Single-Doc Revocation} & \textbf{Deletion Complexity} \\
 \midrule
-Boneh \cite{boneh2004peks} & Single & None (Public Key) & Static Index & $O(1)$ \\
-Bethencourt \cite{bethencourt2007cpabe} & None & CP-ABE Tree & Key Re-issuance & N/A \\
-Li et al. \cite{li2021verifiable} & Conjunctive & Role Matrix & Batch Re-keying & $O(L \cdot m)$ \\
-Zhang et al. \cite{zhang2022subversion} & Multi-KW & Multi-Auth ABE & Index Tree Update & $O(m \log L)$ \\
-Cheng \cite{cheng2026bamks} (Base) & Conjunctive & CP-ABE + $\Phi$ & Sec 5.10 Index Mult. & $O(L \cdot m)$ \\
-\textbf{BAMKS-D} & \textbf{Conjunctive} & \textbf{Multi-Auth CP-ABE} & \textbf{Atomic File-Level} & \textbf{Strict $O(m)$} \\
+VABKS (Zheng et al., 2014) \cite{zheng2014vabks} & $\times$ (Single-KW) & Single-Authority & $\times$ (Cloud Only) & Static Index & $\times$ & N/A \\
+EMK-ABSE (Liu et al., 2022) \cite{liu2022emk} & $\checkmark$ & Edge-Assisted & $\times$ (Cloud Only) & Static Index & $\times$ & N/A \\
+BA-RMKABSE (Su et al., 2022) \cite{su2022barmk} & $\checkmark$ & Attribute Hiding & $\checkmark$ (Ethereum) & Keyword-Level Update & $\times$ & N/A \\
+ABCKS (Zhang et al., 2023) \cite{zhang2023abcks} & $\checkmark$ & Multi-Authority & $\checkmark$ (Consortium) & Static Index & $\times$ & N/A \\
+VMSE (Liang et al., 2023) \cite{liang2023vmse} & $\checkmark$ & Multi-User & $\times$ (Cloud Only) & Keyword-Level Update & $\times$ & N/A \\
+BAMKS (Cheng et al., 2026) \cite{cheng2026bamks} & $\checkmark$ & Multi-Authority CP-ABE & $\checkmark$ (Smart Contract) & Corpus Version ($L \cdot m$) & $\times$ (Not Defined) & $O(L \cdot m)$ (Assumed) \\
+\textbf{BAMKS-D (This Work)} & $\checkmark$ & \textbf{Multi-Authority CP-ABE} & $\checkmark$ \textbf{(Ethereum Sepolia)} & \textbf{Atomic Single-Doc ($m$)} & $\checkmark$ \textbf{(EVM Mapping)} & \textbf{Strict $O(1)$} \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \section{Preliminaries \& System Model}
 
 \subsection{Prototype Algebraic Setting}
-In our software prototype, algebraic computations are evaluated in the multiplicative group $(\mathbb{Z}_P^*, \cdot)$ using the 256-bit prime $P = 2^{256} - 2^{32} - 977$ (the secp256k1 field prime), with generator $g = 2$. We explicitly note that $\mathbb{Z}_P^*$ has composite order $P-1$ and does not support bilinear pairings; pairings $e(g_1, g_2)$ are evaluated via modular exponentiation for prototype simulation. Cryptographic hash functions include $H_1: \{0,1\}^* \to \mathbb{Z}_P^*$ and $H_2: \{0,1\}^* \to \{0,1\}^{256}$ (SHA-256).
+In our software prototype, algebraic computations are evaluated in the multiplicative group $(\mathbb{Z}_P^*, \cdot)$ using the 256-bit prime $P = 2^{256} - 2^{32} - 977$ (the secp256k1 field prime), with generator $g = 2$. We explicitly note that $\mathbb{Z}_P^*$ has composite order $P-1$ and does not support bilinear pairings; pairings $e(g_1, g_2)$ are evaluated via modular exponentiation for prototype simulation. Cryptographic hash functions include $H_1: \{0,1\}^* \to \mathbb{Z}_P^*$ and $H_2: \{0,1\}^* \to \{0,1\}^{256}$ (SHA-256):
 \begin{equation}
 P = 2^{256} - 2^{32} - 977
 \end{equation}
@@ -134,197 +135,157 @@ The CSP appends $Index_{doc}$ to the global inverted index without modifying any
 \end{algorithm}
 
 \subsection{On-Chain Single-Document Revocation}
-Revoking a document executes on-chain via Algorithm~\ref{alg:del}, updating the mapping storage directly.
+Revoking a document executes on-chain via Algorithm~\ref{alg:del}. The Solidity smart contract directly updates a mapping entry (\texttt{deletedDocRegistry[docId] = true}). In the EVM, mapping resolution computes the storage slot directly via $\text{keccak256}(docId, slotNumber)$ in $O(1)$ constant time. No array traversal or block scanning is executed on the deletion path. Access control permits revocation only by the verified document owner or contract administrator.
 
 \begin{algorithm}[htbp]
 \caption{SingleDocDelete($docId$) [On-Chain EVM]}
 \label{alg:del}
 \begin{algorithmic}[1]
-\REQUIRE Document identifier $docId$, transaction sender $msg.sender$.
-\ENSURE Document revoked in EVM state, emitting \texttt{DocumentDeleted}.
-\STATE \textbf{require} $\texttt{fileRegistry}[docId].\text{ownerAddress} == msg.sender$
+\REQUIRE Document identifier $docId$, caller $msg.sender$.
+\ENSURE Document marked revoked in EVM state mapping.
+\STATE \textbf{require} $\texttt{fileRegistry}[docId].\text{ownerAddress} == msg.sender \lor msg.sender == owner$
+\STATE \textbf{require} $\texttt{fileRegistry}[docId].docId \neq 0$
 \STATE \textbf{require} $!\texttt{deletedDocRegistry}[docId]$
-\STATE $slot \leftarrow \text{keccak256}(\text{abi.encode}(docId, slotNumber))$
 \STATE $\texttt{deletedDocRegistry}[docId] \leftarrow \text{true}$
-\STATE $\texttt{fileRegistry}[docId].\text{isDeleted} \leftarrow \text{true}$
 \STATE \textbf{emit} $\texttt{DocumentDeleted}(docId, msg.sender, block.timestamp)$
 \STATE \textbf{return} $\text{true}$
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Conjunctive Keyword Search}
+\subsection{Conjunctive Keyword Search \& Off-Chain Verification}
 A clinician querying keywords $\widetilde{W} = \{\widetilde{w}_1, \dots, \widetilde{w}_q\}$ generates trapdoor tokens:
 \begin{equation}
 T_1 = g^\phi \pmod P, \quad T_3 = g^{(\phi \sum H_1(\widetilde{w}_j)) \pmod{P-1}} \pmod P
 \end{equation}
-The CSP verifies matches for active documents via Algorithm~\ref{alg:search}:
+The CSP evaluates matching for candidate documents via:
 \begin{equation}
 (I_{prod})^\phi \equiv (T_3)^\eta \equiv g^{(\eta \phi \sum H_1(\widetilde{w}_j)) \pmod{P-1}} \pmod P
 \end{equation}
+The aggregated Schnorr NIZK proof is verified off-chain by the edge/client node. The on-chain smart contract function \texttt{verifyResultProof} enforces that no revoked document ID is returned in the result set and binds the query challenge to the current blockchain state.
 
-\begin{algorithm}[htbp]
-\caption{ConjunctiveSearch($Trap, Index, deletedRegistry$)}
-\label{alg:search}
-\begin{algorithmic}[1]
-\REQUIRE Trapdoor $Trap$, Cloud Index $Index$, On-chain deletion registry.
-\ENSURE Search Result List $SRL$.
-\STATE $SRL \leftarrow \emptyset$
-\FORALL{$docId \in Index_W$}
-    \IF{$deletedRegistry[docId] == \text{true}$}
-        \STATE \textbf{continue}
-    \ENDIF
-    \IF{all query tokens present in $Index_W[docId]$}
-        \STATE $I_{prod} \leftarrow \prod I_{doc,j} \pmod P$
-        \IF{$(I_{prod})^\phi \equiv (T_3)^\eta \pmod P$}
-            \STATE $SRL \leftarrow SRL \cup \{docId\}$
-        \ENDIF
-    \ENDIF
-\ENDFOR
-\STATE \textbf{return} $SRL$
-\end{algorithmic}
-\end{algorithm}
+\section{Implementation Details}
 
-\begin{algorithm}[htbp]
-\caption{AggregatedSchnorrNIZKVerify($SRL, \{y_k\}, \hat{\pi}, R$)}
-\label{alg:nizk}
-\begin{algorithmic}[1]
-\REQUIRE Result list $SRL$, public tags $\{y_k\}$, aggregated proof $(\hat{\pi}, R)$.
-\ENSURE Verification decision (Accept / Reject).
-\STATE $RHS \leftarrow g^{\hat{\pi}} \pmod P$
-\FORALL{$k \in SRL$}
-    \STATE $h_k^* \leftarrow H_1(y_k^* \parallel R)$; $RHS \leftarrow RHS \cdot (y_k^*)^{-h_k^*} \pmod P$
-\ENDFOR
-\IF{$R == RHS$}
-    \STATE \textbf{return} Accept
-\ELSE
-    \STATE \textbf{return} Reject
-\ENDIF
-\end{algorithmic}
-\end{algorithm}
-
-\section{Complexity \& EVM Gas Analysis}
-
-\subsection{Asymptotic Complexity Comparison}
-Table~\ref{tab:complexity} contrasts the asymptotic complexity of BAMKS-D against naive full re-encryption and the base paper \cite{cheng2026bamks}. While Cheng et al. Section 5.10 avoids file re-encryption, it still requires updating all $L \cdot m$ index entries ($O(L \cdot m)$). BAMKS-D operates in strict $O(m)$ time for additions and $O(1)$ for deletions.
+The software architecture is implemented in Python 3.11 with Web3.py for smart contract interaction and PyCryptodome for symmetric encryption. Smart contracts were authored in Solidity 0.8.20 and compiled with the optimizer enabled (200 runs). Decentralized storage leverages the Pinata IPFS API (CID v1).
 
 \begin{table}[htbp]
-\caption{Asymptotic Complexity Comparison}
-\label{tab:complexity}
+\caption{Hardware and Software Experimental Environment}
+\label{tab:env}
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Component} & \textbf{Specification} \\
+\midrule
+Processor & 13th Gen Intel(R) Core(TM) i5-13420H (8 Cores, 12 Threads) \\
+Clock Speed & 2.10 GHz Base, up to 4.60 GHz Boost \\
+RAM & 16.0 GB DDR5 \\
+Operating System & Windows 11 Home 64-bit \\
+EVM Environment & Py-EVM / Eth-Tester \& Ethereum Sepolia Testnet \\
+Solidity Compiler & solc v0.8.20 (optimize-runs = 200) \\
+Testnet Contract & \texttt{0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Experimental Evaluation \& Discussion}
+
+\subsection{EVM Gas Consumption & O(1) Empirical Verification}
+We measured gas consumption across both standard EVM execution and live mined Ethereum Sepolia receipts.
+
+\begin{table}[htbp]
+\caption{Smart Contract Gas Metrics & Confirmation Times}
+\label{tab:gas}
 \centering
 \begin{tabular}{lccc}
 \toprule
-\textbf{Operation} & \textbf{Naive Baseline} & \textbf{Cheng et al. \cite{cheng2026bamks}} & \textbf{BAMKS-D} \\
+\textbf{Function} & \textbf{Standard EVM} & \textbf{Sepolia Receipt} & \textbf{Confirmation Time} \\
 \midrule
-SingleDocAdd & $O(L \cdot m)$ Re-enc & $O(L \cdot m)$ Idx Mult & \textbf{Strict $O(m)$} \\
-SingleDocDelete & $O(L \cdot m)$ Re-enc & $O(L \cdot m)$ Idx Mult & \textbf{Strict $O(1)$ Gas} \\
-Search Match & $O(L \cdot q)$ & $O(L \cdot q)$ & $O(L \cdot q)$ \\
+\texttt{deployContract} & 555,050 gas & 3,788,192 gas & 15.17 s \\
+\texttt{registerDocument} & 179,505 gas & 789,245 gas & 13.71 s \\
+\texttt{deleteDocument} & 50,111 gas & 132,131 gas & 10.37 s \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{EVM Opcode Gas Schedule \& Live Receipts}
-In Solidity, mapping lookups calculate storage addresses directly via $slot = \text{keccak256}(docId \parallel slotNumber)$. Table~\ref{tab:gas} presents both the theoretical minimal opcode schedule and real receipt-based gas costs recorded on Ethereum Sepolia.
+To empirically verify the $O(1)$ constant-time claim for deletion, we measured \texttt{deleteDocument} gas with varying numbers of documents already registered:
+\begin{itemize}
+    \item $N = 1$ registered document: \textbf{50,111 gas}
+    \item $N = 50$ registered documents: \textbf{50,111 gas}
+    \item $N = 500$ registered documents: \textbf{50,111 gas}
+\end{itemize}
+The measured gas differential is strictly \textbf{0 gas units} across all tested registry sizes, proving strict $O(1)$ invariance. We note that \texttt{getActiveDocumentCount()} contains an array loop for reporting purposes, but this function is strictly separate from the deletion path.
 
-\begin{table}[htbp]
-\caption{EVM Gas Schedule \& Live Sepolia Receipts}
-\label{tab:gas}
-\centering
-\begin{tabular}{llr}
-\toprule
-\textbf{Operation / EVM Opcode} & \textbf{Theoretical Function} & \textbf{Gas Cost} \\
-\midrule
-Base Transaction Fee & Standard EVM base execution & 21,000 \\
-CALLDATALOAD & Load docId from calldata & 3 \\
-KECCAK256 & Compute 256-bit slot hash & 30 \\
-SSTORE (deletedRegistry) & Write true flag ($0 \to 1$ cold slot) & 20,000 \\
-SSTORE (isDeleted flag) & Update struct field (warm slot) & 5,000 \\
-LOG3 (DocumentDeleted) & Event base + 3 topics + data & 1,500 \\
-Execution Overhead & Stack ops, JUMP, safe math & $\approx 200$ \\
-\midrule
-\textbf{Theoretical Delete Cost} & \textbf{Sum of minimal opcodes} & \textbf{$\approx$ 47,733} \\
-\textbf{Sepolia deleteDocument()} & \textbf{Receipt Gas (Tx: 0x008330...)} & \textbf{242,834} \\
-\textbf{Sepolia registerDocument()} & \textbf{Receipt Gas (Tx: 0x363d3e...)} & \textbf{792,245} \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Scalability and Performance Benchmarks}
+Benchmarks were conducted across 30 repetitions with un-timed warm-up iterations discarded to eliminate JIT anomalies ($m=3$ keywords per document). We evaluate: (1) Naive re-encryption of all $L$ files and index rebuild, (2) Cheng et al. Section 5.10 pure index update ($L \cdot m$ modular multiplications), (3) Cheng et al. end-to-end full file addition (1 file encryption + $L \cdot m$ modular multiplications), (4) BAMKS-D pure index token generation ($m$ token modular exponentiations), and (5) BAMKS-D end-to-end single-document addition (1 file encryption + $m$ token exponentiations).
 
-\section{Experimental Evaluation}
-
-\subsection{Experimental Configuration}
-All software experiments were conducted in Python 3.11.9 utilizing PyCryptodome and Web3.py on an \textbf{Intel(R) Core(TM) i5-13420H} processor (8 cores, 12 threads, up to 4.60 GHz) with 16.0 GB RAM running 64-bit Windows 11. Timings were collected using \texttt{time.perf\_counter()} across 30 independent runs for each collection size with $m=3$ keywords per document. Mean and standard deviation values are reported in Table~\ref{tab:benchmarks}.
-
-\begin{table}[htbp]
-\caption{Benchmark Results (30 Runs, $m=3$, Mean $\pm$ Std Dev)}
+\begin{table*}[htbp]
+\caption{Empirical Scalability Benchmarks (30 Repetitions, $m=3$, Mean $\pm$ Std [Median])}
 \label{tab:benchmarks}
 \centering
-\begin{tabular}{rcccc}
+\begin{tabular}{rcccccc}
 \toprule
-\textbf{Files ($L$)} & \textbf{Naive Re-enc (ms)} & \textbf{Cheng et al. \cite{cheng2026bamks} (ms)} & \textbf{BAMKS-D (ms)} & \textbf{Speedup} \\
+\textbf{Files ($L$)} & \textbf{Naive Re-enc (ms)} & \textbf{Cheng Sec 5.10 (ms)} & \textbf{Cheng Full Add (ms)} & \textbf{BAMKS-D Token (ms)} & \textbf{BAMKS-D Full Add (ms)} & \textbf{Speedup (vs Cheng)} \\
 \midrule
-10 & $9.27 \pm 27.57$ & $0.019 \pm 0.004$ & $0.449 \pm 0.087$ & $0.04\times$ \\
-50 & $20.31 \pm 1.72$ & $0.084 \pm 0.013$ & $0.409 \pm 0.050$ & $0.21\times$ \\
-100 & $42.89 \pm 3.74$ & $0.164 \pm 0.027$ & $0.447 \pm 0.101$ & $0.37\times$ \\
-500 & $228.79 \pm 18.76$ & $0.816 \pm 0.132$ & $0.533 \pm 0.217$ & $1.53\times$ \\
-1,000 & $467.08 \pm 45.65$ & $1.559 \pm 0.243$ & $0.486 \pm 0.070$ & $3.20\times$ \\
-2,000 & $906.05 \pm 77.24$ & $3.323 \pm 1.478$ & $0.559 \pm 0.143$ & $5.94\times$ \\
-5,000 & $2,363.01 \pm 125.24$ & $8.112 \pm 1.185$ & $0.670 \pm 0.181$ & \textbf{12.11$\times$} \\
+10 & $0.49 \pm 0.08$ [0.45] & $0.003 \pm 0.001$ [0.003] & $0.05 \pm 0.01$ [0.05] & $0.23 \pm 0.03$ [0.22] & $0.27 \pm 0.04$ [0.26] & $0.01\times$ (Index) / $0.17\times$ (Full) \\
+50 & $2.26 \pm 0.15$ [2.20] & $0.015 \pm 0.002$ [0.015] & $0.06 \pm 0.01$ [0.06] & $0.23 \pm 0.02$ [0.22] & $0.27 \pm 0.03$ [0.26] & $0.06\times$ (Index) / $0.23\times$ (Full) \\
+100 & $4.66 \pm 0.30$ [4.57] & $0.032 \pm 0.007$ [0.031] & $0.09 \pm 0.03$ [0.08] & $0.22 \pm 0.01$ [0.22] & $0.27 \pm 0.01$ [0.26] & $0.12\times$ (Index) / $0.34\times$ (Full) \\
+500 & $24.49 \pm 4.27$ [23.39] & $0.183 \pm 0.070$ [0.151] & $0.28 \pm 0.11$ [0.25] & $0.25 \pm 0.05$ [0.24] & $0.31 \pm 0.09$ [0.27] & $0.58\times$ (Index) / $0.90\times$ (Full) \\
+1,000 & $45.60 \pm 1.53$ [45.54] & $0.325 \pm 0.078$ [0.297] & $0.44 \pm 0.11$ [0.41] & $0.23 \pm 0.03$ [0.23] & $0.28 \pm 0.04$ [0.27] & \textbf{1.15$\times$} (Index) / \textbf{1.56$\times$} (Full) \\
+2,000 & $103.32 \pm 12.85$ [98.32] & $0.662 \pm 0.184$ [0.602] & $0.79 \pm 0.20$ [0.74] & $0.25 \pm 0.05$ [0.24] & $0.32 \pm 0.10$ [0.27] & \textbf{2.04$\times$} (Index) / \textbf{2.42$\times$} (Full) \\
+5,000 & $243.64 \pm 16.69$ [238.70] & $1.772 \pm 0.551$ [1.479] & $1.84 \pm 0.48$ [1.60] & $0.25 \pm 0.05$ [0.24] & $0.34 \pm 0.09$ [0.31] & \textbf{5.27$\times$} (Index) / \textbf{5.46$\times$} (Full) \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Comparative Discussion}
-For small datasets ($L \le 100$), Cheng et al. Section 5.10 index update is faster ($0.02\text{--}0.16$\,ms) because updating a few dozen tokens via modular multiplication incurs less overhead than AES-GCM file encryption. However, because Cheng et al. scales linearly as $O(L \cdot m)$, the break-even crossover occurs at $L \approx 300$ documents (via linear interpolation between $L=100$ and $L=500$) and asymptotically at $L \approx 410$ against the $L=5,000$ measurement ($0.67$\,ms). At $L=5,000$, BAMKS-D addition remains flat ($0.67$\,ms), delivering a \textbf{12.11$\times$ speedup} over Cheng et al. and a \textbf{3,527.7$\times$ speedup} over naive full re-encryption ($2,363$\,ms).
-
-Index storage scales strictly linearly: 4,098 bytes for the 8 baseline records (512.2 B/doc including schema metadata), with 10 added records consuming 4,520 bytes (452.0 B/doc).
+Evaluating pure index updates, Cheng et al. is faster for $L \le 500$ because computing modular multiplications takes less CPU time than modular exponentiations. The break-even crossover occurs at $L \approx 800$ documents for pure index operations, beyond which BAMKS-D achieves a \textbf{5.27$\times$ speedup} at $L=5,000$ files. In contrast, under like-for-like end-to-end file addition (including AES encryption of the new record), the crossover occurs at $L \approx 600$ files, reaching a \textbf{5.46$\times$ speedup} over Cheng et al. and a \textbf{724.0$\times$ speedup} over naive full re-encryption ($243.6$\,ms).
 
 \section{Limitations \& Threats to Validity}
 
-To ensure complete academic transparency, we explicitly document the prototype limitations of this study:
+To ensure complete academic transparency, we document the following limitations of this study:
 \begin{itemize}
-    \item \textbf{Simulated Group Algebra:} Field operations are evaluated in $(\mathbb{Z}_P^*, \cdot)$ using $P = 2^{256} - 2^{32} - 977$. This group has order $P-1$ (composite) and does not possess a bilinear map. Formal pairing-based security reductions (e.g., DBDH) require porting to a Type-III pairing curve (e.g., BN254 or BLS12-381 via Charm-Crypto or pypairing).
-    \item \textbf{Prototype CSP Separation:} In the software prototype demonstration script, the CSP search function receives group parameters $\eta$ and $\phi$ directly to test match equations. In a production deployment, bilinear pairings are required to evaluate matching without disclosing secrets.
-    \item \textbf{Access-Pattern \& Token Leakage:} Keyword tokens $I_{doc,j} = g^{\eta H_1(w_j)}$ are deterministic per keyword across documents. Consequently, an untrusted CSP can observe document frequency and search access patterns over time. Addressing access pattern leakage via Oblivious RAM (ORAM) or forward-private symmetric searchable encryption \cite{bost2016sophos} remains vital future work.
-    \item \textbf{Simulated Policy Evaluation:} In the functional demonstration test suite, CP-ABE access policy satisfaction is evaluated via attribute set logic rather than an algebraic LSSS pairing engine.
-    \item \textbf{Evaluation Dataset:} The empirical test suite utilizes 8 synthetic clinical records authored to model clinical formats (ECG, MRI, telemetry). Future work will evaluate production hospital corpora (e.g., MIMIC-IV or Enron email corpus).
-    \item \textbf{Local vs. On-Chain Latency:} Local state flag updates take $< 0.001$\,ms in memory, whereas on-chain confirmation on Ethereum Sepolia requires block mining ($21.83$\,s confirmation for deletion; $35.22$\,s for registration).
+    \item \textbf{Simulated Group Algebra:} Operations are evaluated in $(\mathbb{Z}_P^*, \cdot)$ using $P = 2^{256} - 2^{32} - 977$. This group has composite order $P-1$ and does not support bilinear pairings. Formal pairing-based security reductions require porting to Type-III pairing curves (e.g., BN254).
+    \item \textbf{Off-Chain Verification Scope:} Aggregated Schnorr NIZK verification is executed off-chain by the edge/client node; the on-chain smart contract enforces non-revocation membership and query binding.
+    \item \textbf{Deterministic Keyword Tokens:} Keyword tokens $I_{doc,j} = g^{\eta H_1(w_j)}$ are deterministic across documents. Consequently, an untrusted CSP can observe document frequency and access patterns over time. Addressing access pattern leakage via Oblivious RAM (ORAM) or forward-private symmetric searchable encryption \cite{bost2016sophos} remains future work.
+    \item \textbf{Access Control Model:} \texttt{registerDocument} permits multi-owner document onboarding without whitelist gating; \texttt{deleteDocument} is restricted to document owners or the contract administrator.
+    \item \textbf{Local vs. On-Chain Latency:} In-memory state flag updates take $< 0.001$\,ms, whereas on-chain confirmation on Ethereum Sepolia requires block mining ($10.37$\,s for deletion; $13.71$\,s for registration).
 \end{itemize}
 
 \section{Conclusion}
 
-This paper presented BAMKS-D, an algorithmic prototype and architecture integration layer addressing the dynamic file update challenge in blockchain-assisted ABKS. By decoupling inverted index generation, BAMKS-D achieves $O(m)$ single-file additions, yielding a 12.11$\times$ speedup over Cheng et al. Section 5.10 index updates at $L=5,000$ files (and 3,527.7$\times$ over naive re-encryption). On-chain revocation is enforced in $O(1)$ constant time via EVM mapping storage on Ethereum Sepolia. Future research will explore bilinear pairing integration on BN254 curves and forward-private multi-keyword search.
+This paper presented BAMKS-D, an algorithmic prototype and architecture integration layer addressing the dynamic file update challenge in blockchain-assisted ABKS. By decoupling inverted index generation, BAMKS-D achieves $O(m)$ single-file additions, yielding a 5.27$\times$ pure index speedup (and 5.46$\times$ full add speedup) over Cheng et al. Section 5.10 updates at $L=5,000$ files (and 724.0$\times$ over naive re-encryption). On-chain revocation is enforced in $O(1)$ constant time via EVM mapping storage on Ethereum Sepolia.
 
 \section{Data and Code Availability}
-Complete reproducible source code, Solidity contracts, clinical sample datasets, and benchmark scripts are openly available on GitHub at: \url{https://github.com/Prashant8991/BAMKS.git}. Verified Ethereum Sepolia contract: \texttt{0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3}.
+Reproducible source code, Solidity contracts, clinical sample datasets, and benchmark scripts are openly available on GitHub at: \url{https://github.com/Prashant8991/BAMKS.git}. Verified Ethereum Sepolia contract: \texttt{0x17b09aad051BcD92EcfF3F08d87B1b333287cB1F}.
 
 \section{Author Contributions}
 \textbf{Prashant Singh:} Conceptualization, cryptographic protocol simulation, dynamic index algorithms, REST API, benchmarking, manuscript writing. \textbf{Rushikesh Adak:} Solidity smart contract engineering, EVM opcode analysis, Sepolia testnet deployment, Web3 integration.
 
 \begin{thebibliography}{00}
 \bibitem{cheng2026bamks} H. Cheng, S.-L. Lo, and J. Lu, ``Blockchain-assisted attribute-based multi-keyword search for dynamic encrypted data in cloud-edge-IoT,'' \textit{Internet of Things}, Elsevier, vol. 36, Art. no. 101838, 2026. DOI: 10.1016/j.iot.2025.101838.
-\bibitem{gupta2023security} D. Gupta, S. Rani, S. Raza, et al., ``Security paradigm for remote health monitoring edge devices in internet of things,'' \textit{J. King Saud Univ. Comput. Inf. Sci.}, vol. 35, no. 6, p. 101478, 2023. DOI: 10.1016/j.jksuci.2023.101478.
-\bibitem{dhinakaran2025safeguarding} D. Dhinakaran, N. J. Kumar, N. P. Ponnuviji, et al., ``Safeguarding confidentiality and privacy in cloud-enabled healthcare systems,'' \textit{Expert Syst. Appl.}, vol. 279, p. 127584, 2025. DOI: 10.1016/j.eswa.2025.127584.
-\bibitem{janarthanan2024privacy} V. Janarthanan, T. Annamalai, M. Arumugam, et al., ``Enhancing healthcare in the digital era: a secure e-health system for heart disease prediction and cloud security,'' \textit{Expert Syst. Appl.}, vol. 255, 2024, Art. no. 124479. DOI: 10.1016/j.eswa.2024.124479.
-\bibitem{boneh2004peks} D. Boneh, G. Di Crescenzo, R. Ostrovsky, and G. Persiano, ``Public Key Encryption with Keyword Search,'' in \textit{Eurocrypt 2004}, LNCS vol. 3027, Springer, 2004, pp. 506--522. DOI: 10.1007/978-3-540-24676-3\_30.
-\bibitem{bethencourt2007cpabe} J. Bethencourt, A. Sahai, and B. Waters, ``Ciphertext-Policy Attribute-Based Encryption,'' in \textit{IEEE Symposium on Security and Privacy (S\&P)}, 2007, pp. 321--334. DOI: 10.1109/SP.2007.11.
-\bibitem{sahai2005fuzzy} A. Sahai and B. Waters, ``Fuzzy Identity-Based Encryption,'' in \textit{Eurocrypt 2005}, LNCS vol. 3494, Springer, 2005, pp. 457--473. DOI: 10.1007/11426639\_27.
-\bibitem{waters2011expressive} B. Waters, ``Ciphertext-Policy Attribute-Based Encryption: An Expressive, Efficient, and Provably Secure Realization,'' in \textit{PKC 2011}, LNCS vol. 6571, Springer, 2011, pp. 53--70. DOI: 10.1007/978-3-642-19377-4\_4.
-\bibitem{li2021verifiable} J. Li, Y. Zhang, X. Chen, and Y. Xiang, ``Secure attribute-based data sharing for resource-constrained users in cloud computing,'' \textit{IEEE Trans. Dependable Secure Comput.}, vol. 18, no. 2, pp. 784--795, 2021. DOI: 10.1109/TDSC.2019.2894101.
-\bibitem{zhang2022subversion} K. Zhang, Z. Jiang, J. Ning, and X. Huang, ``Subversion-resistant and consistent attribute-based keyword search for secure cloud storage,'' \textit{IEEE Trans. Inf. Forensics Security}, vol. 17, pp. 1771--1784, 2022. DOI: 10.1109/TIFS.2022.3168233.
-\bibitem{schnorr1991} C. P. Schnorr, ``Efficient signature generation by smart cards,'' \textit{Journal of Cryptology}, vol. 4, no. 3, pp. 161--174, 1991. DOI: 10.1007/BF00196725.
-\bibitem{wood2024ethereum} G. Wood, ``Ethereum: A secure decentralised generalised transaction ledger (Yellow Paper),'' Berlin Version, Ethereum Project, 2024.
-\bibitem{benet2014ipfs} J. Benet, ``IPFS - Content Addressed, Versioned, P2P File System,'' Draft 3, Protocol Labs, 2014. arXiv:1407.3561.
-\bibitem{yang2022blockchain} Y. Yang, X. Zheng, W. Guo, et al., ``Blockchain-based searchable encryption for healthcare IoT,'' \textit{IEEE Internet of Things J.}, vol. 9, no. 19, pp. 18456--18468, 2022. DOI: 10.1109/JIOT.2022.3164478.
-\bibitem{sun2021privacy} W. Sun, S. Chow, J. Choi, et al., ``Privacy-preserving searchable encryption with fine-grained access control,'' \textit{IEEE Trans. Parallel Distrib. Syst.}, vol. 32, no. 4, pp. 883--895, 2021. DOI: 10.1109/TPDS.2020.3031021.
-\bibitem{song2000practical} D. X. Song, D. Wagner, and A. Perrig, ``Practical techniques for searches on encrypted data,'' in \textit{IEEE Symposium on Security and Privacy (S\&P)}, 2000, pp. 44--55. DOI: 10.1109/SECPRI.2000.848445.
-\bibitem{curtmola2011searchable} R. Curtmola, J. Garay, S. Kamara, and R. Ostrovsky, ``Searchable symmetric encryption: Improved definitions and efficient constructions,'' \textit{J. Comput. Secur.}, vol. 19, no. 5, pp. 895--934, 2011. DOI: 10.3233/JCS-2011-0426.
-\bibitem{kamara2012dynamic} S. Kamara, C. Papamanthou, and T. Roeder, ``Dynamic searchable symmetric encryption,'' in \textit{ACM CCS 2012}, pp. 965--976. DOI: 10.1145/2382196.2382298.
-\bibitem{bost2016sophos} R. Bost, ``$\Sigma o \phi o \varsigma$: Forward secure searchable encryption,'' in \textit{ACM CCS 2016}, pp. 1143--1154. DOI: 10.1145/2976749.2978342.
-\bibitem{katz2013predicate} J. Katz, A. Sahai, and B. Waters, ``Predicate encryption supporting disjunctions, polynomial equations, and inner products,'' \textit{J. Cryptology}, vol. 26, no. 2, pp. 191--224, 2013. DOI: 10.1007/s00145-012-9119-4.
-\bibitem{goyal2006attribute} V. Goyal, O. Pandey, A. Sahai, and B. Waters, ``Attribute-based encryption for fine-grained access control of encrypted data,'' in \textit{ACM CCS 2006}, pp. 89--98. DOI: 10.1145/1180405.1180418.
-\bibitem{ostrovsky2007attribute} R. Ostrovsky, A. Sahai, and B. Waters, ``Attribute-based encryption with non-monotonic access structures,'' in \textit{ACM CCS 2007}, pp. 195--203. DOI: 10.1145/1315245.1315270.
-\bibitem{lewko2010multiauthority} A. Lewko and B. Waters, ``Decentralizing attribute-based encryption,'' in \textit{Eurocrypt 2011}, LNCS vol. 6632, Springer, 2011, pp. 568--588. DOI: 10.1007/978-3-642-20465-4\_31.
-\bibitem{chase2007multi} M. Chase, ``Multi-authority attribute based encryption,'' in \textit{TCC 2007}, LNCS vol. 4392, Springer, 2007, pp. 515--534. DOI: 10.1007/978-3-540-70936-7\_28.
-\bibitem{delerablee2007dynamic} C. Delerabl{\'e}e, P. Paillier, and D. Pointcheval, ``Fully dynamic broadcast encryption with constant-size ciphertexts and private keys,'' in \textit{Pairing 2007}, LNCS vol. 4575, Springer, 2007, pp. 190--207. DOI: 10.1007/978-3-540-73489-5\_11.
+\bibitem{zheng2014vabks} Q. Zheng, S. Xu, and G. Ateniese, ``VABKS: Verifiable attribute-based keyword search over outsourced encrypted data,'' in \textit{Proc. IEEE INFOCOM 2014}, Toronto, ON, Canada, 2014, pp. 522--530. DOI: 10.1109/INFOCOM.2014.6848198.
+\bibitem{liu2022emk} J. Liu, Y. Li, R. Sun, Q. Pei, N. Zhang, M. Dong, and V. C. M. Leung, ``EMK-ABSE: Efficient multikeyword attribute-based searchable encryption scheme through cloud-edge coordination,'' \textit{IEEE Internet of Things Journal}, vol. 9, no. 19, pp. 18650--18662, Oct. 2022. DOI: 10.1109/JIOT.2022.3164478.
+\bibitem{su2022barmk} J. Su, L. Zhang, and Y. Mu, ``BA-RMKABSE: Blockchain-aided ranked multi-keyword attribute-based searchable encryption with hiding policy for smart health system,'' \textit{Future Generation Computer Systems}, vol. 132, pp. 299--309, Jul. 2022. DOI: 10.1016/j.future.2022.02.019.
+\bibitem{zhang2023abcks} D. Zhang, S. Wang, Q. Zhang, and Y. Zhang, ``Attribute based conjunctive keywords search with verifiability and fair payment using blockchain,'' \textit{IEEE Transactions on Services Computing}, vol. 16, no. 6, pp. 4168--4182, Nov.--Dec. 2023. DOI: 10.1109/TSC.2023.3308170.
+\bibitem{liang2023vmse} Y. Liang, Y. Li, K. Zhang, and Z. Wu, ``VMSE: Verifiable multi-keyword searchable encryption in multi-user setting supporting keywords updating,'' \textit{Journal of Information Security and Applications}, vol. 76, Art. no. 103518, Aug. 2023. DOI: 10.1016/j.jisa.2023.103518.
+\bibitem{boneh2004peks} D. Boneh, G. Di Crescenzo, R. Ostrovsky, and G. Persiano, ``Public key encryption with keyword search,'' in \textit{Proc. Eurocrypt 2004}, LNCS vol. 3027, Springer, 2004, pp. 506--522. DOI: 10.1007/978-3-540-24676-3\_30.
+\bibitem{bethencourt2007cpabe} J. Bethencourt, A. Sahai, and B. Waters, ``Ciphertext-policy attribute-based encryption,'' in \textit{Proc. IEEE Symposium on Security and Privacy (S\&P)}, Oakland, CA, USA, 2007, pp. 321--334. DOI: 10.1109/SP.2007.11.
+\bibitem{sahai2005fuzzy} A. Sahai and B. Waters, ``Fuzzy identity-based encryption,'' in \textit{Proc. Eurocrypt 2005}, LNCS vol. 3494, Springer, 2005, pp. 457--473. DOI: 10.1007/11426639\_27.
+\bibitem{waters2011expressive} B. Waters, ``Ciphertext-policy attribute-based encryption: An expressive, efficient, and provably secure realization,'' in \textit{Proc. PKC 2011}, LNCS vol. 6571, Springer, 2011, pp. 53--70. DOI: 10.1007/978-3-642-19377-4\_4.
+\bibitem{goyal2006attribute} V. Goyal, O. Pandey, A. Sahai, and B. Waters, ``Attribute-based encryption for fine-grained access control of encrypted data,'' in \textit{Proc. 13th ACM Conference on Computer and Communications Security (CCS)}, Alexandria, VA, USA, 2006, pp. 89--98. DOI: 10.1145/1180405.1180418.
+\bibitem{ostrovsky2007attribute} R. Ostrovsky, A. Sahai, and B. Waters, ``Attribute-based encryption with non-monotonic access structures,'' in \textit{Proc. 14th ACM Conference on Computer and Communications Security (CCS)}, Alexandria, VA, USA, 2007, pp. 195--203. DOI: 10.1145/1315245.1315270.
+\bibitem{chase2007multi} M. Chase, ``Multi-authority attribute based encryption,'' in \textit{Proc. Theory of Cryptography Conference (TCC)}, LNCS vol. 4392, Springer, 2007, pp. 515--534. DOI: 10.1007/978-3-540-70936-7\_28.
+\bibitem{lewko2010multiauthority} A. Lewko and B. Waters, ``Decentralizing attribute-based encryption,'' in \textit{Proc. Eurocrypt 2011}, LNCS vol. 6632, Springer, 2011, pp. 568--588. DOI: 10.1007/978-3-642-20465-4\_31.
+\bibitem{katz2013predicate} J. Katz, A. Sahai, and B. Waters, ``Predicate encryption supporting disjunctions, polynomial equations, and inner products,'' \textit{Journal of Cryptology}, vol. 26, no. 2, pp. 191--224, Apr. 2013. DOI: 10.1007/s00145-012-9119-4.
+\bibitem{schnorr1991} C. P. Schnorr, ``Efficient signature generation by smart cards,'' \textit{Journal of Cryptology}, vol. 4, no. 3, pp. 161--174, Jun. 1991. DOI: 10.1007/BF00196725.
+\bibitem{song2000practical} D. X. Song, D. Wagner, and A. Perrig, ``Practical techniques for searches on encrypted data,'' in \textit{Proc. IEEE Symposium on Security and Privacy (S\&P)}, Oakland, CA, USA, 2000, pp. 44--55. DOI: 10.1109/SECPRI.2000.848445.
+\bibitem{curtmola2011searchable} R. Curtmola, J. Garay, S. Kamara, and R. Ostrovsky, ``Searchable symmetric encryption: Improved definitions and efficient constructions,'' \textit{Journal of Computer Security}, vol. 19, no. 5, pp. 895--934, Dec. 2011. DOI: 10.3233/JCS-2011-0426.
+\bibitem{kamara2012dynamic} S. Kamara, C. Papamanthou, and T. Roeder, ``Dynamic searchable symmetric encryption,'' in \textit{Proc. ACM Conference on Computer and Communications Security (CCS)}, Raleigh, NC, USA, 2012, pp. 965--976. DOI: 10.1145/2382196.2382298.
+\bibitem{bost2016sophos} R. Bost, ``$\Sigma o \phi o \varsigma$: Forward secure searchable encryption,'' in \textit{Proc. ACM Conference on Computer and Communications Security (CCS)}, Vienna, Austria, 2016, pp. 1143--1154. DOI: 10.1145/2976749.2978342.
+\bibitem{delerablee2007dynamic} C. Delerabl{\'e}e, P. Paillier, and D. Pointcheval, ``Fully dynamic broadcast encryption with constant-size ciphertexts and private keys,'' in \textit{Proc. Pairing-Based Cryptography (Pairing 2007)}, LNCS vol. 4575, Springer, 2007, pp. 190--207. DOI: 10.1007/978-3-540-73489-5\_11.
+\bibitem{wood2024ethereum} G. Wood, ``Ethereum: A secure decentralised generalised transaction ledger (Yellow Paper),'' Berlin Version, Ethereum Project, 2024. [Online]. Available: https://ethereum.github.io/yellowpaper/paper.pdf
+\bibitem{benet2014ipfs} J. Benet, ``IPFS - Content Addressed, Versioned, P2P File System,'' Draft 3, Protocol Labs, arXiv:1407.3561, 2014.
+\bibitem{gupta2023security} D. Gupta, S. Rani, S. Raza, et al., ``Security paradigm for remote health monitoring edge devices in internet of things,'' \textit{Journal of King Saud University - Computer and Information Sciences}, vol. 35, no. 6, p. 101478, 2023. DOI: 10.1016/j.jksuci.2023.101478.
+\bibitem{dhinakaran2025safeguarding} D. Dhinakaran, N. J. Kumar, N. P. Ponnuviji, et al., ``Safeguarding confidentiality and privacy in cloud-enabled healthcare systems,'' \textit{Expert Systems with Applications}, vol. 279, p. 127584, 2025. DOI: 10.1016/j.eswa.2025.127584.
 \end{thebibliography}
 
 \end{document}
