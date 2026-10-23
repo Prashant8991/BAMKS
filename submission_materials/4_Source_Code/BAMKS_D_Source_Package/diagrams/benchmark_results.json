@@ -1,39 +1,39 @@
 {
   "summary": {
-    "base_rekey_1000_ms": 285.64,
-    "single_doc_add_ms": 0.3496,
-    "single_doc_delete_ms": 0.0007
+    "base_rekey_1000_ms": 286.75,
+    "single_doc_add_ms": 0.3123,
+    "single_doc_delete_ms": 0.0008
   },
   "benchmarks": [
     {
       "n": 50,
-      "base_ms": 13.45,
-      "our_ms": 0.272,
-      "speedup": 49.4
+      "base_ms": 15.87,
+      "our_ms": 0.3233,
+      "speedup": 49.1
     },
     {
       "n": 200,
-      "base_ms": 55.8,
-      "our_ms": 0.2777,
-      "speedup": 200.9
+      "base_ms": 59.02,
+      "our_ms": 0.2821,
+      "speedup": 209.2
     },
     {
       "n": 500,
-      "base_ms": 136.89,
-      "our_ms": 0.2933,
-      "speedup": 466.7
+      "base_ms": 141.66,
+      "our_ms": 0.2986,
+      "speedup": 474.4
     },
     {
       "n": 1000,
-      "base_ms": 287.94,
-      "our_ms": 0.2924,
-      "speedup": 984.8
+      "base_ms": 285.28,
+      "our_ms": 0.3193,
+      "speedup": 893.5
     },
     {
       "n": 5000,
-      "base_ms": 1398.2,
-      "our_ms": 0.3928,
-      "speedup": 3559.6
+      "base_ms": 1456.88,
+      "our_ms": 0.3876,
+      "speedup": 3758.7
     }
   ]
 }

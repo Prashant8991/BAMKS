@@ -899,7 +899,7 @@ def build_pdf():
     img_f8 = make_flowable_image(fig8_path, max_width=490, max_height=210)
     if img_f8:
         story.append(img_f8)
-        story.append(Paragraph("<b>Figure 8:</b> Ethereum Sepolia Blockchain & RVSC Ledger Tab: Highlights the live verified contract address (0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5), transaction hashes, and on-chain event logs.", styles['FigureCaption']))
+        story.append(Paragraph("<b>Figure 8:</b> Ethereum Sepolia Blockchain & RVSC Ledger Tab: Highlights the live verified contract address (0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3), transaction hashes, and on-chain event logs.", styles['FigureCaption']))
         story.append(Spacer(1, 10))
 
     story.append(PageBreak())
@@ -917,7 +917,7 @@ def build_pdf():
     img_f10 = make_flowable_image(fig10_path, max_width=490, max_height=210)
     if img_f10:
         story.append(img_f10)
-        story.append(Paragraph("<b>Figure 10:</b> Scalability & Speedup Comparison: Logarithmic plot showing steep linear growth for Base Paper re-keying (O(L*m)) versus flat constant scaling for BAMKS-D dynamic updates (O(m) and O(1)).", styles['FigureCaption']))
+        story.append(Paragraph("<b>Figure 10:</b> Scalability & Speedup Comparison: Comparing Naive Re-encrypt, Cheng et al. Section 5.10 index update, and BAMKS-D dynamic additions (m=3, 30 runs).", styles['FigureCaption']))
         story.append(Spacer(1, 10))
 
     story.append(PageBreak())
@@ -930,9 +930,9 @@ def build_pdf():
 
     story.append(Paragraph("9.1 Experimental Setup & Measurement Methodology", styles['SectionTitle']))
     setup_text = (
-        "All benchmarks were measured on a local host machine equipped with an Intel Core i7 / AMD Ryzen multi-core processor, "
-        "16 GB RAM, running Python 3.11 under Windows 11. Timing measurements utilize Python's high-precision <code>time.perf_counter()</code> "
-        "and <code>time.perf_counter_ns()</code>, isolated from wall-clock skew. Blockchain metrics reflect the EVM opcode gas specification "
+        "All benchmarks were measured on a host machine equipped with a 13th Gen Intel(R) Core(TM) i5-13420H processor (8 cores, 12 threads), "
+        "16 GB RAM, running Python 3.11.9 under 64-bit Windows 11. Timing measurements utilize Python's high-precision <code>time.perf_counter()</code> "
+        "across 30 independent runs with m=3 keywords per document. Blockchain metrics reflect the EVM opcode gas specification "
         "and actual live transactions broadcast to the Ethereum Sepolia Testnet."
     )
     story.append(Paragraph(setup_text, styles['BodyCustom']))
@@ -940,14 +940,14 @@ def build_pdf():
 
     # Real Benchmark Results Table
     bench_data = [
-        [Paragraph("<b>Dataset Size (L Files)</b>", styles['TableHeader']), Paragraph("<b>Base Paper Re-Keying Latency</b>", styles['TableHeader']), Paragraph("<b>BAMKS-D Dynamic Add Latency</b>", styles['TableHeader']), Paragraph("<b>BAMKS-D Deletion Latency</b>", styles['TableHeader']), Paragraph("<b>Measured Speedup Factor</b>", styles['TableHeader'])],
-        [Paragraph("L = 50", styles['TableCellBold']), Paragraph("13.32 ms", styles['TableCell']), Paragraph("0.2778 ms", styles['TableCell']), Paragraph("0.0007 ms", styles['TableCell']), Paragraph("<b>47.9&times; Faster</b>", styles['TableCellBold'])],
-        [Paragraph("L = 100", styles['TableCellBold']), Paragraph("42.64 ms", styles['TableCell']), Paragraph("0.2859 ms", styles['TableCell']), Paragraph("0.0007 ms", styles['TableCell']), Paragraph("<b>149.2&times; Faster</b>", styles['TableCellBold'])],
-        [Paragraph("L = 200", styles['TableCellBold']), Paragraph("53.26 ms", styles['TableCell']), Paragraph("0.2806 ms", styles['TableCell']), Paragraph("0.0008 ms", styles['TableCell']), Paragraph("<b>189.8&times; Faster</b>", styles['TableCellBold'])],
-        [Paragraph("L = 500", styles['TableCellBold']), Paragraph("140.13 ms", styles['TableCell']), Paragraph("0.2980 ms", styles['TableCell']), Paragraph("0.0006 ms", styles['TableCell']), Paragraph("<b>470.2&times; Faster</b>", styles['TableCellBold'])],
-        [Paragraph("L = 1,000", styles['TableCellBold']), Paragraph("275.00 ms", styles['TableCell']), Paragraph("0.3057 ms", styles['TableCell']), Paragraph("0.0009 ms", styles['TableCell']), Paragraph("<b>899.6&times; Faster</b>", styles['TableCellBold'])],
-        [Paragraph("L = 2,500", styles['TableCellBold']), Paragraph("698.63 ms", styles['TableCell']), Paragraph("0.3542 ms", styles['TableCell']), Paragraph("0.0007 ms", styles['TableCell']), Paragraph("<b>1,972.4&times; Faster</b>", styles['TableCellBold'])],
-        [Paragraph("L = 5,000", styles['TableCellBold']), Paragraph("1,401.28 ms", styles['TableCell']), Paragraph("0.3562 ms", styles['TableCell']), Paragraph("0.0011 ms", styles['TableCell']), Paragraph("<b>3,934.0&times; Faster</b>", styles['TableCellBold'])],
+        [Paragraph("<b>Dataset Size (L Files)</b>", styles['TableHeader']), Paragraph("<b>Naive Re-encryption (ms)</b>", styles['TableHeader']), Paragraph("<b>Cheng et al. Sec. 5.10 (ms)</b>", styles['TableHeader']), Paragraph("<b>BAMKS-D Dynamic Add (ms)</b>", styles['TableHeader']), Paragraph("<b>Speedup (vs Cheng)</b>", styles['TableHeader'])],
+        [Paragraph("L = 10", styles['TableCellBold']), Paragraph("9.27 &plusmn; 27.57", styles['TableCell']), Paragraph("0.019 &plusmn; 0.004", styles['TableCell']), Paragraph("0.449 &plusmn; 0.087", styles['TableCell']), Paragraph("<b>0.04&times;</b>", styles['TableCellBold'])],
+        [Paragraph("L = 50", styles['TableCellBold']), Paragraph("20.31 &plusmn; 1.72", styles['TableCell']), Paragraph("0.084 &plusmn; 0.013", styles['TableCell']), Paragraph("0.409 &plusmn; 0.050", styles['TableCell']), Paragraph("<b>0.21&times;</b>", styles['TableCellBold'])],
+        [Paragraph("L = 100", styles['TableCellBold']), Paragraph("42.89 &plusmn; 3.74", styles['TableCell']), Paragraph("0.164 &plusmn; 0.027", styles['TableCell']), Paragraph("0.447 &plusmn; 0.101", styles['TableCell']), Paragraph("<b>0.37&times;</b>", styles['TableCellBold'])],
+        [Paragraph("L = 500", styles['TableCellBold']), Paragraph("228.79 &plusmn; 18.76", styles['TableCell']), Paragraph("0.816 &plusmn; 0.132", styles['TableCell']), Paragraph("0.533 &plusmn; 0.217", styles['TableCell']), Paragraph("<b>1.53&times; Faster</b>", styles['TableCellBold'])],
+        [Paragraph("L = 1,000", styles['TableCellBold']), Paragraph("467.08 &plusmn; 45.65", styles['TableCell']), Paragraph("1.559 &plusmn; 0.243", styles['TableCell']), Paragraph("0.486 &plusmn; 0.070", styles['TableCell']), Paragraph("<b>3.20&times; Faster</b>", styles['TableCellBold'])],
+        [Paragraph("L = 2,000", styles['TableCellBold']), Paragraph("906.05 &plusmn; 77.24", styles['TableCell']), Paragraph("3.323 &plusmn; 1.478", styles['TableCell']), Paragraph("0.559 &plusmn; 0.143", styles['TableCell']), Paragraph("<b>5.94&times; Faster</b>", styles['TableCellBold'])],
+        [Paragraph("L = 5,000", styles['TableCellBold']), Paragraph("2,363.01 &plusmn; 125.24", styles['TableCell']), Paragraph("8.112 &plusmn; 1.185", styles['TableCell']), Paragraph("0.670 &plusmn; 0.181", styles['TableCell']), Paragraph("<b>12.11&times; Faster</b>", styles['TableCellBold'])],
     ]
     bench_table = Table(bench_data, colWidths=[95, 110, 110, 95, 105])
     bench_table.setStyle(TableStyle([
@@ -963,9 +963,9 @@ def build_pdf():
 
     story.append(Paragraph("9.2 Index Storage Overhead Scaling", styles['SectionTitle']))
     storage_desc = (
-        "Measurements conducted in <code>test_correctness_and_security.py</code> reveal that BAMKS-D index entries consume an average of "
-        "<b>441 bytes per document</b> in JSON serialized format. The storage scales strictly linearly (<i>O(N &times; m)</i>) with zero "
-        "redundant bloat: 100 documents = 44.1 KB; 1,000 documents = 441.4 KB; 5,000 documents = 2.21 MB."
+        "Measurements reveal that BAMKS-D index entries consume an average of <b>512.2 bytes/document</b> for baseline records (including schema metadata) "
+        "and <b>452.0 bytes/document</b> for appended entries. Storage scales strictly linearly (<i>O(L &times; m)</i>) with zero "
+        "redundant bloat: 100 documents = 45.2 KB; 1,000 documents = 452.0 KB; 5,000 documents = 2.26 MB."
     )
     story.append(Paragraph(storage_desc, styles['BodyCustom']))
     story.append(Spacer(1, 6))
@@ -989,11 +989,12 @@ def build_pdf():
     story.append(Paragraph("10.1 Live Ethereum Sepolia Deployment Proof", styles['SectionTitle']))
     sepolia_proof_text = (
         "The BAMKS-D smart contract (<code>BAMKS_Registry.sol</code>) is deployed and verified on the public Ethereum Sepolia Testnet:<br/>"
-        "• <b>Contract Address:</b> <font color='#0284c7'><code>0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5</code></font><br/>"
-        "• <b>Etherscan Contract URL:</b> <font color='#0284c7'>https://sepolia.etherscan.io/address/0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5</font><br/>"
-        "• <b>Deployment Transaction Hash:</b> <font color='#0284c7'><code>0x2277c1481ed1e96268cadd12bd35529bc41d2285ff362a75d3dd2fb62dc6f85c</code></font><br/>"
-        "• <b>Etherscan Tx URL:</b> <font color='#0284c7'>https://sepolia.etherscan.io/tx/0x2277c1481ed1e96268cadd12bd35529bc41d2285ff362a75d3dd2fb62dc6f85c</font><br/>"
-        "• <b>Deployment Block Number:</b> #11946107 | <b>Gas Consumed:</b> 3,000,000 gas units | <b>Deployer Wallet:</b> <code>0x7962dc40751101B4AF8299f70ABeb9feF52D50e9</code>"
+        "• <b>Contract Address:</b> <font color='#0284c7'><code>0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3</code></font><br/>"
+        "• <b>Etherscan Contract URL:</b> <font color='#0284c7'>https://sepolia.etherscan.io/address/0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3</font><br/>"
+        "• <b>Deployment Transaction Hash:</b> <font color='#0284c7'><code>0x1f058bde75b20c2d1ce513897d77d70f47a2951cbcc83d9bc45a573116bf0dbf</code></font><br/>"
+        "• <b>Deployment Block Number:</b> #11975268 | <b>Gas Consumed:</b> 6,889,229 gas units | <b>Deployer:</b> <code>0x7962dc40751101B4AF8299f70ABeb9feF52D50e9</code><br/>"
+        "• <b>registerDocument(101):</b> Tx: <code>0x363d3e8867adb49a2657b798ebb26990a5d0011ec5ddaf7de267ff191dc40ad7</code> (Block #11975277, 792,245 gas, 35.22 s)<br/>"
+        "• <b>deleteDocument(101):</b> Tx: <code>0x008330a08b3ad8926b19de8dc0a1b386b95712dc55077e33df2a36685c876e8d</code> (Block #11975278, 242,834 gas, 21.83 s)"
     )
     story.append(Paragraph(sepolia_proof_text, styles['BodyCustom']))
     story.append(Spacer(1, 8))
@@ -1049,23 +1050,23 @@ def build_pdf():
         ],
         [
             Paragraph("Addition Complexity", styles['TableCellBold']),
-            Paragraph("O(L &times; m) full re-keying", styles['TableCellCode']),
+            Paragraph("O(L &times; m) full re-keying or index multiplication", styles['TableCellCode']),
             Paragraph("O(m) independent indexing", styles['TableCellCode']),
             Paragraph("Index appended without touching unaffected files", styles['TableCell']),
-            Paragraph("899.6&times; faster at L=1,000; 3,934&times; at L=5,000", styles['TableCellBold'])
+            Paragraph("12.11&times; faster over index update at L=5,000; 3,527.7&times; over naive re-encryption", styles['TableCellBold'])
         ],
         [
             Paragraph("Deletion Complexity", styles['TableCellBold']),
             Paragraph("O(L &times; m) full collection rebuild", styles['TableCellCode']),
             Paragraph("O(1) smart-contract mapping flag", styles['TableCellCode']),
             Paragraph("Utilizes EVM <code>deletedDocRegistry</code> state mapping", styles['TableCell']),
-            Paragraph("Strict constant time (0.0009 ms; 42,100 fixed gas)", styles['TableCellBold'])
+            Paragraph("Strict constant time (0.0007 ms local flag; 242,834 on-chain gas)", styles['TableCellBold'])
         ],
         [
             Paragraph("Blockchain Deployment", styles['TableCellBold']),
             Paragraph("Theoretical simulation on local Ganache", styles['TableCell']),
             Paragraph("Live Ethereum Sepolia Testnet deployment", styles['TableCell']),
-            Paragraph("Deployed at <code>0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5</code>", styles['TableCell']),
+            Paragraph("Deployed at <code>0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3</code>", styles['TableCell']),
             Paragraph("Real Web3 transaction hashes, Etherscan auditability", styles['TableCellBold'])
         ],
         [

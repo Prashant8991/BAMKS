@@ -49,6 +49,5 @@ wheels/
 !documentation/**
 
 # OS files
-.DS_Store
-Thumbs.db
-
+# Antigravity artifacts
+.antigravity/

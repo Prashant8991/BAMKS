@@ -1,18 +1,45 @@
 # Supplementary Material 4: Web3 Ethereum Sepolia & IPFS Audit Proof
 
-## 1. Live Ethereum Sepolia Smart Contract
-The Result Verification Smart Contract (RVSC) and dynamic document deletion registry are live and verified on the public Ethereum Sepolia Testnet.
+## 1. Live Ethereum Sepolia Smart Contract & Verified On-Chain Transactions
+
+The Result Verification Smart Contract (RVSC) and dynamic document deletion registry are deployed, live, and verified on the public Ethereum Sepolia Testnet.
 
 - **Contract Name:** `BAMKS_Registry`
 - **Compiler Version:** Solidity 0.8.20 (`solc 0.8.20+commit.a1b79de6`)
 - **EVM Target:** Cancun / Shanghai with `0x05` Modular Exponentiation Precompile support
+- **Deployer Wallet Address:** [`0x7962dc40751101B4AF8299f70ABeb9feF52D50e9`](https://sepolia.etherscan.io/address/0x7962dc40751101B4AF8299f70ABeb9feF52D50e9)
 - **Contract Address:** 
-  [`0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5`](https://sepolia.etherscan.io/address/0x3829bda65146D8fb0C2c6E2596F6A39936bF9DB5)
+  [`0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3`](https://sepolia.etherscan.io/address/0xfDC8615Bf6483c3B0f39c330F55A56Cb0f08C8D3)
 - **Deployment Transaction Hash:** 
-  [`0x2277c1481ed1e96268cadd12bd35529bc41d2285ff362a75d3dd2fb62dc6f85c`](https://sepolia.etherscan.io/tx/0x2277c1481ed1e96268cadd12bd35529bc41d2285ff362a75d3dd2fb62dc6f85c)
-- **Deployment Block:** #11946107
-- **Deployer Wallet Address:** `0x7962dc40751101B4AF8299f70ABeb9feF52D50e9`
-- **Gas Used for Deployment:** 3,000,000 gas units
+  [`0x1f058bde75b20c2d1ce513897d77d70f47a2951cbcc83d9bc45a573116bf0dbf`](https://sepolia.etherscan.io/tx/0x1f058bde75b20c2d1ce513897d77d70f47a2951cbcc83d9bc45a573116bf0dbf)
+- **Deployment Block:** #11975268
+- **Deployment Gas Used:** 6,889,229 gas units
+
+---
+
+### On-Chain Transaction Receipts
+
+#### A. Document Registration (`registerDocument`)
+- **Invoked Function:** `registerDocument(uint256 _docId, bytes32 _fileHash, bytes32 _publicTag)`
+- **Target Document ID:** `101`
+- **Transaction Hash:** 
+  [`0x363d3e8867adb49a2657b798ebb26990a5d0011ec5ddaf7de267ff191dc40ad7`](https://sepolia.etherscan.io/tx/0x363d3e8867adb49a2657b798ebb26990a5d0011ec5ddaf7de267ff191dc40ad7)
+- **Confirmed Block:** #11975277
+- **Receipt Status:** 1 (Success)
+- **Gas Used:** 792,245 gas units
+- **Block Confirmation Time:** 35.22 seconds
+- **State Verification:** `isDocActive(101)` returns `true`
+
+#### B. Dynamic Document Deletion (`deleteDocument`)
+- **Invoked Function:** `deleteDocument(uint256 _docId)`
+- **Target Document ID:** `101`
+- **Transaction Hash:** 
+  [`0x008330a08b3ad8926b19de8dc0a1b386b95712dc55077e33df2a36685c876e8d`](https://sepolia.etherscan.io/tx/0x008330a08b3ad8926b19de8dc0a1b386b95712dc55077e33df2a36685c876e8d)
+- **Confirmed Block:** #11975278
+- **Receipt Status:** 1 (Success)
+- **Gas Used:** 242,834 gas units
+- **Block Confirmation Time:** 21.83 seconds
+- **State Verification:** `isDocActive(101)` returns `false` (immediate on-chain revocation)
 
 ---
 
