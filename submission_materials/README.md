@@ -26,12 +26,8 @@ submission_materials/
 │   ├── README.md                                # Folder documentation & source guide
 │   └── create_word_paper.py                     # Script to sync and regenerate docx
 ├── 3_Research_Paper_PDF/
-│   ├── IEEE_BAMKS_D_Research_Paper.pdf          # Final IEEE 2-column research paper PDF (Our Work, 4 Pages, 952 KB)
-│   ├── create_ieee_pdf.py                       # High-fidelity PDF generator script
-│   ├── ieee_page_1.png                          # Visual proof inspection: Page 1
-│   ├── ieee_page_2.png                          # Visual proof inspection: Page 2
-│   ├── ieee_page_3.png                          # Visual proof inspection: Page 3
-│   └── ieee_page_4.png                          # Visual proof inspection: Page 4
+│   ├── IEEE_BAMKS_D_Research_Paper.pdf          # Final IEEE research paper PDF (Our Work, 14 Pages, 4.41 MB)
+│   └── create_ieee_pdf.py                       # High-fidelity PDF generator script
 ├── 4_Source_Code/
 │   ├── BAMKS_D_Complete_Source_Code.zip         # Portable 5.2 MB archive with all source code
 │   ├── BAMKS_D_Source_Package/                  # Uncompressed full source package
