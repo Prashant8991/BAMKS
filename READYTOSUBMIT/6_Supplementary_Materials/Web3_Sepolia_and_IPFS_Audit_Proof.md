@@ -66,7 +66,7 @@ The live Sepolia receipt gas (132,131 gas units) reflects testnet node pre-execu
 ---
 
 ### Role of On-Chain RVSC vs. Off-Chain SNIZK Verification
-- **Off-Chain:** The aggregated Schnorr Non-Interactive Zero-Knowledge (SNIZK) proof $(R_{agg}, \pi_{agg})$ is verified off-chain by the querying clinician or edge gateway to eliminate high gas costs associated with pairing or complex multi-exponentiation on-chain.
+- **Off-Chain:** The aggregated Schnorr Non-Interactive Zero-Knowledge (SNIZK) proof $(R, \hat{\pi})$ is verified off-chain by the querying clinician or edge gateway to eliminate high gas costs associated with pairing or complex multi-exponentiation on-chain.
 - **On-Chain:** The smart contract enforces revocation non-membership via `deletedDocRegistry` and immutably binds document authenticity.
 
 ---
@@ -74,7 +74,7 @@ The live Sepolia receipt gas (132,131 gas units) reflects testnet node pre-execu
 ## 2. Decentralized Pinata IPFS Storage Audit
 Encrypted patient EHR ciphertexts are pinned directly to the decentralized Web3 IPFS network via Pinata Cloud:
 
-- **IPFS Storage Adapter:** `src/ipfs_storage.py`
+- **IPFS Storage Adapter:** [src/ipfs_storage.py](file:///c:/Users/Prabhat%20Singh/.gemini/antigravity/scratch/BAMKS_Project/src/ipfs_storage.py)
 - **IPFS Protocol Version:** CID v1 (base32 multihash)
 - **Sample Document #101 CID:** `bafkreiegat25m4vgoltbz5l5wtvka7ipm4osl7xtyryhbg643ihctznluq`
 - **Public IPFS Gateway Link:**

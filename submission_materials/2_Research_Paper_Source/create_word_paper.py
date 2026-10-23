@@ -385,7 +385,7 @@ def build_full_paper_docx():
     add_body_p(doc, 
         "The contemporary healthcare ecosystem is experiencing an unprecedented paradigm shift driven by the rapid deployment of Internet of Medical Things (IoMT) devices. "
         "Continuous physiological telemetry streams—including 12-lead electrocardiograms (ECG), photoplethysmography (PPG) vitals, ambulatory blood pressure feeds, "
-        "and high-resolution neuroimaging scans—are captured at the clinical edge and transmitted to cloud repositories for diagnostic archiving and collaborative clinician review [1], [2]. "
+        "and high-resolution neuroimaging scans—are captured at the clinical edge and transmitted to cloud repositories for diagnostic archiving and collaborative clinician review [1], [2], [25]. "
         "While cloud outsourcing provides virtually limitless computational scalability and fault-tolerant storage, it concurrently introduces acute data privacy and regulatory compliance "
         "concerns. Electronic Health Records (EHR) contain highly sensitive diagnostic narratives and protected health information (PHI) governed by strict regulatory frameworks such as the "
         "Health Insurance Portability and Accountability Act (HIPAA) in the United States and the General Data Protection Regulation (GDPR) in the European Union [1]. "
@@ -462,9 +462,19 @@ def build_full_paper_docx():
         "Recent research has extensively integrated blockchain ledgers to eliminate single points of failure and enforce verifiable query computation [15], [16]. "
         "Liu et al. [17] developed EMK-ABSE for edge-assisted IoT multi-keyword search. Su, Zhang, and Mu [18] proposed BA-RMKABSE, introducing smart contract-assisted keyword updates. "
         "Zhang et al. [19] formulated ABCKS, establishing conjunctive multi-keyword search with verifiable fairness across consortium ledgers. "
-        "Liang et al. [20] introduced VMSE, supporting verifiable dynamic keyword updating via blockchain accumulators. "
+        "Liang et al. [7] introduced VMSE, supporting verifiable dynamic keyword updating in multi-user cloud environments. "
         "Cheng et al. [1] synthesized these domains in BAMKS, introducing collaborative indexing and aggregated SNIZK result verification, yet left atomic single-file operations unresolved.",
         bold_prefix="C. Blockchain-Assisted ABKS & Result Verification: "
+    )
+
+    add_body_p(doc,
+        "The theoretical foundation of fine-grained attribute-based access control originated from Fuzzy Identity-Based Encryption formulated by Sahai and Waters [24], "
+        "which relaxed exact identity matching to error-tolerant set overlaps. Goyal et al. [20] subsequently established Key-Policy Attribute-Based Encryption (KP-ABE), "
+        "allowing ciphertext attributes to be authorized under monotonic access trees embedded within user secret keys. To support expressive negative attributes and dynamic "
+        "revocation constraints, Ostrovsky, Sahai, and Waters [21] introduced non-monotonic access structures. Katz, Sahai, and Waters [22] generalized attribute authorization "
+        "into predicate encryption, supporting inner-product evaluations, polynomials, and disjunctions over encrypted data. Furthermore, in dynamic broadcast and multi-user environments, "
+        "Delerablée [23] introduced dynamic threshold public-key encryption to maintain constant-size ciphertexts and private keys during ad-hoc user group updates.",
+        bold_prefix="D. Foundations of Attribute-Based & Predicate Cryptosystems: "
     )
 
     # TABLE I: COMPARATIVE ANALYSIS
@@ -477,7 +487,7 @@ def build_full_paper_docx():
         ["EMK-ABSE [17]", "Yes", "Edge-Assisted CP-ABE", "None (Cloud Only)", "Static Index", "Unsupported", "O(L * m) Re-encrypt"],
         ["BA-RMKABSE [18]", "Yes", "Attribute Hiding CP-ABE", "Ethereum Smart Contract", "Keyword-Level Update", "Unsupported", "Attribute Re-keying"],
         ["ABCKS [19]", "Yes", "Multi-Authority CP-ABE", "Consortium Ledger", "Static Collection", "Unsupported", "Version Increment"],
-        ["VMSE [20]", "Yes", "Multi-User System", "None (Cloud Only)", "Keyword-Level Update", "Unsupported", "Tree Rebalancing"],
+        ["VMSE [7]", "Yes", "Multi-User System", "None (Cloud Only)", "Keyword-Level Update", "Unsupported", "Tree Rebalancing"],
         ["BAMKS [1]", "Yes", "Multi-Authority CP-ABE", "Ethereum Smart Contract", "Corpus Version (L*m)", "Undefined in Paper", "O(L * m) Assumed"],
         ["BAMKS-D (Ours)", "Yes", "Multi-Authority CP-ABE", "Ethereum Sepolia (Live)", "Atomic Single-Doc (m)", "EVM State Mapping", "Strict O(1) Constant"]
     ]

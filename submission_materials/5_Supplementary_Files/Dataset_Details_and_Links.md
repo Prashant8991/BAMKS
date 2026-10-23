@@ -4,7 +4,7 @@
 The research evaluation of **BAMKS-D** utilizes a structured corpus of realistic, multi-departmental Electronic Health Records (EHRs) designed to model real-world hospital workflows, emergency admissions, and continuous medical IoT telemetry.
 
 The dataset is located in the repository under:
-`c:\Users\Prabhat Singh\.gemini\antigravity\scratch\BAMKS_Project\sample_inputs\`
+`sample_inputs/`
 
 ---
 
@@ -42,6 +42,6 @@ The synthetic clinical documents are modeled in strict conformance with standard
 
 ## 5. Base Research Paper & Experimental Baseline Model
 - **Base Paper:** Hanlei Cheng, Sio-Long Lo, Jing Lu, *"Blockchain-assisted attribute-based multi-keyword search for dynamic encrypted data in cloud-edge-IoT"*, Elsevier *Internet of Things*, Vol. 36, Art. 101838, Dec 2025/2026. DOI: [10.1016/j.iot.2025.101838](https://doi.org/10.1016/j.iot.2025.101838)
-- **Local Reference PDF:** [`Cheng_et_al_2026_Base_Research_Paper_BAMKS.pdf`](file:///c:/Users/Prabhat%20Singh/.gemini/antigravity/scratch/BAMKS_Project/submission_materials/Base_Research_Paper_Cheng_et_al/Cheng_et_al_2026_Base_Research_Paper_BAMKS.pdf)
+- **Local Reference PDF:** `Cheng_et_al_2026_Base_Research_Paper_BAMKS.pdf`
 - **Baseline Scale:** Cheng et al. established the benchmark scale across collection sizes $L \in \{50, 200, 500, 1000, 5000\}$ files with $m=5$ keywords per document. Our reproduction and speedup evaluation (`test_demo.py`) directly mirrors this baseline configuration.
 

@@ -312,7 +312,7 @@ def build_pdf():
     story.append(Paragraph(
         "The contemporary healthcare ecosystem is experiencing an unprecedented technological transformation driven by the proliferation of Internet of Medical Things (IoMT) devices. "
         "Modern clinical facilities deploy wireless telemetry monitors, ambulatory ECG sensors, continuous blood glucose feeds, bedside infusion pumps, and digital imaging modalities "
-        "that continuously stream Electronic Health Records (EHR) to cloud repositories for diagnostic archiving and collaborative clinician review [1], [2]. "
+        "that continuously stream Electronic Health Records (EHR) to cloud repositories for diagnostic archiving and collaborative clinician review [1], [2], [25]. "
         "While cloud outsourcing provides virtually limitless computational elasticity and fault-tolerant replication, it concurrently introduces acute data privacy risks. "
         "Medical records contain highly confidential protected health information (PHI) governed by stringent legal mandates, including the Health Insurance Portability and Accountability Act (HIPAA) "
         "in the United States and the General Data Protection Regulation (GDPR) in the European Union [1]. "
@@ -395,8 +395,19 @@ def build_pdf():
         "Recent research has extensively integrated blockchain ledgers to eliminate single points of failure and enforce verifiable query computation [15], [16]. "
         "Liu et al. [17] developed EMK-ABSE for edge-assisted IoT multi-keyword search. Su, Zhang, and Mu [18] proposed BA-RMKABSE, introducing smart contract-assisted keyword updates. "
         "Zhang et al. [19] formulated ABCKS, establishing conjunctive multi-keyword search with verifiable fairness across consortium ledgers. "
-        "Liang et al. [20] introduced VMSE, supporting verifiable dynamic keyword updating via blockchain accumulators. "
+        "Liang et al. [7] introduced VMSE, supporting verifiable dynamic keyword updating in multi-user cloud environments. "
         "Cheng et al. [1] synthesized these domains in BAMKS, introducing collaborative indexing and aggregated SNIZK result verification, yet left atomic single-file operations unresolved.",
+        st_body
+    ))
+
+    story.append(Paragraph("<b>D. Foundations of Attribute-Based &amp; Predicate Cryptosystems</b>", st_h2))
+    story.append(Paragraph(
+        "The theoretical foundation of fine-grained attribute-based access control originated from Fuzzy Identity-Based Encryption formulated by Sahai and Waters [24], "
+        "which relaxed exact identity matching to error-tolerant set overlaps. Goyal et al. [20] subsequently established Key-Policy Attribute-Based Encryption (KP-ABE), "
+        "allowing ciphertext attributes to be authorized under monotonic access trees embedded within user secret keys. To support expressive negative attributes and dynamic "
+        "revocation constraints, Ostrovsky, Sahai, and Waters [21] introduced non-monotonic access structures. Katz, Sahai, and Waters [22] generalized attribute authorization "
+        "into predicate encryption, supporting inner-product evaluations, polynomials, and disjunctions over encrypted data. Furthermore, in dynamic broadcast and multi-user environments, "
+        "Delerablée [23] introduced dynamic threshold public-key encryption to maintain constant-size ciphertexts and private keys during ad-hoc user group updates.",
         st_body
     ))
 
@@ -407,7 +418,7 @@ def build_pdf():
         [Paragraph("EMK-ABSE [17]", st_td_l), Paragraph("Yes", st_td), Paragraph("Edge-Assisted CP-ABE", st_td), Paragraph("None (Cloud Only)", st_td), Paragraph("Static Index", st_td), Paragraph("Unsupported", st_td), Paragraph("<i>O</i>(<i>L</i> &middot; <i>m</i>) Re-encrypt", st_td)],
         [Paragraph("BA-RMKABSE [18]", st_td_l), Paragraph("Yes", st_td), Paragraph("Attribute Hiding CP-ABE", st_td), Paragraph("Ethereum Smart Contract", st_td), Paragraph("Keyword-Level Update", st_td), Paragraph("Unsupported", st_td), Paragraph("Attribute Re-keying", st_td)],
         [Paragraph("ABCKS [19]", st_td_l), Paragraph("Yes", st_td), Paragraph("Multi-Authority CP-ABE", st_td), Paragraph("Consortium Ledger", st_td), Paragraph("Static Collection", st_td), Paragraph("Unsupported", st_td), Paragraph("Version Increment", st_td)],
-        [Paragraph("VMSE [20]", st_td_l), Paragraph("Yes", st_td), Paragraph("Multi-User System", st_td), Paragraph("None (Cloud Only)", st_td), Paragraph("Keyword-Level Update", st_td), Paragraph("Unsupported", st_td), Paragraph("Tree Rebalancing", st_td)],
+        [Paragraph("VMSE [7]", st_td_l), Paragraph("Yes", st_td), Paragraph("Multi-User System", st_td), Paragraph("None (Cloud Only)", st_td), Paragraph("Keyword-Level Update", st_td), Paragraph("Unsupported", st_td), Paragraph("Tree Rebalancing", st_td)],
         [Paragraph("BAMKS [1]", st_td_l), Paragraph("Yes", st_td), Paragraph("Multi-Authority CP-ABE", st_td), Paragraph("Ethereum Smart Contract", st_td), Paragraph("Corpus Version (<i>L</i>&middot;<i>m</i>)", st_td), Paragraph("Undefined in Paper", st_td), Paragraph("<i>O</i>(<i>L</i> &middot; <i>m</i>) Assumed", st_td)],
         [Paragraph("<b>BAMKS-D (Ours)</b>", st_td_l), Paragraph("<b>Yes</b>", st_td), Paragraph("<b>Multi-Authority CP-ABE</b>", st_td), Paragraph("<b>Ethereum Sepolia (Live)</b>", st_td), Paragraph("<b>Atomic Single-Doc (<i>m</i>)</b>", st_td), Paragraph("<b>EVM State Mapping</b>", st_td), Paragraph("<b>Strict <i>O</i>(1) Constant</b>", st_td)]
     ]
