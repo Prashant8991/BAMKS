@@ -1,5 +1,0 @@
-{
-  "summary": "Core BAMKS system implementation src/bamks_system.py covering setup, keygen, encryption, indexing, trapdoors, search, and decryption algorithms.",
-  "updatedAt": "2026-08-03T18:58:23.857092200Z",
-  "userFacing": true
-}

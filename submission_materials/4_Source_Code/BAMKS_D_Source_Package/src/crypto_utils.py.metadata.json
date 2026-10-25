@@ -1,5 +1,0 @@
-{
-  "summary": "Fixed SNIZK proof verification equation in crypto_utils.py so proof verification output is VALID.",
-  "updatedAt": "2026-08-03T19:10:14.039054900Z",
-  "userFacing": true
-}
